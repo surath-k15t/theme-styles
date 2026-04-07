@@ -1,0 +1,113 @@
+import type { PresetConfig } from './types';
+import { baseStyles } from './baseStyles';
+
+export const legacyPreset: PresetConfig = {
+  id: 'legacy',
+  name: 'Legacy',
+  subtitle: 'The Professional',
+  description: 'Formal authority rooted in tradition. An elegant design optimized for high-trust institutions that require a sophisticated presence.',
+  tags: ['Serif headlines', 'Gold accents', 'Low roundness', 'Classic grid', 'Standard layout'],
+  swatchColor: '#fedf88',
+  brandName: 'Ashworth & Cole',
+  brandSubtitle: 'Ashworth & Cole Help',
+  logoType: 'badge',
+  logoIcon: 'AC',
+  apps: [
+    { name: 'CleverApp', icon: 'bar_chart', iconType: 'material', description: 'Executive-level reporting and portfolio analytics for institutional stakeholders.' },
+    { name: 'SmartApp Documentation', icon: 'monitoring', iconType: 'material', description: 'Formal product documentation maintained to the standards expected by enterprise and regulated industries.' },
+    { name: 'WiseApp User Documentation', icon: 'group', iconType: 'material', description: 'Structured user guidance with role-based access paths for administrators, practitioners, and read-only reviewers.' },
+    { name: 'CaseTrack', icon: 'folder_open', iconType: 'material', description: 'Matter and case lifecycle management with document linking, status tracking, and assignee history.' },
+    { name: 'ComplianceDesk', icon: 'gavel', iconType: 'material', description: 'Centralised compliance monitoring, obligation registers, and breach escalation workflows built for regulated environments.' },
+    { name: 'AuditLog', icon: 'fact_check', iconType: 'material', description: 'Immutable, timestamped record of all system activity.' },
+    { name: 'PolicyManager', icon: 'policy', iconType: 'material', description: 'Author, version, and distribute organisational policies with approval workflows, expiry notices, and acknowledgement tracking.' },
+    { name: 'ReportBuilder', icon: 'summarize', iconType: 'material', description: 'Produce boardroom-ready reports from live data sources with templated layouts, scheduled delivery, and export to PDF or Word.' },
+  ],
+  cardLayout: 'list-2col',
+  bannerStyle: 'image',
+  bannerImage: '/public/bannerImageForLegacy.png',
+  cssVars: {
+    '--theme-text-font': "'Source Sans 3', ui-sans-serif, sans-serif",
+    '--theme-headline-font': "'Playfair Display', Georgia, serif",
+    '--theme-text-color': '#2C2C2C',
+    '--theme-headline-color': '#1a1a1a',
+    '--theme-primary-color': '#B8860B',
+    '--theme-on-primary-color': '#F5F0E8',
+    '--theme-headline-scale': '1.05',
+    '--theme-header-background-color': '#2C2C2C',
+    '--theme-header-text-color': '#F5F0E8',
+    '--theme-banner-background-color': 'var(--theme-header-background-color)',
+    '--theme-banner-text-color': '#F5F0E8',
+    '--theme-footer-background-color': '#2C2C2C',
+    '--theme-footer-text-color': '#A09080',
+    '--theme-content-width': '820px',
+    '--theme-content-line-height': 'var(--ds-line-height-large)',
+    '--theme-content-spacing': '1.125rem',
+    '--ds-surface': '#FAFAF8',
+    '--ds-surface-hovered': '#F5F2ED',
+    '--ds-color-brand-50': '#FAF6EE',
+    '--ds-color-brand-75': '#E8DCC8',
+    '--ds-border-neutral': '#E8E2D8',
+    '--ds-border-neutral-hovered': '#B8860B',
+    '--ds-border-neutral-strong': '#E8E2D8',
+    '--ds-border-neutral-strong-hovered': '#B8860B',
+    '--ds-icon-information': '#B8860B',
+    '--ds-background-information': '#FAF6EE',
+    '--ds-link': '#8B6914',
+  },
+  darkCssVars: {
+    '--ds-color-neutral-0': '#1a1a1a',
+    '--ds-color-neutral-25': '#222222',
+    '--ds-color-neutral-50': '#2a2a2a',
+    '--ds-color-neutral-75': '#353535',
+    '--ds-color-neutral-100': '#484848',
+    '--ds-color-neutral-200': '#707070',
+    '--ds-color-neutral-300': '#999999',
+    '--ds-color-neutral-400': '#b8b8b8',
+    '--ds-color-neutral-500': '#d4d4d4',
+    '--ds-color-neutral-900': '#f0ece4',
+    '--ds-color-neutral-1000': '#FFFFFF',
+    '--theme-header-background-color': '#111111',
+    '--theme-header-text-color': '#F5F0E8',
+    '--theme-banner-text-color': '#F5F0E8',
+    '--theme-footer-background-color': '#111111',
+    '--theme-footer-text-color': '#706050',
+    '--theme-text-color': '#b8b8b8',
+    '--theme-headline-color': '#f0ece4',
+    '--theme-primary-color': '#B8860B',
+    '--theme-on-primary-color': '#1a1a1a',
+    '--ds-surface': '#1a1a1a',
+    '--ds-surface-hovered': '#252220',
+    '--ds-color-brand-50': '#2a2520',
+    '--ds-color-brand-75': '#3a3025',
+    '--ds-border-neutral': '#353025',
+    '--ds-border-neutral-hovered': '#B8860B',
+    '--ds-border-neutral-strong': '#353025',
+    '--ds-border-neutral-strong-hovered': '#B8860B',
+    '--ds-icon-information': '#B8860B',
+    '--ds-background-information': '#2a2520',
+    '--ds-link': '#B8860B',
+  },
+  styles: {
+    ...baseStyles,
+
+    // Layout
+    roundness: 0.5,
+    spacingScheme: 'standard',
+
+    // Banner
+    bannerImageSide: 'full',
+
+    // Card icons
+    iconSize: 48,
+
+    // Article — sidebar
+    sidebarItemHoverBackground: 'var(--ds-color-brand-50)',
+    sidebarSelectedBackground: 'var(--ds-color-brand-50)',
+
+    // Article — TOC
+    tocItemHoverBackground: 'var(--ds-color-brand-50)',
+
+    // Search
+    searchButtonBrand: true,
+  },
+};
