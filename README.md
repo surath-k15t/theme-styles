@@ -1,73 +1,106 @@
-# Welcome to your Lovable project
+# Theme Presets — Developer Portal UI Kit
 
-## Project info
+A React + TypeScript theming system for building branded developer portals. It ships with a set of curated theme presets, a design token architecture, and a live preview interface so you can see every preset in context.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Overview
 
-## How can I edit this code?
+The project is structured around **preset configurations** — each preset defines a complete visual identity including color tokens, typography, spacing, card layouts, icon sizing, border radius, and banner styles. All of these feed into a central `ThemeContext` that injects CSS custom properties at runtime, so switching themes requires zero page reload.
 
-There are several ways of editing your application.
+### Preset library
 
-**Use Lovable**
+| Preset | Character |
+|---|---|
+| **Origin** | Clean, neutral, enterprise-ready |
+| **Vector** | Sharp, flat, zero-radius precision |
+| **Ignite** | Bold, energetic, high contrast |
+| **Legacy** | Subtle, muted, documentation-first |
+| **Lucid** | Highly rounded, soft, modern |
+| **Aurora** | Gradient-heavy, frosted glass, immersive |
+| **Playground** | Teal-accented, balanced default for prototyping |
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Design token architecture
 
-Changes made via Lovable will be committed automatically to this repo.
+All visual properties flow through a CSS token chain. Radius is a good example:
 
-**Use your preferred IDE**
+```
+roundness (preset style) → --theme-roundness → --ds-radius-factor → --ds-radius-small / medium / large / pill
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Components hardcode the appropriate token step (e.g. cards use `--ds-radius-medium`, search uses `--ds-radius-pill`) rather than receiving per-preset overrides. This means changing a single `roundness` number in a preset reshapes the entire UI consistently.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Other token families cover spacing schemes (`compact` / `standard` / `spacious`), icon sizes, card gaps per layout type, and typography scales.
 
-Follow these steps:
+## Tech stack
+
+- **React 18** + **TypeScript**
+- **Vite** (dev server + build)
+- **Tailwind CSS** + **shadcn/ui**
+- **@radix-ui/colors** for color palette primitives
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 18+ (recommended: install via [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+- npm 9+
+
+### Clone and install
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone https://github.com/surath-k15t/theme-styles.git
+cd theme-styles
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Run the dev server
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:8080` by default. The dev server supports hot module replacement, so edits to preset files are reflected instantly.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build for production
 
-**Use GitHub Codespaces**
+```sh
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Output goes to `dist/`.
 
-## What technologies are used for this project?
+## Project structure
 
-This project is built with:
+```
+src/
+├── components/
+│   └── theme/          # ThemeContext, AppCards, Banner, SearchBar, FloatingControls, etc.
+├── lib/
+│   └── presets/
+│       ├── types.ts        # PresetConfig + PresetStyles interfaces
+│       ├── baseStyles.ts   # Default values shared across all presets
+│       ├── spacingSchemes.ts
+│       ├── index.ts        # Exports all presets
+│       ├── origin.ts
+│       ├── vector.ts
+│       ├── ignite.ts
+│       ├── legacy.ts
+│       ├── lucid.ts
+│       ├── aurora.ts
+│       └── playground.ts
+├── pages/              # Portal, Article page layouts
+├── design-tokens.css   # Global CSS custom property definitions
+└── index.css
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Adding a new preset
 
-## How can I deploy this project?
+1. Create `src/lib/presets/yourpreset.ts` — copy `playground.ts` as a starting point.
+2. Fill in the `PresetConfig` object, including `id`, `name`, `cssVars`, `darkCssVars`, and `styles`.
+3. Add your preset ID to the `PresetId` union in `types.ts`.
+4. Export it from `src/lib/presets/index.ts`.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+The `roundness` value in `styles` is the main lever for border radius across the whole UI — `0` is fully sharp, `1` is the default scale, and `4` gives very rounded corners everywhere.
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT
