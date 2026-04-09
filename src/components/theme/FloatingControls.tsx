@@ -1,147 +1,19 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/lib/ThemeContext';
 import { presets, presetOrder } from '@/lib/presets';
 import type { PresetId } from '@/lib/presets';
 import { spacingSchemes } from '@/lib/presets/spacingSchemes';
-import { parse, converter, clampChroma, formatHex, wcagContrast } from 'culori';
-
-// ─── Colour generation ────────────────────────────────────────────────────────
-
-const toOklch = converter('oklch');
-
-interface ColorStep {
-  step:     number;
-  hex:      string;
-  l:        number;
-  c:        number;
-  h:        number;
-  contrast: number; // WCAG contrast ratio vs. Step 1 (the background)
-}
-
-/** Fixed lightness targets — light mode (template; Step 9 may be replaced by dynamic anchor) */
-const LIGHT_L = [0.99, 0.97, 0.94, 0.91, 0.88, 0.83, 0.78, 0.72, 0.59, 0.55, 0.51, 0.32];
-/** Dark mode: ramp so Step 1 is the darkest surface */
-const DARK_L = [0.12, 0.16, 0.20, 0.25, 0.31, 0.38, 0.45, 0.54, 0.70, 0.75, 0.87, 0.96];
-
-/** Radix-style default “Solid” step in light mode (OKLCH L) */
-const STANDARD_LIGHT_L9 = LIGHT_L[8];
-/** Default “Solid” step in dark mode */
-const STANDARD_DARK_L9 = DARK_L[8];
-/**
- * Below this L at Step 9 (light mode), Steps 10–11 are hovers/text *lighter* than the solid
- * instead of the default darker text ramp.
- */
-const DARK_SOLID_L_THRESHOLD = 0.4;
-
-function clamp01(x: number): number {
-  return Math.min(1, Math.max(0, x));
-}
-
-/**
- * Per-step chroma: input chroma is the peak at Step 9; Steps 8 and 10 stay tight to that peak
- * (no long ramp that crushes chroma before Step 9).
- */
-function resolveChroma(i: number, peakC: number): number {
-  if (peakC <= 0) return 0;
-  if (i === 0) return Math.min(peakC * 0.06, 0.008);
-  if (i === 1) return Math.min(peakC * 0.09, 0.012);
-  if (i <= 6) {
-    const t = (i - 2) / 5;
-    return peakC * (0.2 + 0.62 * t);
-  }
-  if (i === 7) return peakC * 0.94;
-  if (i === 8) return peakC;
-  if (i === 9) return peakC * 0.94;
-  if (i === 10) return peakC * 0.9;
-  return peakC * 0.3;
-}
-
-/**
- * Dynamic anchoring (light): if input L is darker than the standard Step-9 target, use input L
- * for Step 9 instead of forcing STANDARD_LIGHT_L9.
- */
-function buildLightnessTargetsLight(L_in: number): number[] {
-  const row = LIGHT_L.slice();
-  const L9 =
-    L_in < STANDARD_LIGHT_L9 ? clamp01(L_in) : STANDARD_LIGHT_L9;
-  row[8] = L9;
-
-  if (L9 < DARK_SOLID_L_THRESHOLD) {
-    row[9] = clamp01(L9 + 0.05);
-    row[10] = clamp01(L9 + 0.15);
-    row[11] = clamp01(Math.max(0.06, L9 - 0.1));
-  }
-  return row;
-}
-
-/**
- * Dark mode: same idea — if the accent is darker than the template Step 9, anchor there;
- * very dark Step 9 uses lighter Steps 10–11 for hover/text.
- */
-function buildLightnessTargetsDark(L_in: number): number[] {
-  const row = DARK_L.slice();
-  const L9 =
-    L_in < STANDARD_DARK_L9 ? clamp01(L_in) : STANDARD_DARK_L9;
-  row[8] = L9;
-
-  if (row[8] <= row[7]) {
-    row[7] = clamp01(row[8] - 0.04);
-    for (let j = 6; j >= 0; j--) {
-      if (row[j] >= row[j + 1]) {
-        row[j] = clamp01(row[j + 1] - 0.035);
-      }
-    }
-  }
-
-  if (L9 < 0.45) {
-    row[9] = clamp01(L9 + 0.05);
-    row[10] = clamp01(L9 + 0.15);
-    row[11] = Math.max(row[10] + 0.04, DARK_L[11]);
-  }
-
-  for (let i = 1; i < 12; i++) {
-    if (row[i] < row[i - 1]) row[i] = clamp01(row[i - 1] + 0.008);
-  }
-  return row;
-}
-
-function generateScale(hex: string, isDark: boolean): ColorStep[] {
-  const parsed = parse(hex);
-  if (!parsed) return [];
-  const base = toOklch(parsed);
-  if (base == null || base.l == null) return [];
-
-  const peakC = base.c ?? 0;
-  const h = base.h ?? 0;
-  const L_in = base.l;
-
-  const targets = isDark ? buildLightnessTargetsDark(L_in) : buildLightnessTargetsLight(L_in);
-
-  const raw = targets.map((l, i) => {
-    const c = resolveChroma(i, peakC);
-    const inGamut = toOklch(clampChroma({ mode: 'oklch' as const, l, c, h }, 'oklch'));
-    return {
-      step: i + 1,
-      hex: formatHex(inGamut ?? { mode: 'oklch' as const, l, c: 0, h }) ?? '#000000',
-      l: inGamut?.l ?? l,
-      c: (inGamut as { c?: number }).c ?? 0,
-      h: (inGamut as { h?: number }).h ?? h,
-    };
-  });
-
-  const bgHex = raw[0].hex;
-  return raw.map(s => ({
-    ...s,
-    contrast: Number((wcagContrast(s.hex, bgHex) ?? 1).toFixed(2)),
-  }));
-}
+import { wcagContrast } from 'culori';
+import {
+  alphaVariantMatchingSolid,
+  generateDarkScale,
+  generateScale,
+} from '@/lib/palette-generator';
 
 // ─── FloatingControls ─────────────────────────────────────────────────────────
 
 const FloatingControls: React.FC = () => {
   const { preset, mode, setPreset, showDescription, setShowDescription, showDebug, setShowDebug } = useTheme();
-  const navigate = useNavigate();
 
   const handlePresetSwitch = (id: PresetId) => {
     setPreset(id);
@@ -252,10 +124,35 @@ const ColorPalettePlayground: React.FC = () => {
   const [hex, setHex]               = useState('#157F78');
   const [isDark, setIsDark]         = useState(false);
 
-  const scale = useMemo(() => generateScale(hex, isDark), [hex, isDark]);
+  const { diagnostics, brandStep } = useMemo(() => {
+    if (isDark) {
+      const { diagnostics: steps } = generateDarkScale(hex);
+      return {
+        diagnostics: steps,
+        brandStep: 9,
+      };
+    }
+    const { diagnostics: rows } = generateScale(hex);
+    return { diagnostics: rows, brandStep: 9 };
+  }, [hex, isDark]);
+
+  const alphaOnBg = useMemo(() => {
+    if (diagnostics.length < 1) return [];
+    const step1 = diagnostics[0].hex;
+    return [3, 9, 11]
+      .filter(step => step <= diagnostics.length)
+      .map(step => {
+        const solid = diagnostics[step - 1].hex;
+        return {
+          step,
+          a50: alphaVariantMatchingSolid(solid, step1, 0.5),
+          a15: alphaVariantMatchingSolid(solid, step1, 0.15),
+        };
+      });
+  }, [diagnostics]);
 
   // Local palette UI colours — independent of the site theme
-  const bg      = isDark ? '#111113' : '#f5f7fa';
+  const bg      = isDark ? '#111113' : '#ffffff';
   const surface = isDark ? '#18181b' : '#ffffff';
   const border  = isDark ? '#2e2e32' : '#e4e4e7';
   const fg      = isDark ? '#e4e4e7' : '#18181b';
@@ -278,13 +175,14 @@ const ColorPalettePlayground: React.FC = () => {
     return onWhite >= onBlack ? '#ffffff' : '#18181b';
   }
 
-  if (scale.length < 12) return null;
+  if (diagnostics.length < 12) return null;
 
-  const s2  = scale[1];
-  const s3  = scale[2];
-  const s6  = scale[5];
-  const s9  = scale[8];
-  const s11 = scale[10];
+  const s2  = diagnostics[1];
+  const s3  = diagnostics[2];
+  const s6  = diagnostics[5];
+  const s9  = diagnostics[8];
+  const s11 = diagnostics[10];
+  const sBrand = diagnostics.find(s => s.step === brandStep) ?? s9;
 
   return (
     <div style={{
@@ -305,8 +203,9 @@ const ColorPalettePlayground: React.FC = () => {
             Colour Palette Generator
           </h2>
           <p style={{ margin: '5px 0 0', fontSize: 13, color: muted, lineHeight: 1.55 }}>
-            12-step OKLCH scale · Radix-style semantics · Step 9 uses dynamic anchoring (input L when darker than the default solid).
-            Very dark solids lift Steps 10–11 for hovers/text. Click any swatch to use it as the new base.
+            {isDark
+              ? 'Dark mode: Radix-like skeleton with black canvas, directional hover pivot, and text clamps.'
+              : 'Fixed L blueprint, peak-chroma ramp on steps 1–8, exact brand L/C on step 9. Yellow/lime hues get a guarded +L shift when C ≥ 0.04. Click a swatch to re-base.'}
           </p>
         </div>
 
@@ -374,10 +273,10 @@ const ColorPalettePlayground: React.FC = () => {
 
         {/* ── Palette Strip ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 5, marginBottom: 5 }}>
-          {scale.map(s => {
+          {diagnostics.map(s => {
             const txt   = textOn(s.hex);
             const dim   = txt === '#ffffff' ? 'rgba(255,255,255,0.48)' : 'rgba(0,0,0,0.38)';
-            const brand = s.step === 9;
+            const brand = s.step === brandStep;
             return (
               <div
                 key={s.step}
@@ -414,9 +313,51 @@ const ColorPalettePlayground: React.FC = () => {
           })}
         </div>
 
+        {!isDark && alphaOnBg.length > 0 && (
+          <div style={{
+            marginBottom: 20,
+            padding: '10px 14px',
+            borderRadius: 10,
+            border: `1px solid ${border}`,
+            background: surface,
+            fontSize: 11,
+            color: muted,
+          }}>
+            <div style={{ fontWeight: 600, marginBottom: 8 }}>Alpha on Step 1 bg (match solid)</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+              {alphaOnBg.map(({ step, a50, a15 }) => (
+                <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontFamily: "'PT Mono', monospace" }}>S{step}</span>
+                  <span
+                    title={a50}
+                    style={{
+                      width: 40,
+                      height: 22,
+                      borderRadius: 4,
+                      background: a50,
+                      border: `1px solid ${border}`,
+                    }}
+                  />
+                  <span
+                    title={a15}
+                    style={{
+                      width: 40,
+                      height: 22,
+                      borderRadius: 4,
+                      background: a15,
+                      border: `1px solid ${border}`,
+                    }}
+                  />
+                  <span style={{ fontSize: 10, opacity: 0.85 }}>50% · 15%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Semantic step labels */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 5, marginBottom: 28 }}>
-          {scale.map((s, i) => (
+          {diagnostics.map((s, i) => (
             <div key={s.step} style={{
               textAlign:  'center',
               fontSize:   9,
@@ -450,13 +391,13 @@ const ColorPalettePlayground: React.FC = () => {
               Component Sandbox
             </div>
 
-            {/* Primary button — Step 9 background, white text */}
+            {/* Primary button — brand step background, white text */}
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 11, color: muted, marginBottom: 7 }}>
-                Primary · Step 9 bg / white text
+                Primary · Step {brandStep} (brand) / white text
               </div>
               <button style={{
-                background:   s9.hex,
+                background:   sBrand.hex,
                 color:        '#ffffff',
                 border:       'none',
                 borderRadius: 7,
@@ -545,7 +486,7 @@ const ColorPalettePlayground: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {scale.map(s => {
+                {diagnostics.map(s => {
                   const crColor = s.contrast >= 4.5
                     ? '#22c55e'
                     : s.contrast >= 3
