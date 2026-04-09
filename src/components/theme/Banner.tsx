@@ -7,7 +7,6 @@ const Banner: React.FC = () => {
   const { preset } = useTheme();
   const config = presets[preset];
   const s = config.styles;
-  const isBold = preset === 'ignite';
 
   // For 'none', the banner seamlessly blends into the portal canvas background.
   // For all other styles, the explicit bannerBackground drives the base color.
@@ -36,7 +35,7 @@ const Banner: React.FC = () => {
         fontFamily: 'var(--ds-font-family-body)',
       }}
     >
-      {/* Gradient overlay — colors driven by --aurora-color-* CSS vars */}
+      {/* Gradient overlay — generator ramp (steps 3 / 6 / 9 → brand-100 / 400 / 700) */}
       {config.bannerStyle === 'gradient' && (
         <>
           <div
@@ -44,7 +43,7 @@ const Banner: React.FC = () => {
               position: 'absolute',
               inset: 0,
               background:
-                'linear-gradient(90deg, var(--aurora-color-start) 0%, var(--aurora-color-mid) 51.3%, var(--aurora-color-end) 100%)',
+                'linear-gradient(90deg, var(--ds-color-brand-100) 0%, var(--ds-color-brand-400) 51.3%, var(--ds-color-brand-700) 100%)',
               opacity: 0.8,
             }}
           />
@@ -106,7 +105,7 @@ const Banner: React.FC = () => {
           style={{
             fontFamily: 'var(--ds-font-family-headline)',
             fontSize: s.h1Size,
-            fontWeight: isBold ? 700 : s.h1Weight,
+            fontWeight: s.h1Weight,
             color: s.h1Color,
             letterSpacing: s.h1LetterSpacing,
             lineHeight: s.h1LineHeight,

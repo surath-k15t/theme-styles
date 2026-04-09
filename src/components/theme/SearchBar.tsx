@@ -48,7 +48,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     : glassFill;
   const wrapperBorder = s.searchBorderGradient
     ? '2px solid transparent'
-    : s.searchBorder ?? '1px solid var(--ds-border-neutral-strong)';
+    : s.searchBorder ?? '1px solid var(--ds-border-neutral)';
 
   return (
     <div

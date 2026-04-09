@@ -11,7 +11,7 @@ const PresetDescriptionCard: React.FC = () => {
       <div
         style={{
           background: 'var(--ds-surface)',
-          border: '1px solid var(--ds-border-neutral-strong)',
+          border: '1px solid var(--ds-border-brand-strong)',
           borderRadius: 'var(--ds-radius-medium)',
           padding: '24px 28px',
           fontFamily: 'var(--ds-font-family-body)',
@@ -56,7 +56,7 @@ const PresetDescriptionCard: React.FC = () => {
               style={{
                 padding: '3px 10px',
                 borderRadius: 'var(--ds-radius-small)',
-                border: '1px solid var(--ds-border-neutral-strong)',
+                border: '1px solid var(--ds-border-brand-strong)',
                 fontSize: 12,
                 color: 'var(--ds-foreground-subtle)',
                 fontFamily: 'var(--ds-font-family-body)',

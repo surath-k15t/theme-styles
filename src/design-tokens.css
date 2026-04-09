@@ -5,63 +5,25 @@
 /* ============================================
    SCROLL SITES — DESIGN TOKEN SYSTEM
    Three layers: Core → Alias → Theme
+   --palette-step-1…12: injected by color engine (chromatic ramp).
+   --gray-1…12 + --palette-step-*: from color-engine via ThemeContext (`buildColorEngineThemeVars`, light/dark = floating control + header toggle).
    ============================================ */
 
-/* LAYER 1: Core Tokens */
+/* LAYER 1: Core — brand ramp (generator) + non-color tokens */
 [data-theme-root] {
-  --ds-color-grey-50: #f1f1f1;
-  --ds-color-grey-100: #e2e2e2;
-  --ds-color-grey-200: #c6c6c6;
-  --ds-color-grey-300: #ababab;
-  --ds-color-grey-400: #919191;
-  --ds-color-grey-500: #777777;
-  --ds-color-grey-600: #5e5e5e;
-  --ds-color-grey-700: #474747;
-  --ds-color-grey-800: #303030;
-  --ds-color-grey-900: #1b1b1b;
-  --ds-color-grey-950: #111111;
-  --ds-color-grey-1000: #000000;
-  
-  --ds-color-neutral-0: #FFFFFF;
-  --ds-color-neutral-25: #F7F7F9;
-  --ds-color-neutral-50: #EFF0F4;
-  --ds-color-neutral-75: #E2E5EB;
-  --ds-color-neutral-100: #b7bdcf;
-  --ds-color-neutral-200: #8993AF;
-  --ds-color-neutral-300: #5d6b8f;
-  --ds-color-neutral-400: #3d4e7b;
-  --ds-color-neutral-500: #193468;
-  --ds-color-neutral-600: #132e60;
-  --ds-color-neutral-700: #0a2656;
-  --ds-color-neutral-800: #021d4a;
-  --ds-color-neutral-900: #000c34;
-  --ds-color-neutral-1000: #000000;
-
-  --ds-color-brand-50: var(--ds-color-neutral-50);
-  --ds-color-brand-75: var(--ds-color-neutral-75);
-  --ds-color-brand-100: var(--ds-color-neutral-100);
-  --ds-color-brand-200: var(--ds-color-neutral-200);
-  --ds-color-brand-500: var(--ds-color-neutral-500);
-  --ds-color-brand-700: var(--ds-color-neutral-700);
-  --ds-color-brand-800: var(--ds-color-neutral-800);
-  --ds-color-brand-900: var(--ds-color-neutral-900);
-
-  --ds-color-blue-100: #E9F2FE;
-  --ds-color-blue-200: #CFE1FD;
-  --ds-color-blue-300: #8FB8F6;
-  --ds-color-blue-600: #357DE8;
-  --ds-color-blue-700: #1769DB;
-
-  --ds-color-teal-100: #E7F9FF;
-  --ds-color-teal-200: #C6EDFB;
-  --ds-color-teal-500: #42B2D7;
-  --ds-color-teal-600: #2898BD;
-
-  --ds-color-purple-600: #AE5AE1;
-  --ds-color-purple-700: #964AC0;
-
-  --ds-color-yellow-600: #B38600;
-  --ds-color-yellow-700: #946F00;
+  /* 12 palette steps → monotonic 25–950 scale (light → strong) */
+  --ds-color-brand-25: var(--palette-step-1);
+  --ds-color-brand-50: var(--palette-step-2);
+  --ds-color-brand-100: var(--palette-step-3);
+  --ds-color-brand-200: var(--palette-step-4);
+  --ds-color-brand-300: var(--palette-step-5);
+  --ds-color-brand-400: var(--palette-step-6);
+  --ds-color-brand-500: var(--palette-step-7);
+  --ds-color-brand-600: var(--palette-step-8);
+  --ds-color-brand-700: var(--palette-step-9);
+  --ds-color-brand-800: var(--palette-step-10);
+  --ds-color-brand-900: var(--palette-step-11);
+  --ds-color-brand-950: var(--palette-step-12);
 
   --ds-font-family-sans: 'Inter', ui-sans-serif, Helvetica, Arial, sans-serif;
   --ds-font-family-mono: 'PT Mono', ui-monospace, Monaco, monospace;
@@ -102,10 +64,13 @@
 
 /* LAYER 2: Alias Tokens */
 [data-theme-root] {
-  --ds-surface: var(--ds-color-neutral-0);
-  --ds-surface-hovered: var(--ds-color-neutral-25);
-  --ds-surface-raised: var(--ds-color-neutral-0);
-  --ds-surface-raised-hovered: var(--ds-color-neutral-25);
+  /* Full-page portal / article canvas (fixed neutral app bg, not chromatic surface) */
+  --ds-canvas: var(--ds-color-neutral-0);
+
+  --ds-surface: var(--ds-color-brand-25);
+  --ds-surface-hovered: var(--ds-color-brand-50);
+  --ds-surface-raised: var(--ds-color-brand-25);
+  --ds-surface-raised-hovered: var(--ds-color-brand-50);
 
   --ds-background-neutral: var(--ds-color-neutral-50);
   --ds-background-neutral-hovered: var(--ds-color-neutral-75);
@@ -113,13 +78,19 @@
   --ds-background-neutral-subtle-hovered: var(--ds-color-neutral-25);
   --ds-background-neutral-strong: var(--ds-color-neutral-700);
 
-  --ds-background-brand-strong: var(--ds-color-brand-700);
-  --ds-background-information: var(--ds-color-blue-100);
+  --ds-background-brand-strong: var(--ds-color-brand-600);
+  --ds-background-information: var(--ds-color-brand-50);
 
-  --ds-border-neutral: var(--ds-color-neutral-50);
-  --ds-border-neutral-hovered: var(--ds-color-neutral-100);
-  --ds-border-neutral-strong: var(--ds-color-neutral-75);
-  --ds-border-neutral-strong-hovered: var(--ds-color-neutral-200);
+  --ds-border-neutral: var(--ds-color-neutral-100);
+  --ds-border-neutral-hovered: var(--ds-color-neutral-400);
+  --ds-border-neutral-strong: var(--ds-color-neutral-400);
+  --ds-border-neutral-strong-hovered: var(--ds-color-neutral-500);
+
+  /* Brand chrome — follows generator ramp (--palette-step-*) */
+  --ds-border-brand: var(--ds-color-brand-300);
+  --ds-border-brand-hovered: var(--ds-color-brand-400);
+  --ds-border-brand-strong: var(--ds-color-brand-200);
+  --ds-border-brand-strong-hovered: var(--ds-color-brand-500);
 
   --ds-foreground: var(--ds-color-neutral-900);
   --ds-foreground-subtle: var(--ds-color-neutral-300);
@@ -128,8 +99,10 @@
   --ds-foreground-on-strong: var(--ds-color-neutral-0);
   --ds-foreground-brand: var(--ds-color-brand-900);
 
-  --ds-icon-information: var(--ds-color-blue-600);
-  --ds-link: var(--ds-color-blue-600);
+  --ds-icon-brand: var(--ds-color-brand-700);
+  --ds-icon-brand-muted: var(--ds-color-brand-500);
+  --ds-icon-information: var(--ds-icon-brand);
+  --ds-link: var(--ds-icon-brand);
 }
 
 /* LAYER 3: Theme Tokens */
@@ -138,17 +111,18 @@
   --theme-text-color: initial;
   --theme-headline-font: initial;
   --theme-headline-scale: initial;
-  --theme-primary-color: initial;
+  /* Solid / brand step — generator; contrast text set in JS (--theme-on-primary-color). */
+  --theme-primary-color: var(--ds-color-brand-700);
   --theme-on-primary-color: initial;
   --theme-roundness: 2;
 
   --theme-headline-color: var(--ds-foreground);
   --theme-header-text-color: var(--ds-foreground-on-strong);
-  --theme-header-background-color: #0d284f;
+  --theme-header-background-color: var(--ds-color-brand-50);
   --theme-banner-text-color: var(--ds-foreground-on-strong);
-  --theme-banner-background-color: var(--theme-header-background-color);
+  --theme-banner-background-color: var(--ds-color-brand-25);
   --theme-footer-text-color: var(--ds-foreground-on-strong);
-  --theme-footer-background-color: #385071;
+  --theme-footer-background-color: var(--ds-color-brand-50);
 
   --theme-content-width: 860px;
   --theme-content-line-height: var(--ds-line-height-large);
@@ -160,26 +134,13 @@
   --ds-foreground-subtle: var(--theme-text-color, var(--ds-color-neutral-300));
   --ds-font-family-headline: var(--theme-headline-font, var(--ds-font-family-body));
   --ds-font-size-scale-large: var(--theme-headline-scale, 1);
-  --ds-foreground-brand: var(--theme-primary-color, var(--ds-color-brand-500));
-  --ds-link: var(--theme-primary-color, var(--ds-color-blue-600));
+  --ds-foreground-brand: var(--theme-primary-color, var(--ds-icon-brand));
+  --ds-link: var(--theme-primary-color, var(--ds-icon-brand));
   --ds-radius-factor: var(--theme-roundness);
 }
 
-/* Fixed light neutral ramp — portal copy (playground + bindings); not driven by the palette generator. */
+/* Light mode: `--gray-1`…`12` (+ chromatic steps) set inline by ThemeContext (`buildColorEngineThemeVars`). */
 [data-theme-root][data-mode="light"] {
-  --gray-1: #fcfcfc;
-  --gray-2: #f9f9f9;
-  --gray-3: #f0f0f0;
-  --gray-4: #e8e8e8;
-  --gray-5: #e1e1e1;
-  --gray-6: #d9d9d9;
-  --gray-7: #cecece;
-  --gray-8: #bbb;
-  --gray-9: #8c8c8c;
-  --gray-10: #818181;
-  --gray-11: #636363;
-  --gray-12: #1f1f1f;
-
   --gray-a1: #00000003;
   --gray-a2: #00000006;
   --gray-a3: #0000000f;
@@ -197,24 +158,26 @@
   --gray-surface: #ffffffcc;
   --gray-indicator: #8c8c8c;
   --gray-track: #8c8c8c;
+
+  --ds-color-neutral-0: var(--gray-1);
+  --ds-color-neutral-25: var(--gray-2);
+  --ds-color-neutral-50: var(--gray-3);
+  --ds-color-neutral-75: var(--gray-4);
+  --ds-color-neutral-100: var(--gray-5);
+  --ds-color-neutral-200: var(--gray-6);
+  --ds-color-neutral-300: var(--gray-7);
+  --ds-color-neutral-400: var(--gray-8);
+  --ds-color-neutral-500: var(--gray-9);
+  --ds-color-neutral-600: var(--gray-10);
+  --ds-color-neutral-700: var(--gray-11);
+  --ds-color-neutral-800: var(--gray-11);
+  --ds-color-neutral-900: var(--gray-11);
+  --ds-color-neutral-1000: var(--gray-12);
 }
 
 @supports (color: color(display-p3 1 1 1)) {
   @media (color-gamut: p3) {
     [data-theme-root][data-mode="light"] {
-      --gray-1: oklch(99.2% 0 none);
-      --gray-2: oklch(98.1% 0 none);
-      --gray-3: oklch(95.5% 0 none);
-      --gray-4: oklch(93.1% 0 none);
-      --gray-5: oklch(90.9% 0 none);
-      --gray-6: oklch(88.5% 0 none);
-      --gray-7: oklch(85.1% 0 none);
-      --gray-8: oklch(79.2% 0 none);
-      --gray-9: oklch(63.9% 0 none);
-      --gray-10: oklch(60.5% 0 none);
-      --gray-11: oklch(50.1% 0 none);
-      --gray-12: oklch(24% 0 none);
-
       --gray-a1: color(display-p3 0 0 0 / 0.0118);
       --gray-a2: color(display-p3 0 0 0 / 0.0235);
       --gray-a3: color(display-p3 0 0 0 / 0.0588);
@@ -236,21 +199,8 @@
   }
 }
 
-/* Fixed dark neutral ramp — playground portal copy when site + scale are both dark. */
+/* Dark mode: `--gray-1`…`12` (+ chromatic steps) set inline by ThemeContext (`buildColorEngineThemeVars`). */
 [data-theme-root][data-mode="dark"] {
-  --gray-1: #000;
-  --gray-2: #121212;
-  --gray-3: #1f1f1f;
-  --gray-4: #282828;
-  --gray-5: #303030;
-  --gray-6: #3a3a3a;
-  --gray-7: #474747;
-  --gray-8: #606060;
-  --gray-9: #6d6d6d;
-  --gray-10: #7a7a7a;
-  --gray-11: #b3b3b3;
-  --gray-12: #eee;
-
   --gray-a1: #00000000;
   --gray-a2: #ffffff12;
   --gray-a3: #ffffff1f;
@@ -268,24 +218,26 @@
   --gray-surface: rgba(0, 0, 0, 0.05);
   --gray-indicator: #6d6d6d;
   --gray-track: #6d6d6d;
+
+  --ds-color-neutral-0: var(--gray-1);
+  --ds-color-neutral-25: var(--gray-2);
+  --ds-color-neutral-50: var(--gray-3);
+  --ds-color-neutral-75: var(--gray-4);
+  --ds-color-neutral-100: var(--gray-5);
+  --ds-color-neutral-200: var(--gray-6);
+  --ds-color-neutral-300: var(--gray-7);
+  --ds-color-neutral-400: var(--gray-8);
+  --ds-color-neutral-500: var(--gray-9);
+  --ds-color-neutral-600: var(--gray-10);
+  --ds-color-neutral-700: var(--gray-11);
+  --ds-color-neutral-800: var(--gray-11);
+  --ds-color-neutral-900: var(--gray-11);
+  --ds-color-neutral-1000: var(--gray-12);
 }
 
 @supports (color: color(display-p3 1 1 1)) {
   @media (color-gamut: p3) {
     [data-theme-root][data-mode="dark"] {
-      --gray-1: oklch(0% 0 none);
-      --gray-2: oklch(18.3% 0 none);
-      --gray-3: oklch(23.9% 0 none);
-      --gray-4: oklch(27.5% 0 none);
-      --gray-5: oklch(30.8% 0 none);
-      --gray-6: oklch(34.7% 0 none);
-      --gray-7: oklch(40% 0 none);
-      --gray-8: oklch(49% 0 none);
-      --gray-9: oklch(53.4% 0 none);
-      --gray-10: oklch(58.1% 0 none);
-      --gray-11: oklch(76.7% 0 none);
-      --gray-12: oklch(94.8% 0 none);
-
       --gray-a1: color(display-p3 0 0 0 / 0);
       --gray-a2: color(display-p3 1 1 1 / 0.0706);
       --gray-a3: color(display-p3 1 1 1 / 0.1216);

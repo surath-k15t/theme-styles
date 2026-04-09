@@ -36,7 +36,7 @@ const AppIcon: React.FC<AppIconProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: hasBackground ? 'var(--ds-radius-small)' : undefined,
-        background: hasBackground ? (listMode ? 'var(--ds-color-brand-50)' : iconBackground) : undefined,
+        background: hasBackground ? (listMode ? 'var(--ds-color-brand-100)' : iconBackground) : undefined,
         fontSize: iconType === 'emoji' ? iconRenderSize : undefined,
         flexShrink: 0,
         overflow: isImageList ? 'hidden' : undefined,

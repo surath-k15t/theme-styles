@@ -5,4 +5,4 @@
    ──────────────────────────────────────────── */
 export type { PresetId, ThemeMode, PresetStyles, PresetConfig } from './presets/types';
 export { baseStyles } from './presets/baseStyles';
-export { presets, presetOrder } from './presets/index';
+export { presets } from './presets/index';

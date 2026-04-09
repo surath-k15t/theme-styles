@@ -43,16 +43,16 @@ export const baseStyles: PresetStyles = {
   pWeight: 'var(--ds-font-weight-regular)',
   pColor: 'var(--ds-foreground-subtle)',
 
-  portalCanvasBackground: 'var(--ds-surface)',
-  articleCanvasBackground: 'var(--ds-surface)',
+  portalCanvasBackground: 'var(--ds-canvas)',
+  articleCanvasBackground: 'var(--ds-canvas)',
 
   spacingScheme: 'standard',
   roundness: 2,
 
-  cardBorder: '1px solid var(--ds-border-neutral-strong)',
+  cardBorder: '1px solid var(--ds-border-brand-strong)',
   cardBackground: 'var(--ds-surface)',
   cardBackgroundHover: 'var(--ds-surface-hovered)',
-  cardBorderHover: 'var(--ds-border-neutral-strong-hovered)',
+  cardBorderHover: 'var(--ds-border-brand-strong-hovered)',
   iconSize: 48,
   cardIconColor: 'var(--ds-card-icon-color)',
   cardIconBackground: 'var(--ds-background-neutral)',
@@ -60,7 +60,7 @@ export const baseStyles: PresetStyles = {
   sidebarPadding: '20px 0',
   contentPadding: '32px 48px',
   tocPadding: '32px 24px 32px 16px',
-  tocBoxBorder: '1px solid var(--ds-border-neutral-strong)',
+  tocBoxBorder: '1px solid var(--ds-border-brand-strong)',
   tocBoxPadding: '16px',
 
   // Page tree colors

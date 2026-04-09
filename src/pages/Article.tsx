@@ -46,7 +46,7 @@ const Article: React.FC = () => {
           style={{
             width: 320,
             minWidth: 320,
-            borderRight: '1px solid var(--ds-border-neutral-strong)',
+            borderRight: '1px solid var(--ds-border-brand-strong)',
             padding: s.sidebarPadding,
             flexShrink: 0,
             fontSize: 'var(--ds-font-size-sm)',
@@ -138,7 +138,7 @@ const Article: React.FC = () => {
             style={{
               fontFamily: 'var(--ds-font-family-headline)',
               fontSize: 'var(--ds-font-size-2xl)',
-              fontWeight: preset === 'ignite' ? 700 : ('var(--ds-font-weight-medium)' as any),
+              fontWeight: 'var(--ds-font-weight-medium)',
               color: 'var(--theme-headline-color)',
               marginBottom: 'var(--theme-content-spacing)',
             }}
@@ -160,7 +160,7 @@ const Article: React.FC = () => {
             style={{
               fontFamily: 'var(--ds-font-family-headline)',
               fontSize: 'var(--ds-font-size-xl)',
-              fontWeight: preset === 'ignite' ? 700 : ('var(--ds-font-weight-medium)' as any),
+              fontWeight: 'var(--ds-font-weight-medium)',
               color: 'var(--theme-headline-color)',
               marginBottom: 'var(--theme-content-spacing)',
             }}
@@ -196,7 +196,7 @@ const Article: React.FC = () => {
           <div
             style={{
               background: 'var(--ds-background-neutral)',
-              border: '1px solid var(--ds-border-neutral-strong)',
+              border: '1px solid var(--ds-border-brand-strong)',
               borderRadius: 'var(--ds-radius-medium)',
               height: 240,
               display: 'flex',

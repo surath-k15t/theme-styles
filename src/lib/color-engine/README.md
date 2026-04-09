@@ -1,8 +1,10 @@
-# Color palette generator & engine
+# Color engine
 
-Turns a **single brand color** (hex or any string Culori can parse) into a **12-step OKLCH-based palette**: backgrounds, UI chrome, borders, solid + hover, and text steps. Output is **sRGB hex** after gamut clamping, plus per-step **L / C / h** diagnostics and **WCAG contrast** vs step 1.
+Turns a **single brand color** (hex or any string Culori can parse) into a **12-step OKLCH-based chromatic palette**: backgrounds, UI chrome, borders, solid + hover, and text steps. Output is **sRGB hex** after gamut clamping, plus per-step **L / C / h** diagnostics and **WCAG contrast** vs step 1.
 
-The **Playground** preset (`FloatingControls` → `ColorPalettePlayground`) uses the **v2** API: `generateScale` (light) and `generateDarkScale` (dark).
+**Fixed neutrals** (typography / gray UI) live in `neutral-ramp.ts` as **12 sRGB solids**; `ThemeContext` injects them as `--gray-1`…`--gray-12` on `data-theme-root`. Alpha / P3 refinements for neutrals remain in `design-tokens.css`.
+
+The **Playground** preset (`FloatingControls` → `ColorEnginePlayground`) uses the **v2** chromatic API: `generateScale` (light) and `generateDarkScale` (dark).
 
 ---
 
@@ -13,12 +15,16 @@ import {
   generateScale,
   generateDarkScale,
   alphaVariantMatchingSolid,
-} from '@/lib/palette-generator';
+  buildColorEngineThemeVars,
+  neutralSolidsForMode,
+} from '@/lib/color-engine';
 
 const { scale, diagnostics } = generateScale('#157F78');
 // diagnostics[0]..[11] → steps 1–12: { step, l, c, h, hex, contrast }
 
 const dark = generateDarkScale('#157F78');
+
+const vars = buildColorEngineThemeVars('#157F78', false); // light: neutrals + --palette-step-*
 
 // rgba that composites onto bg to match a solid (linear RGB solve)
 const overlay = alphaVariantMatchingSolid(solidHex, bgHex, 0.5);
@@ -39,7 +45,10 @@ const overlay = alphaVariantMatchingSolid(solidHex, bgHex, 0.5);
 
 ```
 index.ts
-├── generate-scale.ts      ← v2 light + dark (playground)
+├── theme-vars.ts          ← buildColorEngineThemeVars (neutrals + chromatic for theme root)
+├── neutral-ramp.ts        ← fixed 12 neutral solids + buildNeutralSolidCssVars
+├── playground-css-vars.ts ← chromatic steps + on-primary + portal text overrides
+├── generate-scale.ts      ← v2 light + dark chromatic (playground)
 ├── generate-scale-legacy.ts
 ├── light-chromatic.ts     ← legacy Radix light templates + smoothstep blends
 ├── dark-chromatic.ts      ← legacy Radix dark templates + smoothstep blends
@@ -107,12 +116,13 @@ There is **no Gaussian (normal) distribution** in this package. V2 also uses **c
 
 ## Related UI
 
-- `src/components/theme/FloatingControls.tsx` — `ColorPalettePlayground` when preset is `playground`; calls v2 generators and shows alpha variants for selected steps.
+- `src/components/theme/FloatingControls.tsx` — `ColorEnginePlayground`; calls v2 generators and shows alpha variants for selected steps.
 
 ---
 
 ## Adding or tuning behavior
 
 - **V2 light/dark rules:** edit `generate-scale.ts` only; keep `buildScaleFromTargets` as the single place that applies `clampChroma` + hex + contrast.
+- **Neutral solids:** edit `neutral-ramp.ts`; `ThemeContext` spreads `buildColorEngineThemeVars(hex, playgroundIsDark)` so light/dark matches the floating control and header toggle.
 - **Legacy Radix shapes:** adjust arrays in `light-templates.ts` / `dark-templates.ts` or blend weights in `*-chromatic.ts`.
 - After changes, run `npm run build` and exercise the Playground preset in both light/dark toggles.
