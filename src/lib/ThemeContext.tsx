@@ -1,12 +1,17 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { PresetId, ThemeMode } from './presets';
 import { presets } from './presets';
+import { buildPlaygroundCssVars } from './palette-generator/playground-css-vars';
 
 interface ThemeContextType {
   preset: PresetId;
   mode: ThemeMode;
   setPreset: (p: PresetId) => void;
   toggleMode: () => void;
+  playgroundHex: string;
+  setPlaygroundHex: (hex: string) => void;
+  playgroundIsDark: boolean;
+  setPlaygroundIsDark: (v: boolean) => void;
   showDescription: boolean;
   setShowDescription: (v: boolean) => void;
   showDebug: boolean;
@@ -24,6 +29,8 @@ export const useTheme = () => {
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [preset, setPreset] = useState<PresetId>('origin');
   const [mode, setMode] = useState<ThemeMode>('light');
+  const [playgroundHex, setPlaygroundHex] = useState('#157F78');
+  const [playgroundIsDark, setPlaygroundIsDark] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
 
@@ -32,15 +39,33 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const currentPreset = presets[preset];
+  const playgroundVars =
+    preset === 'playground'
+      ? buildPlaygroundCssVars(playgroundHex, playgroundIsDark)
+      : {};
   const themeStyle = {
     ...currentPreset.cssVars,
     ...(mode === 'dark' ? currentPreset.darkCssVars : {}),
+    ...playgroundVars,
     '--theme-roundness': String(currentPreset.styles.roundness),
   } as React.CSSProperties;
 
   return (
     <ThemeContext.Provider
-      value={{ preset, mode, setPreset, toggleMode, showDescription, setShowDescription, showDebug, setShowDebug }}
+      value={{
+        preset,
+        mode,
+        setPreset,
+        toggleMode,
+        playgroundHex,
+        setPlaygroundHex,
+        playgroundIsDark,
+        setPlaygroundIsDark,
+        showDescription,
+        setShowDescription,
+        showDebug,
+        setShowDebug,
+      }}
     >
       <div data-theme-root data-preset={preset} data-mode={mode} style={themeStyle}>
         {children}

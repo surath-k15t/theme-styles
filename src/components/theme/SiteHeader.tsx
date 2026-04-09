@@ -160,7 +160,13 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
           </span>
 
           <span
-            style={{ fontWeight: 600, fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap', color: headerText }}
+            style={{
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              color: 'var(--theme-headline-color)',
+            }}
             onClick={() => navigate('/')}
           >
             {config.brandName}

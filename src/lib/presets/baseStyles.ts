@@ -54,7 +54,7 @@ export const baseStyles: PresetStyles = {
   cardBackgroundHover: 'var(--ds-surface-hovered)',
   cardBorderHover: 'var(--ds-border-neutral-strong-hovered)',
   iconSize: 48,
-  cardIconColor: 'var(--ds-foreground-subtle)',
+  cardIconColor: 'var(--ds-card-icon-color)',
   cardIconBackground: 'var(--ds-background-neutral)',
 
   sidebarPadding: '20px 0',

@@ -20,7 +20,7 @@ export const playgroundPreset: PresetConfig = {
     { name: 'Accessibility',    icon: 'accessibility_new', iconType: 'material', description: 'WCAG guidelines and best practices for building inclusive, keyboard-navigable interfaces.' },
     { name: 'Changelog',        icon: 'history',           iconType: 'material', description: 'A full record of releases, deprecations, fixes, and breaking changes across every version.' },
   ],
-  cardLayout: 'grid-3col',
+  cardLayout: 'list-3col',
   bannerStyle: 'colored',
   cssVars: {
     '--theme-text-font':     "'Inter', ui-sans-serif, sans-serif",
@@ -89,6 +89,8 @@ export const playgroundPreset: PresetConfig = {
   },
   styles: {
     ...baseStyles,
-    roundness: 1.5,
+    roundness: 3.5,
+    /* Step 9 solid — same as --theme-primary-color (playground merges generated scale). */
+    searchButtonBrand: true,
   },
 };

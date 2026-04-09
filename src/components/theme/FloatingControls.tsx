@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTheme } from '@/lib/ThemeContext';
 import { presets, presetOrder } from '@/lib/presets';
 import type { PresetId } from '@/lib/presets';
@@ -119,10 +119,77 @@ const STEP_LABELS = [
   'Text', 'Text +',
 ];
 
+const NEUTRAL_SCALE_LIGHT = [
+  '#fcfcfc', '#f9f9f9', '#f0f0f0', '#e8e8e8', '#e1e1e1', '#d9d9d9',
+  '#cecece', '#bbbbbb', '#8c8c8c', '#818181', '#636363', '#1f1f1f',
+];
+
+/** Matches `design-tokens.css` — [data-theme-root][data-mode="dark"] gray solids. */
+const NEUTRAL_SCALE_DARK = [
+  '#000', '#121212', '#1f1f1f', '#282828', '#303030', '#3a3a3a',
+  '#474747', '#606060', '#6d6d6d', '#7a7a7a', '#b3b3b3', '#eee',
+];
+
+const PLAYGROUND_HEX_KEY = 'palette-playground:hex';
+const PLAYGROUND_INPUT_KEY = 'palette-playground:input';
+const PLAYGROUND_IS_DARK_KEY = 'palette-playground:isDark';
+
+function getSessionString(key: string, fallback: string): string {
+  if (typeof window === 'undefined') return fallback;
+  return window.sessionStorage.getItem(key) ?? fallback;
+}
+
+function getSessionBool(key: string, fallback: boolean): boolean {
+  if (typeof window === 'undefined') return fallback;
+  const raw = window.sessionStorage.getItem(key);
+  if (raw == null) return fallback;
+  return raw === 'true';
+}
+
 const ColorPalettePlayground: React.FC = () => {
-  const [inputValue, setInputValue] = useState('#157F78');
-  const [hex, setHex]               = useState('#157F78');
-  const [isDark, setIsDark]         = useState(false);
+  const {
+    playgroundHex,
+    setPlaygroundHex,
+    playgroundIsDark,
+    setPlaygroundIsDark,
+    mode: siteMode,
+  } = useTheme();
+  const [inputValue, setInputValue] = useState(() =>
+    getSessionString(PLAYGROUND_INPUT_KEY, playgroundHex),
+  );
+  const hex = playgroundHex;
+  const isDark = playgroundIsDark;
+  /* Dark ramp when previewing dark scale in the panel and/or site theme is dark (matches CSS `--gray-*`). */
+  const neutralScaleHexes =
+    isDark || siteMode === 'dark' ? NEUTRAL_SCALE_DARK : NEUTRAL_SCALE_LIGHT;
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showGeneratedScale, setShowGeneratedScale] = useState(false);
+  const [showNeutralScale, setShowNeutralScale] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.sessionStorage.setItem(PLAYGROUND_INPUT_KEY, inputValue);
+  }, [inputValue]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.sessionStorage.setItem(PLAYGROUND_HEX_KEY, playgroundHex);
+  }, [playgroundHex]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.sessionStorage.setItem(PLAYGROUND_IS_DARK_KEY, String(playgroundIsDark));
+  }, [playgroundIsDark]);
+
+  useEffect(() => {
+    const savedHex = getSessionString(PLAYGROUND_HEX_KEY, playgroundHex);
+    const savedDark = getSessionBool(PLAYGROUND_IS_DARK_KEY, playgroundIsDark);
+    if (savedHex !== playgroundHex) setPlaygroundHex(savedHex);
+    if (savedDark !== playgroundIsDark) setPlaygroundIsDark(savedDark);
+    if (inputValue !== savedHex) setInputValue(savedHex);
+    // hydrate once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { diagnostics, brandStep } = useMemo(() => {
     if (isDark) {
@@ -157,15 +224,11 @@ const ColorPalettePlayground: React.FC = () => {
   const border  = isDark ? '#2e2e32' : '#e4e4e7';
   const fg      = isDark ? '#e4e4e7' : '#18181b';
   const muted   = '#71717a';
+  const sectionHeaderBg = isDark ? '#222227' : '#fafafa';
 
   function handleHexInput(val: string) {
     setInputValue(val);
-    if (/^#[0-9a-fA-F]{6}$/.test(val)) setHex(val);
-  }
-
-  function pickSwatch(swatchHex: string) {
-    setHex(swatchHex);
-    setInputValue(swatchHex);
+    if (/^#[0-9a-fA-F]{6}$/.test(val)) setPlaygroundHex(val);
   }
 
   /** Returns white or near-black — whichever reads better on the given swatch colour */
@@ -177,53 +240,63 @@ const ColorPalettePlayground: React.FC = () => {
 
   if (diagnostics.length < 12) return null;
 
-  const s2  = diagnostics[1];
-  const s3  = diagnostics[2];
-  const s6  = diagnostics[5];
-  const s9  = diagnostics[8];
-  const s11 = diagnostics[10];
-  const sBrand = diagnostics.find(s => s.step === brandStep) ?? s9;
-
   return (
     <div style={{
-      position:   'fixed',
-      inset:      0,
-      zIndex:     9990,
-      overflowY:  'auto',
+      position: 'fixed',
+      right: 24,
+      top: 84,
+      bottom: 92,
+      width: 360,
+      maxWidth: 'calc(100vw - 32px)',
+      zIndex: 9990,
+      overflowY: 'auto',
       background: bg,
-      color:      fg,
+      color: fg,
       fontFamily: "'Inter', ui-sans-serif, sans-serif",
-      paddingBottom: 120,
+      borderRadius: 14,
+      border: `1px solid ${border}`,
+      boxShadow: '0 20px 50px rgba(0,0,0,0.35)',
     }}>
-      <div style={{ maxWidth: 980, margin: '0 auto', padding: '44px 28px 0' }}>
-
-        {/* ── Header ── */}
-        <div style={{ marginBottom: 28 }}>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em' }}>
-            Colour Palette Generator
-          </h2>
-          <p style={{ margin: '5px 0 0', fontSize: 13, color: muted, lineHeight: 1.55 }}>
-            {isDark
-              ? 'Dark mode: Radix-like skeleton with black canvas, directional hover pivot, and text clamps.'
-              : 'Fixed L blueprint, peak-chroma ramp on steps 1–8, exact brand L/C on step 9. Yellow/lime hues get a guarded +L shift when C ≥ 0.04. Click a swatch to re-base.'}
-          </p>
+      <div style={{ padding: 14 }}>
+        {/* Header */}
+        <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, letterSpacing: '-0.01em' }}>
+              Palette Generator
+            </h2>
+            <p style={{ margin: '2px 0 0', fontSize: 11, color: muted }}>
+              {isDark ? 'Dark scale' : 'Light scale'}
+            </p>
+          </div>
+          <button
+            onClick={() => setPlaygroundIsDark(!isDark)}
+            style={{
+              padding: '5px 9px',
+              borderRadius: 7,
+              border: `1px solid ${border}`,
+              background: isDark ? '#3f3f46' : '#f4f4f5',
+              color: fg,
+              fontSize: 11,
+              cursor: 'pointer',
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 500,
+            }}
+          >
+            {isDark ? 'Light' : 'Dark'}
+          </button>
         </div>
 
-        {/* ── Control Panel ── */}
+        {/* Controls */}
         <div style={{
-          display:    'flex',
+          display: 'flex',
           alignItems: 'center',
-          gap:        10,
-          flexWrap:   'wrap',
+          gap: 8,
           background: surface,
           borderRadius: 12,
-          padding:    '12px 16px',
-          border:     `1px solid ${border}`,
-          marginBottom: 22,
+          padding: '10px 12px',
+          border: `1px solid ${border}`,
+          marginBottom: 10,
         }}>
-          <span style={{ fontSize: 12, color: muted }}>Base colour</span>
-
-          {/* Hex text input */}
           <input
             type="text"
             value={inputValue}
@@ -231,296 +304,225 @@ const ColorPalettePlayground: React.FC = () => {
             placeholder="#157F78"
             style={{
               fontFamily:   "'PT Mono', monospace",
-              fontSize:     13,
-              padding:      '6px 10px',
+              fontSize: 12,
+              padding: '6px 8px',
               borderRadius: 7,
-              border:       `1px solid ${border}`,
-              background:   bg,
-              color:        fg,
-              width:        110,
-              outline:      'none',
+              border: `1px solid ${border}`,
+              background: bg,
+              color: fg,
+              width: 102,
+              outline: 'none',
             }}
           />
-
-          {/* Native colour picker */}
           <input
             type="color"
             value={hex}
-            onChange={e => { setHex(e.target.value); setInputValue(e.target.value); }}
+            onChange={e => { setPlaygroundHex(e.target.value); setInputValue(e.target.value); }}
             style={{ width: 36, height: 32, borderRadius: 7, border: 'none', cursor: 'pointer', padding: 2 }}
           />
+          <span style={{ marginLeft: 'auto', fontSize: 11, color: muted }}>
+            Base color
+          </span>
+        </div>
 
-          <div style={{ flex: 1 }} />
-
-          {/* Dark / Light toggle */}
+        {/* Generated palette (collapsed by default) */}
+        <div style={{ background: surface, borderRadius: 12, border: `1px solid ${border}`, marginBottom: 10, overflow: 'hidden' }}>
           <button
-            onClick={() => setIsDark(d => !d)}
+            type="button"
+            onClick={() => setShowGeneratedScale(v => !v)}
             style={{
-              padding:      '6px 13px',
-              borderRadius: 7,
-              border:       `1px solid ${border}`,
-              background:   isDark ? '#3f3f46' : '#f4f4f5',
-              color:        fg,
-              fontSize:     12,
-              cursor:       'pointer',
-              fontFamily:   "'Inter', sans-serif",
-              fontWeight:   500,
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '8px 10px',
+              border: 'none',
+              borderBottom: showGeneratedScale ? `1px solid ${border}44` : 'none',
+              background: sectionHeaderBg,
+              color: fg,
+              cursor: 'pointer',
+              fontSize: 12,
+              fontWeight: 600,
+              textAlign: 'left',
             }}
           >
-            {isDark ? '☀ Light mode' : '🌙 Dark mode'}
+            <span>Generated palette</span>
+            <span style={{ color: muted }}>{showGeneratedScale ? 'Hide' : 'Show'}</span>
           </button>
-        </div>
-
-        {/* ── Palette Strip ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 5, marginBottom: 5 }}>
-          {diagnostics.map(s => {
-            const txt   = textOn(s.hex);
-            const dim   = txt === '#ffffff' ? 'rgba(255,255,255,0.48)' : 'rgba(0,0,0,0.38)';
-            const brand = s.step === brandStep;
-            return (
-              <div
-                key={s.step}
-                onClick={() => pickSwatch(s.hex)}
-                title={`Step ${s.step} · ${s.hex} · ${s.contrast.toFixed(2)}:1`}
-                style={{
-                  background:    s.hex,
-                  borderRadius:  10,
-                  padding:       '10px 7px 8px',
-                  display:       'flex',
-                  flexDirection: 'column',
-                  gap:           3,
-                  minHeight:     104,
-                  cursor:        'pointer',
-                  outline:       brand ? `2.5px solid ${fg}` : 'none',
-                  outlineOffset: brand ? '2px' : '0',
-                }}
-              >
-                <span style={{ fontSize: 10.5, fontWeight: 700, color: dim }}>{s.step}</span>
-                <span style={{
-                  fontSize:    8.5,
-                  color:       txt,
-                  fontFamily:  "'PT Mono', monospace",
-                  marginTop:   'auto',
-                  lineHeight:  1.35,
-                }}>
-                  {s.hex}
-                </span>
-                <span style={{ fontSize: 8.5, color: dim, fontFamily: "'PT Mono', monospace" }}>
-                  {s.contrast.toFixed(2)}:1
-                </span>
+          {showGeneratedScale && (
+            <>
+              {diagnostics.map((s, i) => {
+                const txt = textOn(s.hex);
+                const rowLabel = STEP_LABELS[i] ?? `Step ${s.step}`;
+                const isBrand = s.step === brandStep;
+                return (
+                  <div
+                    key={s.step}
+                    title={`Step ${s.step} · ${s.hex}`}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '7px 9px',
+                      borderTop: i === 0 ? 'none' : `1px solid ${border}44`,
+                      background: 'transparent',
+                      color: fg,
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: 4,
+                        background: s.hex,
+                        border: `1px solid ${border}`,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: 11, color: muted, width: 14, fontFamily: "'PT Mono', monospace" }}>
+                      {s.step}
+                    </span>
+                    <span style={{ fontSize: 12, fontWeight: isBrand ? 700 : 500, flex: 1 }}>
+                      {rowLabel}
+                    </span>
+                    <span style={{ fontSize: 11, fontFamily: "'PT Mono', monospace", color: txt === '#ffffff' ? '#16a34a' : '#52525b' }}>
+                      {s.hex}
+                    </span>
+                  </div>
+                );
+              })}
+              <div style={{ borderTop: `1px solid ${border}44` }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced(v => !v)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 10px',
+                    border: 'none',
+                    borderBottom: showAdvanced ? `1px solid ${border}44` : 'none',
+                    background: sectionHeaderBg,
+                    color: fg,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span>Advanced</span>
+                  <span style={{ color: muted }}>{showAdvanced ? 'Hide' : 'Show'}</span>
+                </button>
+                {showAdvanced && (
+                  <div style={{ padding: 10 }}>
+                    {!isDark && alphaOnBg.length > 0 && (
+                      <div style={{ marginBottom: 10 }}>
+                        <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 11, color: muted }}>
+                          Alpha variants
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+                          {alphaOnBg.map(({ step, a50, a15 }) => (
+                            <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontFamily: "'PT Mono', monospace", fontSize: 10 }}>S{step}</span>
+                              <span title={a50} style={{ width: 24, height: 14, borderRadius: 3, background: a50, border: `1px solid ${border}` }} />
+                              <span title={a15} style={{ width: 24, height: 14, borderRadius: 3, background: a15, border: `1px solid ${border}` }} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'PT Mono', monospace", fontSize: 10.5 }}>
+                      <thead>
+                        <tr style={{ borderBottom: `1px solid ${border}` }}>
+                          {['#', 'L', 'C', 'Hex'].map(col => (
+                            <th key={col} style={{ textAlign: 'left', padding: '3px 4px 6px', color: muted, fontWeight: 600 }}>
+                              {col}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {diagnostics.map(s => (
+                          <tr key={s.step} style={{ borderBottom: `1px solid ${border}33` }}>
+                            <td style={{ padding: '4px', color: muted }}>{s.step}</td>
+                            <td style={{ padding: '4px', color: fg }}>{s.l.toFixed(3)}</td>
+                            <td style={{ padding: '4px', color: fg }}>{s.c.toFixed(4)}</td>
+                            <td style={{ padding: '4px', color: fg }}>{s.hex}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
-            );
-          })}
+            </>
+          )}
         </div>
 
-        {!isDark && alphaOnBg.length > 0 && (
-          <div style={{
-            marginBottom: 20,
-            padding: '10px 14px',
-            borderRadius: 10,
-            border: `1px solid ${border}`,
-            background: surface,
-            fontSize: 11,
-            color: muted,
-          }}>
-            <div style={{ fontWeight: 600, marginBottom: 8 }}>Alpha on Step 1 bg (match solid)</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
-              {alphaOnBg.map(({ step, a50, a15 }) => (
-                <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontFamily: "'PT Mono', monospace" }}>S{step}</span>
-                  <span
-                    title={a50}
-                    style={{
-                      width: 40,
-                      height: 22,
-                      borderRadius: 4,
-                      background: a50,
-                      border: `1px solid ${border}`,
-                    }}
-                  />
-                  <span
-                    title={a15}
-                    style={{
-                      width: 40,
-                      height: 22,
-                      borderRadius: 4,
-                      background: a15,
-                      border: `1px solid ${border}`,
-                    }}
-                  />
-                  <span style={{ fontSize: 10, opacity: 0.85 }}>50% · 15%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Semantic step labels */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 5, marginBottom: 28 }}>
-          {diagnostics.map((s, i) => (
-            <div key={s.step} style={{
-              textAlign:  'center',
-              fontSize:   9,
-              color:      muted,
-              fontFamily: "'PT Mono', monospace",
-              lineHeight: 1.4,
-            }}>
-              {STEP_LABELS[i]}
+        {/* Neutral scale (collapsed by default) */}
+        <div style={{ background: surface, borderRadius: 12, border: `1px solid ${border}`, marginBottom: 10, overflow: 'hidden' }}>
+          <button
+            type="button"
+            onClick={() => setShowNeutralScale(v => !v)}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '8px 10px',
+              border: 'none',
+              borderBottom: showNeutralScale ? `1px solid ${border}44` : 'none',
+              background: sectionHeaderBg,
+              color: fg,
+              cursor: 'pointer',
+              fontSize: 12,
+              fontWeight: 600,
+              textAlign: 'left',
+            }}
+          >
+            <span>Neutral scale</span>
+            <span style={{ color: muted }}>{showNeutralScale ? 'Hide' : 'Show'}</span>
+          </button>
+          {showNeutralScale && neutralScaleHexes.map((hexValue, i) => (
+            <div
+              key={`${hexValue}-${i}`}
+              title={`Gray ${i + 1} · ${hexValue}`}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '7px 9px',
+                borderTop: i === 0 ? 'none' : `1px solid ${border}44`,
+                background: 'transparent',
+                color: fg,
+                textAlign: 'left',
+              }}
+            >
+              <span
+                style={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: 4,
+                  background: hexValue,
+                  border: `1px solid ${border}`,
+                  flexShrink: 0,
+                }}
+              />
+              <span style={{ fontSize: 11, color: muted, width: 14, fontFamily: "'PT Mono', monospace" }}>
+                {i + 1}
+              </span>
+              <span style={{ fontSize: 12, fontWeight: 500, flex: 1 }}>
+                {STEP_LABELS[i] ?? `Gray ${i + 1}`}
+              </span>
+              <span style={{ fontSize: 11, fontFamily: "'PT Mono', monospace", color: textOn(hexValue) === '#ffffff' ? '#16a34a' : '#52525b' }}>
+                {hexValue}
+              </span>
             </div>
           ))}
-        </div>
-
-        {/* ── Bottom row: Sandbox + Diagnostics ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 32 }}>
-
-          {/* Component Sandbox */}
-          <div style={{
-            background:   surface,
-            borderRadius: 12,
-            padding:      '18px 20px',
-            border:       `1px solid ${border}`,
-          }}>
-            <div style={{
-              fontSize:      10.5,
-              fontWeight:    600,
-              color:         muted,
-              textTransform: 'uppercase',
-              letterSpacing: '0.07em',
-              marginBottom:  18,
-            }}>
-              Component Sandbox
-            </div>
-
-            {/* Primary button — brand step background, white text */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 11, color: muted, marginBottom: 7 }}>
-                Primary · Step {brandStep} (brand) / white text
-              </div>
-              <button style={{
-                background:   sBrand.hex,
-                color:        '#ffffff',
-                border:       'none',
-                borderRadius: 7,
-                padding:      '8px 16px',
-                fontSize:     13,
-                fontWeight:   600,
-                fontFamily:   "'Inter', sans-serif",
-                cursor:       'pointer',
-              }}>
-                Get started →
-              </button>
-            </div>
-
-            {/* Ghost button — Step 3 background, Step 11 text */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 11, color: muted, marginBottom: 7 }}>
-                Ghost · Step 3 bg / Step 11 text
-              </div>
-              <button style={{
-                background:   s3.hex,
-                color:        s11.hex,
-                border:       'none',
-                borderRadius: 7,
-                padding:      '8px 16px',
-                fontSize:     13,
-                fontWeight:   500,
-                fontFamily:   "'Inter', sans-serif",
-                cursor:       'pointer',
-              }}>
-                Learn more
-              </button>
-            </div>
-
-            {/* Card — Step 2 background, Step 6 border */}
-            <div>
-              <div style={{ fontSize: 11, color: muted, marginBottom: 7 }}>
-                Card · Step 2 bg / Step 6 border
-              </div>
-              <div style={{
-                background:   s2.hex,
-                border:       `1px solid ${s6.hex}`,
-                borderRadius: 10,
-                padding:      '12px 14px',
-              }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: s11.hex, marginBottom: 3 }}>
-                  Card title
-                </div>
-                <div style={{ fontSize: 12, color: muted, lineHeight: 1.5 }}>
-                  Background from Step 2 · border from Step 6 · text from Step 11.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* OKLCH Diagnostic Table */}
-          <div style={{
-            background:   surface,
-            borderRadius: 12,
-            padding:      '18px 20px',
-            border:       `1px solid ${border}`,
-            overflowX:    'auto',
-          }}>
-            <div style={{
-              fontSize:      10.5,
-              fontWeight:    600,
-              color:         muted,
-              textTransform: 'uppercase',
-              letterSpacing: '0.07em',
-              marginBottom:  18,
-            }}>
-              OKLCH Diagnostics
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'PT Mono', monospace", fontSize: 11 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${border}` }}>
-                  {['#', 'L', 'C', 'H', 'Hex', 'CR'].map(col => (
-                    <th key={col} style={{
-                      textAlign:   'left',
-                      padding:     '3px 6px 7px',
-                      color:       muted,
-                      fontWeight:  600,
-                    }}>
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {diagnostics.map(s => {
-                  const crColor = s.contrast >= 4.5
-                    ? '#22c55e'
-                    : s.contrast >= 3
-                      ? '#f59e0b'
-                      : muted;
-                  return (
-                    <tr key={s.step} style={{ borderBottom: `1px solid ${border}44` }}>
-                      <td style={{ padding: '4px 6px', color: muted }}>{s.step}</td>
-                      <td style={{ padding: '4px 6px', color: fg }}>{s.l.toFixed(3)}</td>
-                      <td style={{ padding: '4px 6px', color: fg }}>{s.c.toFixed(4)}</td>
-                      <td style={{ padding: '4px 6px', color: fg }}>{(s.h ?? 0).toFixed(1)}°</td>
-                      <td style={{ padding: '4px 6px' }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                          <span style={{
-                            width:        10,
-                            height:       10,
-                            borderRadius: 2,
-                            background:   s.hex,
-                            flexShrink:   0,
-                            border:       `1px solid ${border}`,
-                          }} />
-                          <span style={{ color: fg }}>{s.hex}</span>
-                        </span>
-                      </td>
-                      <td style={{ padding: '4px 6px', color: crColor, fontWeight: 600 }}>
-                        {s.contrast.toFixed(2)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
         </div>
       </div>
     </div>
