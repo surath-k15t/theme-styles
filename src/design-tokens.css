@@ -233,6 +233,10 @@
   --ds-color-neutral-800: var(--gray-11);
   --ds-color-neutral-900: var(--gray-11);
   --ds-color-neutral-1000: var(--gray-12);
+
+  /* Dark only: default surface is chromatic step 1 on light; use neutral subtle bg here */
+  --ds-surface: var(--ds-color-neutral-25);
+
 }
 
 @supports (color: color(display-p3 1 1 1)) {
