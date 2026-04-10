@@ -5,6 +5,17 @@ import { buildColorEngineThemeVars } from './color-engine';
 
 const PRESET_ID: PresetId = 'playground';
 
+/** Radix-style radius steps → `--theme-roundness` / `--ds-radius-factor`. */
+export type ThemeRadiusTier = 'none' | 'small' | 'medium' | 'large' | 'full';
+
+export const THEME_RADIUS_TIER_VALUES: Record<ThemeRadiusTier, number> = {
+  none: 0,
+  small: 1.25,
+  medium: 3.5,
+  large: 6,
+  full: 12,
+};
+
 interface ThemeContextType {
   preset: PresetId;
   mode: ThemeMode;
@@ -13,6 +24,8 @@ interface ThemeContextType {
   setPlaygroundHex: (hex: string) => void;
   playgroundIsDark: boolean;
   setPlaygroundIsDark: (v: boolean) => void;
+  themeRadiusTier: ThemeRadiusTier;
+  setThemeRadiusTier: (v: ThemeRadiusTier) => void;
   showDescription: boolean;
   setShowDescription: (v: boolean) => void;
   showDebug: boolean;
@@ -31,6 +44,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [playgroundHex, setPlaygroundHex] = useState('#157F78');
   /** Single light/dark switch: color engine (floating bar) + header toggle both use this. Drives `data-mode`, neutrals, and chromatic scale. */
   const [playgroundIsDark, setPlaygroundIsDark] = useState(false);
+  const [themeRadiusTier, setThemeRadiusTier] = useState<ThemeRadiusTier>('medium');
   const [showDescription, setShowDescription] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
 
@@ -45,7 +59,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     ...currentPreset.cssVars,
     ...(playgroundIsDark ? currentPreset.darkCssVars : {}),
     ...colorEngineVars,
-    '--theme-roundness': String(currentPreset.styles.roundness),
+    '--theme-roundness': String(THEME_RADIUS_TIER_VALUES[themeRadiusTier]),
   } as React.CSSProperties;
 
   return (
@@ -58,6 +72,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setPlaygroundHex,
         playgroundIsDark,
         setPlaygroundIsDark,
+        themeRadiusTier,
+        setThemeRadiusTier,
         showDescription,
         setShowDescription,
         showDebug,
