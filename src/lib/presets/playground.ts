@@ -22,7 +22,7 @@ export const playgroundPreset: PresetConfig = {
   ],
   cardLayout: 'list-3col',
   bannerStyle: 'colored',
-  /* Typography & layout only — chromatic: --ds-color-brand-* (color engine) + neutrals via --gray-* from neutral-ramp. */
+  /* Typography & layout only — chromatic: --ds-color-brand-* (color engine) + neutral scale via --gray-* from neutral-ramp. */
   cssVars: {
     '--theme-text-font':     "'Inter', ui-sans-serif, sans-serif",
     '--theme-headline-font': "'Inter', ui-sans-serif, sans-serif",

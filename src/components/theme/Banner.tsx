@@ -4,24 +4,38 @@ import { presets } from '@/lib/presets';
 import SearchBar from '@/components/theme/SearchBar';
 
 const Banner: React.FC = () => {
-  const { preset } = useTheme();
+  const {
+    preset,
+    portalBannerStyle,
+    portalBannerImage,
+    bannerPaddingX,
+    portalBannerHeadingColor,
+    panelBackgroundMode,
+  } = useTheme();
   const config = presets[preset];
   const s = config.styles;
 
+  const bannerStyle = portalBannerStyle === 'image' ? 'image' : 'colored';
+  const bannerImageSrc = portalBannerStyle === 'image' ? portalBannerImage ?? undefined : undefined;
+
   // For 'none', the banner seamlessly blends into the portal canvas background.
   // For all other styles, the explicit bannerBackground drives the base color.
-  const bannerBg = config.bannerStyle === 'none' ? s.portalCanvasBackground : s.bannerBackground;
+  const bannerBg = bannerStyle === 'none' ? s.portalCanvasBackground : s.bannerBackground;
 
   // Compute padding from the single X value:
-  //   top    = X           (+ headerHeight when bannerOverlapHeader is true)
+  //   top    = X (+ headerHeight when nav overlaps banner: preset flag or translucent panels)
   //   right  = 24px        (fixed)
   //   bottom = 0.5 × X    (when bannerStyle === 'none')
   //            X           (all other styles)
   //   left   = 24px        (fixed)
-  const x = s.bannerPaddingX;
-  const topPad    = s.bannerOverlapHeader == true ? x + s.headerHeight : x;
-  const bottomPad = config.bannerStyle === 'none' ? Math.round(x * 0.5) : x;
+  const x = bannerPaddingX;
+  const reserveHeaderClearance =
+    s.bannerOverlapHeader === true || panelBackgroundMode === 'translucent';
+  const topPad = reserveHeaderClearance ? x + s.headerHeight : x;
+  const bottomPad = bannerStyle === 'none' ? Math.round(x * 0.5) : x;
   const computedPadding = `${topPad}px 24px ${bottomPad}px`;
+
+  const bannerHeadingColorHex = portalBannerHeadingColor === 'light' ? '#ffffff' : '#0a0a0a';
 
   return (
     <div
@@ -36,7 +50,7 @@ const Banner: React.FC = () => {
       }}
     >
       {/* Gradient overlay — generator ramp (steps 3 / 6 / 9 → brand-100 / 400 / 700) */}
-      {config.bannerStyle === 'gradient' && (
+      {bannerStyle === 'gradient' && (
         <>
           <div
             style={{
@@ -60,8 +74,9 @@ const Banner: React.FC = () => {
       )}
 
       {/* Full-width banner image */}
-      {config.bannerStyle === 'image' && config.bannerImage && (() => {
-        const side = s.bannerImageSide ?? 'right';
+      {bannerStyle === 'image' && bannerImageSrc && (() => {
+        const side =
+          portalBannerStyle === 'image' && portalBannerImage ? 'full' : (s.bannerImageSide ?? 'right');
         const opacity = s.bannerImageOpacity ?? 1;
         const maxHeight = s.bannerImageMaxHeight ?? '100%';
         const maskImage =
@@ -85,7 +100,7 @@ const Banner: React.FC = () => {
             }}
           >
             <img
-              src={config.bannerImage}
+              src={bannerImageSrc}
               aria-hidden
               style={{
                 height: maxHeight,
@@ -106,7 +121,7 @@ const Banner: React.FC = () => {
             fontFamily: 'var(--ds-font-family-headline)',
             fontSize: s.h1Size,
             fontWeight: s.h1Weight,
-            color: s.h1Color,
+            color: bannerHeadingColorHex,
             letterSpacing: s.h1LetterSpacing,
             lineHeight: s.h1LineHeight,
             paddingBottom: s.h1PaddingBottom,

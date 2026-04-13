@@ -1,6 +1,6 @@
 /**
- * Fixed 12-step neutral solids (app bg → text+). Not derived from the chromatic scale.
- * Injected on `data-theme-root` as `--gray-1`…`--gray-12`; `design-tokens.css` maps `--ds-color-neutral-*` to these.
+ * Fixed 12-step neutral scale / neutral ramp (app bg → text+). Not derived from the chromatic scale.
+ * Injected on `data-theme-root` as `--gray-1`…`--gray-12` (legacy token names); `design-tokens.css` maps `--ds-color-neutral-*` to these.
  */
 
 export const NEUTRAL_SOLIDS_LIGHT = [
@@ -39,7 +39,7 @@ export function neutralSolidsForMode(isDark: boolean): readonly string[] {
 
 export type CssVarMap = Record<string, string>;
 
-/** Emits `--gray-1`…`--gray-12` for the active engine theme (`playgroundIsDark` / `data-mode`). */
+/** Emits neutral ramp CSS vars `--gray-1`…`--gray-12` for the active engine theme (`playgroundIsDark` / `data-mode`). */
 export function buildNeutralSolidCssVars(isDark: boolean): CssVarMap {
   const solids = neutralSolidsForMode(isDark);
   const out: CssVarMap = {};

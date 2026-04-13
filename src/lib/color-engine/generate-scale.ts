@@ -34,7 +34,7 @@ const YELLOW_STEP_ORDER_GAP = 0.006;
 /** Step 1 (app bg): chroma never exceeds this; lower values are unchanged. */
 const STEP1_CHROMA_CEILING = 0.005;
 
-/** Below this C, colorFactor = 0 (full gray ramp); blend through 0.015 up to COLOR_FACTOR_FULL at 0.020+. */
+/** Below this C, colorFactor = 0 (full achromatic chroma ramp); blend through 0.015 up to COLOR_FACTOR_FULL at 0.020+. */
 const COLOR_FACTOR_GRAY = 0.005;
 const COLOR_FACTOR_FULL = 0.02;
 const COLOR_FACTOR_RANGE = COLOR_FACTOR_FULL - COLOR_FACTOR_GRAY;

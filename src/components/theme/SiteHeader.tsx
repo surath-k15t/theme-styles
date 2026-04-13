@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '@/lib/ThemeContext';
+import { PANEL_SURFACE_TRANSITION, panelSurfaceBackground } from '@/lib/panelSurfaceGlass';
 import { presets } from '@/lib/presets';
 import { useNavigate } from 'react-router-dom';
 
@@ -95,16 +96,41 @@ interface SiteHeaderProps {
 }
 
 const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) => {
-  const { preset, mode, toggleMode } = useTheme();
+  const { preset, mode, toggleMode, panelBackgroundMode, portalBannerHeadingColor } = useTheme();
   const config = presets[preset];
   const s = config.styles;
   const navigate = useNavigate();
 
-  const headerText = 'var(--theme-header-text-color)';
+  const transl = panelBackgroundMode === 'translucent';
+  /** Portal + glass: nav sits over the hero banner — match banner heading contrast (white / black). */
+  const bannerDrivenNav = variant === 'portal' && transl;
+  const onDarkBanner = portalBannerHeadingColor === 'light';
+  const headerText = bannerDrivenNav ? (onDarkBanner ? '#ffffff' : '#0a0a0a') : 'var(--theme-header-text-color)';
+  const brandTitleColor = bannerDrivenNav ? headerText : 'var(--theme-headline-color)';
+  const navChromeBorder = bannerDrivenNav
+    ? onDarkBanner
+      ? '1px solid rgba(255,255,255,0.28)'
+      : '1px solid rgba(0,0,0,0.18)'
+    : s.headerPickerBorder;
+  const headerBottomRule = bannerDrivenNav
+    ? onDarkBanner
+      ? '1px solid rgba(255,255,255,0.14)'
+      : '1px solid rgba(0,0,0,0.08)'
+    : s.headerBorderBottom;
+
+  const linkReadabilityShadow = bannerDrivenNav
+    ? onDarkBanner
+      ? '0 1px 3px rgba(0,0,0,0.55)'
+      : '0 1px 2px rgba(255,255,255,0.45)'
+    : transl && mode === 'light'
+      ? '0 1px 2px rgba(0,0,0,0.14)'
+      : transl && mode === 'dark'
+        ? '0 1px 3px rgba(0,0,0,0.55)'
+        : undefined;
 
   const iconBtnStyle: React.CSSProperties = {
     background: 'transparent',
-    border: s.headerPickerBorder,
+    border: navChromeBorder,
     borderRadius: 'var(--ds-radius-small)',
     width: 32,
     height: 32,
@@ -120,16 +146,17 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
   return (
     <header
       style={{
-        background: s.headerBackground,
-        backdropFilter: s.headerBackdropFilter,
-        WebkitBackdropFilter: s.headerBackdropFilter,
+        background: panelSurfaceBackground(s.headerBackground, panelBackgroundMode),
+        backdropFilter: transl ? 'blur(30px)' : s.headerBackdropFilter,
+        WebkitBackdropFilter: transl ? 'blur(30px)' : s.headerBackdropFilter,
         color: headerText,
-        borderBottom: s.headerBorderBottom,
+        borderBottom: headerBottomRule,
         position: 'sticky',
         top: 0,
         zIndex: 50,
         fontFamily: 'var(--ds-font-family-body)',
         fontSize: 'var(--ds-font-size-sm)',
+        transition: PANEL_SURFACE_TRANSITION,
       }}
     >
       <div
@@ -165,7 +192,8 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
               fontSize: 14,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              color: 'var(--theme-headline-color)',
+              color: brandTitleColor,
+              textShadow: linkReadabilityShadow,
             }}
             onClick={() => navigate('/')}
           >
@@ -181,6 +209,7 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
                 opacity: 0.7,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
+                textShadow: linkReadabilityShadow,
               }}
               onClick={() => navigate('/')}
             >
@@ -215,6 +244,7 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
                       fontSize: 13,
                       whiteSpace: 'nowrap',
                       transition: 'opacity 0.15s',
+                      textShadow: linkReadabilityShadow,
                     }}
                     onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')}
                     onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = '0.85')}

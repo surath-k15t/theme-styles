@@ -2,7 +2,7 @@
 
 Turns a **single brand color** (hex or any string Culori can parse) into a **12-step OKLCH-based chromatic palette**: backgrounds, UI chrome, borders, solid + hover, and text steps. Output is **sRGB hex** after gamut clamping, plus per-step **L / C / h** diagnostics and **WCAG contrast** vs step 1.
 
-**Fixed neutrals** (typography / gray UI) live in `neutral-ramp.ts` as **12 sRGB solids**; `ThemeContext` injects them as `--gray-1`…`--gray-12` on `data-theme-root`. Alpha / P3 refinements for neutrals remain in `design-tokens.css`.
+**Neutral scale** (fixed neutral ramp for typography and UI neutrals) lives in `neutral-ramp.ts` as **12 sRGB solids**; `ThemeContext` injects them as `--gray-1`…`--gray-12` on `data-theme-root`. Alpha / P3 refinements remain in `design-tokens.css`.
 
 The **Playground** preset (`FloatingControls` → `ColorEnginePlayground`) uses the **v2** chromatic API: `generateScale` (light) and `generateDarkScale` (dark).
 
@@ -75,8 +75,8 @@ index.ts
 
 ### Light mode — `generateScale`
 
-- **Lightness:** Starts from `L_BLUEPRINT`, sets step 9 to input **L**. Yellow/lime hues (60–110°) with **C ≥ 0.04** lift mid steps by `+0.05` with caps and ordering gaps. Step 10 is a **hover** offset from step 9 (±0.05 vs `DARK_SOLID_L = 0.4`). Very dark grays (`colorFactor === 0` and **L < 0.35**) override steps 10–12 **L** for a readable text ramp.
-- **Chroma:** **`colorFactor`** lerps between a **gray ramp** and a **color ramp** (thresholds **C ∈ [0.005, 0.02]**). Uses `grayPeak = min(C×1.5, 0.01)` and `colorPeak = max(C, 0.04)` with per-step multipliers (`GRAY_C_MULTIPLIERS` / `C_MULTIPLIERS`). Steps 9, 10, 12 use raw **C**; step 11 uses the same peak lerp as the strong text step.
+- **Lightness:** Starts from `L_BLUEPRINT`, sets step 9 to input **L**. Yellow/lime hues (60–110°) with **C ≥ 0.04** lift mid steps by `+0.05` with caps and ordering gaps. Step 10 is a **hover** offset from step 9 (±0.05 vs `DARK_SOLID_L = 0.4`). Very dark achromatic rows (`colorFactor === 0` and **L < 0.35**) override steps 10–12 **L** for a readable text ramp.
+- **Chroma:** **`colorFactor`** lerps between a **low-chroma (achromatic) ramp** and a **saturated chroma ramp** (thresholds **C ∈ [0.005, 0.02]**). Uses `grayPeak = min(C×1.5, 0.01)` and `colorPeak = max(C, 0.04)` with per-step multipliers (`GRAY_C_MULTIPLIERS` / `C_MULTIPLIERS`). Steps 9, 10, 12 use raw **C**; step 11 uses the same peak lerp as the strong text step.
 
 ### Dark mode — `generateDarkScale`
 
@@ -116,7 +116,7 @@ There is **no Gaussian (normal) distribution** in this package. V2 also uses **c
 
 ## Related UI
 
-- `src/components/theme/FloatingControls.tsx` — `ColorEnginePlayground`; calls v2 generators and shows alpha variants for selected steps.
+- `src/components/theme/floating-controls/` — theme panel (`ThemeSidePanel`, `DesignColorCard`); calls v2 generators and shows alpha variants for selected steps. Import the shell via `FloatingControls.tsx`.
 
 ---
 

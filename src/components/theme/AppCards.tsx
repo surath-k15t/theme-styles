@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/lib/ThemeContext';
+import { PANEL_SURFACE_TRANSITION, panelSurfaceBackground } from '@/lib/panelSurfaceGlass';
 import { presets } from '@/lib/presets';
 import { spacingSchemes } from '@/lib/presets/spacingSchemes';
 
@@ -36,7 +37,8 @@ const AppIcon: React.FC<AppIconProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: hasBackground ? 'var(--ds-radius-small)' : undefined,
-        background: hasBackground ? (listMode ? 'var(--ds-color-brand-100)' : iconBackground) : undefined,
+        /* Well fill: chromatic step 3 — not `--ds-color-brand-100` so “Apply brand color” off does not gray it out. */
+        background: hasBackground ? 'var(--chromatic-step-3)' : undefined,
         fontSize: iconType === 'emoji' ? iconRenderSize : undefined,
         flexShrink: 0,
         overflow: isImageList ? 'hidden' : undefined,
@@ -80,11 +82,17 @@ const AppIcon: React.FC<AppIconProps> = ({
 };
 
 const AppCards: React.FC = () => {
-  const { preset } = useTheme();
+  const { preset, spacingScheme, cardLayout: layout, iconSize, panelBackgroundMode, mode } = useTheme();
   const config = presets[preset];
   const s = config.styles;
   const navigate = useNavigate();
-  const layout = config.cardLayout;
+  const transl = panelBackgroundMode === 'translucent';
+  const cardReadabilityShadow =
+    transl && mode === 'light'
+      ? '0 1px 2px rgba(0,0,0,0.14)'
+      : transl && mode === 'dark'
+        ? '0 1px 3px rgba(0,0,0,0.45)'
+        : undefined;
   // list-style: icon beside text in a flex row
   const isListStyle = layout === 'list-1col' || layout === 'list-2col' || layout === 'list-3col';
   // left-aligned: grid cards where icon is on top but text is left-aligned (not centred)
@@ -98,16 +106,14 @@ const AppCards: React.FC = () => {
   const showDescription = s.cardShowDescription !== false && layout !== 'list-3col';
   const hasImageList = isListStyle && config.apps.some(a => a.iconType === 'image');
 
-  const scheme = spacingSchemes[s.spacingScheme];
+  const scheme = spacingSchemes[spacingScheme];
   const sectionSides = s.cardsSectionPaddingSides ?? 24;
   const sectionPadding = `${scheme.sectionPaddingV}px ${sectionSides}px`;
   const cardPadding = scheme.cardPadding[layout];
   const iconTextGap = s.cardIconTextGap ?? scheme.cardIconTextGap;
   const cardsGap = scheme.cardsGap[layout];
-  const iconContainerSize = s.iconSize;
-  const iconRenderSize = s.cardIconBackground !== 'none'
-    ? Math.round(s.iconSize / 2)
-    : s.iconSize;
+  const iconContainerSize = iconSize;
+  const iconRenderSize = s.cardIconBackground !== 'none' ? Math.round(iconSize / 2) : iconSize;
 
   return (
     <div style={{ maxWidth: 1024, margin: '0 auto', padding: sectionPadding }}>
@@ -139,12 +145,12 @@ const AppCards: React.FC = () => {
             style={{
               border: s.cardBorder,
               borderRadius: 'var(--ds-radius-medium)',
-              background: s.cardBackground,
-              backdropFilter: s.cardBackdropFilter,
-              WebkitBackdropFilter: s.cardBackdropFilter,
+              background: panelSurfaceBackground(s.cardBackground, panelBackgroundMode),
+              backdropFilter: transl ? 'blur(30px)' : s.cardBackdropFilter,
+              WebkitBackdropFilter: transl ? 'blur(30px)' : s.cardBackdropFilter,
               padding: cardPadding,
               cursor: 'pointer',
-              transition: 'border-color 0.15s, background 0.15s',
+              transition: PANEL_SURFACE_TRANSITION,
               display: isListStyle ? 'flex' : 'block',
               alignItems: isListStyle ? (hasImageList ? 'stretch' : 'center') : undefined,
               gap: isListStyle ? iconTextGap : undefined,
@@ -152,14 +158,14 @@ const AppCards: React.FC = () => {
             }}
             onMouseEnter={e => {
               const el = e.currentTarget as HTMLElement;
-              el.style.background = s.cardBackgroundHover;
+              el.style.background = panelSurfaceBackground(s.cardBackgroundHover, panelBackgroundMode);
               if (s.cardBorderHover) {
                 el.style.borderColor = s.cardBorderHover;
               }
             }}
             onMouseLeave={e => {
               const el = e.currentTarget as HTMLElement;
-              el.style.background = s.cardBackground;
+              el.style.background = panelSurfaceBackground(s.cardBackground, panelBackgroundMode);
               if (s.cardBorderHover) {
                 el.style.border = s.cardBorder;
               }
@@ -186,6 +192,7 @@ const AppCards: React.FC = () => {
                   letterSpacing: s.h3LetterSpacing,
                   lineHeight: scheme.cardTitleLineHeight,
                   marginBottom: showDescription ? 4 : 0,
+                  textShadow: cardReadabilityShadow,
                 }}
               >
                 {app.name}
@@ -198,6 +205,7 @@ const AppCards: React.FC = () => {
                     fontSize: s.pSize,
                     fontWeight: s.pWeight,
                     lineHeight: scheme.cardBodyLineHeight,
+                    textShadow: cardReadabilityShadow,
                     display: '-webkit-box',
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',

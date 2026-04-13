@@ -1,9 +1,9 @@
-import { SpacingScheme } from './spacingSchemes';
+import type { CardLayout, SpacingScheme } from './spacingSchemes';
 
 export type PresetId = 'playground';
 export type ThemeMode = 'light' | 'dark';
 
-export type { SpacingScheme, CardLayout } from './spacingSchemes';
+export type { CardLayout, SpacingScheme } from './spacingSchemes';
 
 export interface PresetStyles {
   // Header
@@ -142,7 +142,7 @@ export interface PresetConfig {
   apps: { name: string; icon: string; iconType: 'material' | 'emoji' | 'image'; description?: string }[];
   /** Section heading above the app cards grid (defaults to "Our apps") */
   cardsSectionHeading?: string;
-  cardLayout: string;
+  cardLayout: CardLayout;
   /**
    * Controls how the banner background is rendered:
    * - 'none'     — blends with the portal canvas (no distinct banner bg)

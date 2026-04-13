@@ -6,7 +6,7 @@
    SCROLL SITES — DESIGN TOKEN SYSTEM
    Three layers: Core → Alias → Theme
    --palette-step-1…12: injected by color engine (chromatic ramp).
-   --gray-1…12 + --palette-step-*: from color-engine via ThemeContext (`buildColorEngineThemeVars`, light/dark = floating control + header toggle).
+   Neutral scale (`--gray-1`…`12`) + chromatic `--palette-step-*`: from color-engine via ThemeContext (`buildColorEngineThemeVars`, light/dark = floating control + header toggle).
    ============================================ */
 
 /* LAYER 1: Core — brand ramp (generator) + non-color tokens */
@@ -139,7 +139,7 @@
   --ds-radius-factor: var(--theme-roundness);
 }
 
-/* Light mode: `--gray-1`…`12` (+ chromatic steps) set inline by ThemeContext (`buildColorEngineThemeVars`). */
+/* Light mode: neutral scale `--gray-1`…`12` (+ chromatic steps) set inline by ThemeContext (`buildColorEngineThemeVars`). */
 [data-theme-root][data-mode="light"] {
   --gray-a1: #00000003;
   --gray-a2: #00000006;
@@ -199,7 +199,7 @@
   }
 }
 
-/* Dark mode: `--gray-1`…`12` (+ chromatic steps) set inline by ThemeContext (`buildColorEngineThemeVars`). */
+/* Dark mode: neutral scale `--gray-1`…`12` (+ chromatic steps) set inline by ThemeContext (`buildColorEngineThemeVars`). */
 [data-theme-root][data-mode="dark"] {
   --gray-a1: #00000000;
   --gray-a2: #ffffff12;
