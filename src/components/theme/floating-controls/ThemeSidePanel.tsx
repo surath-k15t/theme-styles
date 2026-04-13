@@ -18,7 +18,8 @@ import {
   SIDEBAR_WIDTH,
 } from './constants';
 import { getSessionBool, getSessionString, readPanelPosition } from './storage';
-import { CmsCard, CmsNavItem } from './cms-ui';
+import { CmsCollapsibleCard, CmsNavItem } from './cms-ui';
+import { MoonIcon, SunIcon } from './mode-toggle';
 import { DesignAppearanceCard } from './DesignAppearanceCard';
 import { DesignColorCard } from './DesignColorCard';
 import { PagesTab } from './PagesTab';
@@ -36,6 +37,9 @@ export const ThemeSidePanel: React.FC<{
     setPlaygroundHex,
     playgroundIsDark,
     setPlaygroundIsDark,
+    mode,
+    toggleMode,
+    colorModeSetting,
     themeRadiusTier,
     setThemeRadiusTier,
     spacingScheme,
@@ -62,8 +66,9 @@ export const ThemeSidePanel: React.FC<{
     getSessionString(PLAYGROUND_INPUT_KEY, playgroundHex),
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showNeutralScale, setShowNeutralScale] = useState(false);
   const [activeNav, setActiveNav] = useState<'design' | 'pages' | 'site'>('design');
+  const [designColorOpen, setDesignColorOpen] = useState(true);
+  const [designAppearanceOpen, setDesignAppearanceOpen] = useState(true);
   const [panelPos, setPanelPos] = useState(readPanelPosition);
   const shellRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -214,6 +219,8 @@ export const ThemeSidePanel: React.FC<{
 
   if (diagnostics.length < 12) return null;
 
+  const panelFillHeight = `max(280px, calc(100vh - ${panelPos.y + PANEL_ISLAND_INSET}px))`;
+
   return (
     <div
       ref={shellRef}
@@ -223,7 +230,8 @@ export const ThemeSidePanel: React.FC<{
         left: panelPos.x,
         width: PANEL_SHELL_WIDTH,
         maxWidth: `calc(100vw - ${PANEL_ISLAND_INSET * 2}px)`,
-        maxHeight: `calc(100vh - ${panelPos.y + PANEL_ISLAND_INSET}px)`,
+        height: panelFillHeight,
+        maxHeight: panelFillHeight,
         minHeight: 280,
         zIndex: 9998,
         display: 'flex',
@@ -297,6 +305,7 @@ export const ThemeSidePanel: React.FC<{
         style={{
           flex: 1,
           minWidth: 0,
+          minHeight: 0,
           display: 'flex',
           flexDirection: 'column',
           background: CMS.pageBg,
@@ -312,6 +321,10 @@ export const ThemeSidePanel: React.FC<{
             cursor: 'grab',
             userSelect: 'none',
             touchAction: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
           }}
         >
           <h1
@@ -322,89 +335,178 @@ export const ThemeSidePanel: React.FC<{
               color: CMS.text,
               letterSpacing: '-0.02em',
               pointerEvents: 'none',
+              flex: 1,
+              minWidth: 0,
             }}
           >
             {activeNav === 'site' ? 'Site' : activeNav === 'design' ? 'Design' : 'Pages'}
           </h1>
+          {activeNav === 'design' && colorModeSetting === 'light-and-dark' ? (
+            <button
+              type="button"
+              title={mode === 'light' ? 'Switch preview to dark mode' : 'Switch preview to light mode'}
+              aria-label={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+              onPointerDown={e => e.stopPropagation()}
+              onClick={e => {
+                e.stopPropagation();
+                toggleMode();
+              }}
+              style={{
+                flexShrink: 0,
+                width: 36,
+                height: 36,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: `1px solid ${CMS.border}`,
+                borderRadius: 8,
+                background: CMS.inputBg,
+                cursor: 'pointer',
+                color: CMS.text,
+                padding: 0,
+                pointerEvents: 'auto',
+              }}
+            >
+              {mode === 'light' ? (
+                <SunIcon muted={CMS.primary} />
+              ) : (
+                <MoonIcon muted={CMS.primary} />
+              )}
+            </button>
+          ) : null}
         </header>
 
         <div
           style={{
             flex: 1,
-            overflowY: 'auto',
-            padding: 24,
+            minHeight: 0,
             display: 'flex',
             flexDirection: 'column',
-            gap: 20,
           }}
         >
-          {activeNav === 'pages' && (
-            <PagesTab
-              cardLayout={cardLayout}
-              setCardLayout={setCardLayout}
-              iconSize={iconSize}
-              setIconSize={setIconSize}
-              portalBannerStyle={portalBannerStyle}
-              setPortalBannerStyle={setPortalBannerStyle}
-              portalBannerImage={portalBannerImage}
-              setPortalBannerImage={setPortalBannerImage}
-              bannerPaddingX={bannerPaddingX}
-              setBannerPaddingX={setBannerPaddingX}
-              portalBannerHeadingColor={portalBannerHeadingColor}
-              setPortalBannerHeadingColor={setPortalBannerHeadingColor}
-            />
-          )}
-
-          {activeNav === 'site' && (
-            <SiteTab
-              playgroundConfig={playgroundConfig}
-              showDescription={showDescription}
-              setShowDescription={setShowDescription}
-              showDebug={showDebug}
-              setShowDebug={setShowDebug}
-            />
-          )}
-
-          {activeNav === 'design' && (
-            <>
-              <CmsCard title="Color">
-                <DesignColorCard
-                  hex={hex}
-                  isDark={isDark}
-                  inputValue={inputValue}
-                  handleHexInput={handleHexInput}
-                  setPlaygroundHex={setPlaygroundHex}
-                  setPlaygroundIsDark={setPlaygroundIsDark}
-                  setInputValue={setInputValue}
-                  diagnostics={diagnostics}
-                  accentSelectedStep={accentSelectedStep}
-                  neutralScaleHexes={neutralScaleHexes}
-                  panelBorder={panelBorder}
-                  panelFg={panelFg}
-                  panelMuted={panelMuted}
-                  panelDrawerBg={panelDrawerBg}
-                  showcaseRampDivider={showcaseRampDivider}
+          <div
+            style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: 24,
+              gap: 12,
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
+            {activeNav === 'design' ? (
+              <>
+                <CmsCollapsibleCard
+                  title="Color"
+                  expanded={designColorOpen}
+                  onToggle={() => setDesignColorOpen(o => !o)}
+                >
+                  <DesignColorCard
+                    hex={hex}
+                    isDark={isDark}
+                    inputValue={inputValue}
+                    handleHexInput={handleHexInput}
+                    setPlaygroundHex={setPlaygroundHex}
+                    setInputValue={setInputValue}
+                    diagnostics={diagnostics}
+                    accentSelectedStep={accentSelectedStep}
+                    neutralScaleHexes={neutralScaleHexes}
+                    panelBorder={panelBorder}
+                    panelFg={panelFg}
+                    panelMuted={panelMuted}
+                    panelDrawerBg={panelDrawerBg}
+                    showcaseRampDivider={showcaseRampDivider}
                   showAdvanced={showAdvanced}
                   setShowAdvanced={setShowAdvanced}
-                  showNeutralScale={showNeutralScale}
-                  setShowNeutralScale={setShowNeutralScale}
                   alphaOnBg={alphaOnBg}
-                  applyBrandColor={applyBrandColor}
-                  setApplyBrandColor={setApplyBrandColor}
-                />
-              </CmsCard>
-              <CmsCard title="Appearance">
-                <DesignAppearanceCard
-                  themeRadiusTier={themeRadiusTier}
-                  setThemeRadiusTier={setThemeRadiusTier}
-                  spacingScheme={spacingScheme}
-                  setSpacingScheme={setSpacingScheme}
-                  panelBackgroundMode={panelBackgroundMode}
-                  setPanelBackgroundMode={setPanelBackgroundMode}
-                />
-              </CmsCard>
-            </>
-          )}
+                    applyBrandColor={applyBrandColor}
+                    setApplyBrandColor={setApplyBrandColor}
+                  />
+                </CmsCollapsibleCard>
+                <CmsCollapsibleCard
+                  title="Appearance"
+                  expanded={designAppearanceOpen}
+                  onToggle={() => setDesignAppearanceOpen(o => !o)}
+                >
+                  <DesignAppearanceCard
+                    themeRadiusTier={themeRadiusTier}
+                    setThemeRadiusTier={setThemeRadiusTier}
+                    spacingScheme={spacingScheme}
+                    setSpacingScheme={setSpacingScheme}
+                    panelBackgroundMode={panelBackgroundMode}
+                    setPanelBackgroundMode={setPanelBackgroundMode}
+                  />
+                </CmsCollapsibleCard>
+              </>
+            ) : (
+              <div
+                style={{
+                  flex: 1,
+                  minHeight: 0,
+                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 20,
+                  WebkitOverflowScrolling: 'touch',
+                }}
+              >
+                {activeNav === 'pages' && (
+                  <PagesTab
+                    cardLayout={cardLayout}
+                    setCardLayout={setCardLayout}
+                    iconSize={iconSize}
+                    setIconSize={setIconSize}
+                    portalBannerStyle={portalBannerStyle}
+                    setPortalBannerStyle={setPortalBannerStyle}
+                    portalBannerImage={portalBannerImage}
+                    setPortalBannerImage={setPortalBannerImage}
+                    bannerPaddingX={bannerPaddingX}
+                    setBannerPaddingX={setBannerPaddingX}
+                    portalBannerHeadingColor={portalBannerHeadingColor}
+                    setPortalBannerHeadingColor={setPortalBannerHeadingColor}
+                  />
+                )}
+
+                {activeNav === 'site' && (
+                  <SiteTab
+                    playgroundConfig={playgroundConfig}
+                    showDescription={showDescription}
+                    setShowDescription={setShowDescription}
+                    showDebug={showDebug}
+                    setShowDebug={setShowDebug}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+          <div
+            role="status"
+            aria-live="polite"
+            style={{
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 24px 14px',
+              borderTop: `1px solid ${CMS.border}`,
+              fontSize: 12,
+              fontWeight: 500,
+              color: CMS.textMuted,
+              background: CMS.pageBg,
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              aria-hidden
+              style={{ fontSize: 16, color: '#22a06b' }}
+            >
+              check_circle
+            </span>
+            Changes saved
+          </div>
         </div>
       </div>
     </div>

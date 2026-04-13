@@ -7,7 +7,7 @@ import {
   type PortalBannerHeadingColor,
   type PortalBannerStyle,
 } from '@/lib/ThemeContext';
-import type { CardLayout } from '@/lib/presets/spacingSchemes';
+import { spacingSchemes, type CardLayout } from '@/lib/presets/spacingSchemes';
 import { CARD_LAYOUT_LABELS, CARD_LAYOUT_OPTIONS, CMS } from './constants';
 import { CmsCard, CmsFieldLabel, cmsSelectStyle } from './cms-ui';
 
@@ -81,7 +81,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div style={{ marginBottom: 24 }}>
           <CmsFieldLabel
             title="Icon size"
-            hint="Icon container in pixels. With a background well, the glyph uses half this size."
+            hint={`Icon container in pixels. With a background well, the glyph uses half this size. Spacing (Design → Appearance) sets defaults — Compact & Standard ${spacingSchemes.compact.defaultIconSize}px, Spacious ${spacingSchemes.spacious.defaultIconSize}px; adjust here anytime.`}
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
             <input

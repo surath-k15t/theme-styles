@@ -19,6 +19,73 @@ export function CmsCard({ title, children }: { title: string; children: React.Re
   );
 }
 
+/**
+ * Collapsible settings group: height follows content. The panel’s scroll region scrolls when
+ * sections together exceed available space.
+ */
+export function CmsCollapsibleCard({
+  title,
+  expanded,
+  onToggle,
+  children,
+}: {
+  title: string;
+  expanded: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        border: `1px solid ${CMS.border}`,
+        borderRadius: 8,
+        background: CMS.pageBg,
+        display: 'flex',
+        flexDirection: 'column',
+        flex: '0 0 auto',
+        alignSelf: 'stretch',
+        overflow: 'hidden',
+      }}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          width: '100%',
+          padding: '14px 20px',
+          border: 'none',
+          background: CMS.pageBg,
+          cursor: 'pointer',
+          flexShrink: 0,
+          borderBottom: expanded ? `1px solid ${CMS.border}` : undefined,
+          textAlign: 'left',
+        }}
+      >
+        <span style={{ fontSize: 15, fontWeight: 600, color: CMS.text, letterSpacing: '-0.01em' }}>{title}</span>
+        <span
+          className="material-symbols-outlined"
+          aria-hidden
+          style={{
+            fontSize: 22,
+            color: CMS.textMuted,
+            flexShrink: 0,
+            transition: 'transform 0.2s ease',
+            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}
+        >
+          expand_more
+        </span>
+      </button>
+      {expanded ? <div style={{ padding: '20px' }}>{children}</div> : null}
+    </div>
+  );
+}
+
 export function CmsNavItem({
   icon,
   label,
@@ -131,6 +198,53 @@ export function CmsToggleRow({
         />
       </button>
     </div>
+  );
+}
+
+/** Compact chip with chevron — for expandable panels (distinct from full-width mode toggles). */
+export function CmsExpansionChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={active}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 2,
+        padding: '6px 8px 6px 10px',
+        borderRadius: 6,
+        border: `1px dashed ${active ? CMS.primary : CMS.border}`,
+        background: active ? 'rgba(12, 102, 228, 0.07)' : CMS.inputBg,
+        color: CMS.text,
+        fontSize: 11,
+        fontWeight: 600,
+        cursor: 'pointer',
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
+      <span>{children}</span>
+      <span
+        className="material-symbols-outlined"
+        aria-hidden
+        style={{
+          fontSize: 16,
+          color: active ? CMS.primary : CMS.textMuted,
+          transition: 'transform 0.15s ease',
+          transform: active ? 'rotate(180deg)' : 'rotate(0deg)',
+        }}
+      >
+        expand_more
+      </span>
+    </button>
   );
 }
 

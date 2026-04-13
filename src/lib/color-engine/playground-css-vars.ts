@@ -84,21 +84,10 @@ function chromaticStepVars(diagnostics: { hex: string }[]): CssVarMap {
 }
 
 /**
- * When `--palette-step-*` is neutral, keep hovers on the real accent (matches `design-tokens`
- * brand-50 / 400 / 500 → steps 2, 6, 7).
- */
-const CHROMATIC_HOVER_VARS: CssVarMap = {
-  '--ds-surface-hovered': 'var(--chromatic-step-2)',
-  '--ds-surface-raised-hovered': 'var(--chromatic-step-2)',
-  '--ds-border-brand-hovered': 'var(--chromatic-step-6)',
-  '--ds-border-brand-strong-hovered': 'var(--chromatic-step-7)',
-};
-
-/**
  * Injects `--palette-step-*` (chromatic or neutral copy) plus on-primary and portal text overrides.
  *
- * `applyBrandColor`: when false, palette mirrors the neutral scale so resting UI uses that ramp; hover
- * tokens are still overridden to `--chromatic-step-*` so cards keep brand-colored hovers.
+ * `applyBrandColor`: when false, `--palette-step-*` mirror the neutral scale; semantic tokens that map
+ * through `--ds-color-brand-*` (e.g. `--ds-surface`, `--ds-surface-hovered`) follow that ramp.
  */
 export function buildPlaygroundCssVars(
   baseHex: string,
@@ -134,6 +123,5 @@ export function buildPlaygroundCssVars(
     ...neutralPortalTextOverrides(),
     /* Showcase / user icons — always chromatic; not affected by `applyBrandColor` (palette may be neutral). */
     '--ds-card-icon-color': scaleIsDark ? 'var(--chromatic-step-11)' : 'var(--chromatic-step-9)',
-    ...(applyBrandColor ? {} : CHROMATIC_HOVER_VARS),
   };
 }

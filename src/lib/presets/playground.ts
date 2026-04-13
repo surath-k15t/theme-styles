@@ -7,7 +7,7 @@ export const playgroundPreset: PresetConfig = {
   subtitle: 'The Experiment',
   description: 'Standalone theme lab: base layout, live color engine, and neutral text tokens. This app ships only this preset.',
   tags: ['Playground', 'Color engine', 'Neutral text', 'Base styles'],
-  swatchColor: '#157F78',
+  swatchColor: '#0e305c',
   brandName: 'Playground',
   brandSubtitle: 'Playground Docs',
   logoType: 'emoji',
@@ -20,8 +20,8 @@ export const playgroundPreset: PresetConfig = {
     { name: 'Accessibility',    icon: 'accessibility_new', iconType: 'material', description: 'WCAG guidelines and best practices for building inclusive, keyboard-navigable interfaces.' },
     { name: 'Changelog',        icon: 'history',           iconType: 'material', description: 'A full record of releases, deprecations, fixes, and breaking changes across every version.' },
   ],
-  cardLayout: 'list-3col',
-  bannerStyle: 'colored',
+  cardLayout: 'grid-3col',
+  bannerStyle: 'image',
   /* Typography & layout only — chromatic: --ds-color-brand-* (color engine) + neutral scale via --gray-* from neutral-ramp. */
   cssVars: {
     '--theme-text-font':     "'Inter', ui-sans-serif, sans-serif",

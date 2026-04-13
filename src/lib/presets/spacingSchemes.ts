@@ -25,6 +25,8 @@ export interface SpacingSchemeValues {
   cardTitleLineHeight: string;
   /** Line height for card body / description text — maps to --ds-line-height-* token */
   cardBodyLineHeight: string;
+  /** Default portal app-card icon container (px) when this spacing scheme is selected */
+  defaultIconSize: number;
 }
 
 export const spacingSchemes: Record<SpacingScheme, SpacingSchemeValues> = {
@@ -48,6 +50,7 @@ export const spacingSchemes: Record<SpacingScheme, SpacingSchemeValues> = {
     },
     cardTitleLineHeight:      'var(--ds-line-height-x-small)',
     cardBodyLineHeight:       'var(--ds-line-height-small)',
+    defaultIconSize:          58,
   },
   standard: {
     sectionPaddingV:          48,
@@ -69,6 +72,7 @@ export const spacingSchemes: Record<SpacingScheme, SpacingSchemeValues> = {
     },
     cardTitleLineHeight:      'var(--ds-line-height-small)',
     cardBodyLineHeight:       'var(--ds-line-height-medium)',
+    defaultIconSize:          58,
   },
   spacious: {
     sectionPaddingV:          108,
@@ -90,5 +94,11 @@ export const spacingSchemes: Record<SpacingScheme, SpacingSchemeValues> = {
     },
     cardTitleLineHeight:      'var(--ds-line-height-medium)',
     cardBodyLineHeight:       'var(--ds-line-height-medium)',
+    defaultIconSize:          72,
   },
 };
+
+/** Icon container default (px) for the active spacing scheme — clamp in ThemeContext. */
+export function defaultIconSizeForSpacingScheme(scheme: SpacingScheme): number {
+  return spacingSchemes[scheme].defaultIconSize;
+}

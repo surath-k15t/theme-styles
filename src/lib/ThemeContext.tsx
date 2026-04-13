@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import type { PresetId, ThemeMode } from './presets';
 import { presets } from './presets';
-import type { CardLayout, SpacingScheme } from './presets/spacingSchemes';
+import { defaultIconSizeForSpacingScheme, type CardLayout, type SpacingScheme } from './presets/spacingSchemes';
 import { buildColorEngineThemeVars } from './color-engine';
 import type { PanelBackgroundMode } from './panelSurfaceGlass';
 
@@ -12,10 +12,19 @@ const CARD_LAYOUT_SESSION_KEY = 'playground:cardLayout';
 const ICON_SIZE_SESSION_KEY = 'playground:iconSize';
 const PORTAL_BANNER_STYLE_KEY = 'playground:portalBannerStyle';
 const PORTAL_BANNER_IMAGE_KEY = 'playground:portalBannerImage';
+
+/** Shipped asset (Vite `public/origin/banner.svg`) — default portal banner when no upload is stored. */
+export const DEFAULT_PORTAL_BANNER_IMAGE_SRC = '/origin/banner.svg';
 const BANNER_PADDING_X_SESSION_KEY = 'playground:bannerPaddingX';
 const PORTAL_BANNER_HEADING_COLOR_KEY = 'playground:portalBannerHeadingColor';
 const PLAYGROUND_APPLY_BRAND_COLOR_KEY = 'playground:applyBrandColor';
 const PLAYGROUND_PANEL_BACKGROUND_KEY = 'playground:panelBackgroundMode';
+const PLAYGROUND_COLOR_MODE_SETTING_KEY = 'playground:colorModeSetting';
+/** Same key as `PLAYGROUND_IS_DARK_KEY` in floating-controls/constants (avoid circular import). */
+const PLAYGROUND_IS_DARK_STORAGE_KEY = 'color-engine:isDark';
+
+/** How the preview may switch between light and dark. */
+export type ColorModeSetting = 'light-only' | 'dark-only' | 'light-and-dark';
 
 /** Portal banner background mode (Pages tab). */
 export type PortalBannerStyle = 'colored' | 'image';
@@ -81,8 +90,10 @@ function readStoredPortalBannerStyle(fallback: PortalBannerStyle): PortalBannerS
 function readStoredPortalBannerImage(): string | null {
   if (typeof window === 'undefined') return null;
   const raw = window.sessionStorage.getItem(PORTAL_BANNER_IMAGE_KEY);
-  if (!raw || !raw.startsWith('data:image/')) return null;
-  return raw;
+  if (!raw) return null;
+  if (raw.startsWith('data:image/')) return raw;
+  if (raw.startsWith('/')) return raw;
+  return null;
 }
 
 function readStoredBannerPaddingX(fallback: number): number {
@@ -116,6 +127,21 @@ function readStoredPanelBackgroundMode(fallback: PanelBackgroundMode): PanelBack
   return fallback;
 }
 
+function readStoredColorModeSetting(fallback: ColorModeSetting): ColorModeSetting {
+  if (typeof window === 'undefined') return fallback;
+  const raw = window.sessionStorage.getItem(PLAYGROUND_COLOR_MODE_SETTING_KEY);
+  if (raw === 'light-only' || raw === 'dark-only' || raw === 'light-and-dark') return raw;
+  return fallback;
+}
+
+function readStoredPlaygroundIsDark(fallback: boolean): boolean {
+  if (typeof window === 'undefined') return fallback;
+  const raw = window.sessionStorage.getItem(PLAYGROUND_IS_DARK_STORAGE_KEY);
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  return fallback;
+}
+
 /** Radix-style radius steps → `--theme-roundness` / `--ds-radius-factor`. */
 export type ThemeRadiusTier = 'none' | 'small' | 'medium' | 'large' | 'full';
 
@@ -131,6 +157,9 @@ interface ThemeContextType {
   preset: PresetId;
   mode: ThemeMode;
   toggleMode: () => void;
+  /** When `light-and-dark`, site header and panel header may show a toggle. */
+  colorModeSetting: ColorModeSetting;
+  setColorModeSetting: (v: ColorModeSetting) => void;
   playgroundHex: string;
   setPlaygroundHex: (hex: string) => void;
   playgroundIsDark: boolean;
@@ -151,7 +180,7 @@ interface ThemeContextType {
   /** Portal home banner: solid brand tint vs uploaded image. */
   portalBannerStyle: PortalBannerStyle;
   setPortalBannerStyle: (v: PortalBannerStyle) => void;
-  /** Data URL from upload when `portalBannerStyle === 'image'`. */
+  /** Banner image: data URL from upload and/or default `/origin/banner.svg` when `portalBannerStyle === 'image'`. */
   portalBannerImage: string | null;
   setPortalBannerImage: (v: string | null) => void;
   /** Drives portal banner top/bottom padding (same role as `PresetStyles.bannerPaddingX`). */
@@ -177,32 +206,40 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [playgroundHex, setPlaygroundHex] = useState('#157F78');
-  /** Single light/dark switch: color engine (floating bar) + header toggle both use this. Drives `data-mode`, neutrals, and chromatic scale. */
-  const [playgroundIsDark, setPlaygroundIsDark] = useState(false);
-  const [themeRadiusTier, setThemeRadiusTier] = useState<ThemeRadiusTier>('medium');
-  const [spacingScheme, setSpacingSchemeState] = useState<SpacingScheme>(() =>
-    readStoredSpacingScheme(presets[PRESET_ID].styles.spacingScheme),
+  const [playgroundHex, setPlaygroundHex] = useState('#0e305c');
+  const [colorModeSetting, setColorModeSettingState] = useState<ColorModeSetting>(() =>
+    readStoredColorModeSetting('light-and-dark'),
   );
+  /** Single light/dark switch: drives `data-mode`, neutrals, and chromatic scale. */
+  const [playgroundIsDark, setPlaygroundIsDark] = useState(() => {
+    const setting = readStoredColorModeSetting('light-and-dark');
+    if (setting === 'light-only') return false;
+    if (setting === 'dark-only') return true;
+    return readStoredPlaygroundIsDark(false);
+  });
+  const [themeRadiusTier, setThemeRadiusTier] = useState<ThemeRadiusTier>('medium');
+  const initialSpacingScheme = readStoredSpacingScheme(presets[PRESET_ID].styles.spacingScheme);
+  const spacingSchemeRef = useRef<SpacingScheme>(initialSpacingScheme);
+  const [spacingScheme, setSpacingSchemeState] = useState<SpacingScheme>(initialSpacingScheme);
   const [cardLayout, setCardLayoutState] = useState<CardLayout>(() =>
     readStoredCardLayout(presets[PRESET_ID].cardLayout),
   );
   const [iconSize, setIconSizeState] = useState(() =>
-    readStoredIconSize(presets[PRESET_ID].styles.iconSize),
+    readStoredIconSize(defaultIconSizeForSpacingScheme(initialSpacingScheme)),
   );
   const [showDescription, setShowDescription] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [portalBannerStyle, setPortalBannerStyleState] = useState<PortalBannerStyle>(() =>
-    readStoredPortalBannerStyle('colored'),
+    readStoredPortalBannerStyle('image'),
   );
   const [portalBannerImage, setPortalBannerImageState] = useState<string | null>(() =>
-    readStoredPortalBannerImage(),
+    readStoredPortalBannerImage() ?? DEFAULT_PORTAL_BANNER_IMAGE_SRC,
   );
   const [bannerPaddingX, setBannerPaddingXState] = useState(() =>
     readStoredBannerPaddingX(presets[PRESET_ID].styles.bannerPaddingX),
   );
   const [portalBannerHeadingColor, setPortalBannerHeadingColorState] = useState<PortalBannerHeadingColor>(() =>
-    readStoredPortalBannerHeadingColor('dark'),
+    readStoredPortalBannerHeadingColor('light'),
   );
   const [applyBrandColor, setApplyBrandColorState] = useState(() => readStoredApplyBrandColor(true));
   const [panelBackgroundMode, setPanelBackgroundModeState] = useState<PanelBackgroundMode>(() =>
@@ -214,17 +251,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setPlaygroundIsDark(v => !v);
   }, []);
 
-  const setSpacingScheme = useCallback((v: SpacingScheme) => {
-    setSpacingSchemeState(v);
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(SPACING_SCHEME_SESSION_KEY, v);
-    }
-  }, []);
+  /** Lock preview to light or dark when the setting is not `light-and-dark`. */
+  useEffect(() => {
+    if (colorModeSetting === 'light-only') setPlaygroundIsDark(false);
+    else if (colorModeSetting === 'dark-only') setPlaygroundIsDark(true);
+  }, [colorModeSetting]);
 
-  const setCardLayout = useCallback((v: CardLayout) => {
-    setCardLayoutState(v);
+  const setColorModeSetting = useCallback((v: ColorModeSetting) => {
+    setColorModeSettingState(v);
     if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(CARD_LAYOUT_SESSION_KEY, v);
+      window.sessionStorage.setItem(PLAYGROUND_COLOR_MODE_SETTING_KEY, v);
     }
   }, []);
 
@@ -233,6 +269,28 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIconSizeState(c);
     if (typeof window !== 'undefined') {
       window.sessionStorage.setItem(ICON_SIZE_SESSION_KEY, String(c));
+    }
+  }, []);
+
+  const setSpacingScheme = useCallback(
+    (v: SpacingScheme) => {
+      const prev = spacingSchemeRef.current;
+      spacingSchemeRef.current = v;
+      setSpacingSchemeState(v);
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem(SPACING_SCHEME_SESSION_KEY, v);
+      }
+      if (prev !== v) {
+        setIconSize(defaultIconSizeForSpacingScheme(v));
+      }
+    },
+    [setIconSize],
+  );
+
+  const setCardLayout = useCallback((v: CardLayout) => {
+    setCardLayoutState(v);
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(CARD_LAYOUT_SESSION_KEY, v);
     }
   }, []);
 
@@ -295,6 +353,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         preset: PRESET_ID,
         mode,
         toggleMode,
+        colorModeSetting,
+        setColorModeSetting,
         playgroundHex,
         setPlaygroundHex,
         playgroundIsDark,

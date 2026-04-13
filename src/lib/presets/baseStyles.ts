@@ -11,7 +11,7 @@ export const baseStyles: PresetStyles = {
   headerBorderBottom: 'none',
   headerPickerBorder: '1px solid rgba(255,255,255,0.22)',
 
-  bannerPaddingX: 64,
+  bannerPaddingX: 158,
   bannerBackground: 'var(--theme-banner-background-color)',
   bannerTextColor: 'var(--theme-banner-text-color)',
   bannerOverlapHeader: false,
@@ -52,8 +52,8 @@ export const baseStyles: PresetStyles = {
   cardBorder: '1px solid var(--ds-border-brand-strong)',
   cardBackground: 'var(--ds-surface)',
   cardBackgroundHover: 'var(--ds-surface-hovered)',
-  cardBorderHover: 'var(--ds-border-brand-strong-hovered)',
-  iconSize: 48,
+  cardBorderHover: 'var(--palette-step-8)',
+  iconSize: 58,
   cardIconColor: 'var(--ds-card-icon-color)',
   //cardIconBackground: 'var(--ds-background-neutral)',
 

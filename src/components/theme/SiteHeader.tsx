@@ -96,7 +96,8 @@ interface SiteHeaderProps {
 }
 
 const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) => {
-  const { preset, mode, toggleMode, panelBackgroundMode, portalBannerHeadingColor } = useTheme();
+  const { preset, mode, toggleMode, panelBackgroundMode, portalBannerHeadingColor, colorModeSetting } = useTheme();
+  const showSiteColorToggle = colorModeSetting === 'light-and-dark';
   const config = presets[preset];
   const s = config.styles;
   const navigate = useNavigate();
@@ -274,18 +275,20 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
             </div>
           )}
 
-          {/* header-pickers: mode toggle (icon-only, bordered button) */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <button
-              onClick={toggleMode}
-              title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-              style={iconBtnStyle}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                {mode === 'light' ? 'light_mode' : 'dark_mode'}
-              </span>
-            </button>
-          </div>
+          {/* header-pickers: mode toggle — only when Design allows both themes */}
+          {showSiteColorToggle ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <button
+                onClick={toggleMode}
+                title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+                style={iconBtnStyle}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  {mode === 'light' ? 'light_mode' : 'dark_mode'}
+                </span>
+              </button>
+            </div>
+          ) : null}
 
         </div>
       </div>
