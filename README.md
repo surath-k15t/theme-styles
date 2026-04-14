@@ -49,6 +49,7 @@ Other token families cover spacing schemes (`compact` / `standard` / `spacious`)
 ```sh
 git clone https://github.com/surath-k15t/theme-styles.git
 cd theme-styles
+brew install npm
 npm install
 ```
 
