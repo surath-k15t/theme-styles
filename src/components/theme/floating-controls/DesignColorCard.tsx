@@ -1,5 +1,10 @@
-import React from 'react';
-import type { ScaleDiagnostic } from '@/lib/color-engine';
+import React, { useMemo } from 'react';
+import {
+  materialPinnedPrimaryStep,
+  materialSeedHctTone,
+  materialToneAtDisplayStep,
+  type ScaleDiagnostic,
+} from '@/lib/color-engine';
 import type { ColorModeSetting } from '@/lib/ThemeContext';
 import { useTheme } from '@/lib/ThemeContext';
 import { CMS, SECTION_GAP } from './constants';
@@ -35,6 +40,17 @@ function subsectionDivider(panelBorder: string) {
   } as const;
 }
 
+/** M2-style shade numbers for a row ordered dark (left) → light (right), 12 columns. */
+const M2_SHADE_STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900] as const;
+
+function m2ShadeLabelDarkLeft(visualIndex: number): string {
+  const j = Math.round(((11 - visualIndex) / 11) * (M2_SHADE_STOPS.length - 1));
+  return String(M2_SHADE_STOPS[Math.max(0, Math.min(M2_SHADE_STOPS.length - 1, j))]!);
+}
+
+const RAMP_RECT_H = 36;
+const RAMP_CIRCLE = 42;
+
 /** Design tab — Color: mode; apply brand (with brand + advanced nested when on); default reference strip. */
 export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   hex,
@@ -58,6 +74,15 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   setApplyBrandColor,
 }) => {
   const { colorModeSetting, setColorModeSetting } = useTheme();
+  const primaryPinStep = materialPinnedPrimaryStep(hex);
+  const seedHctTone = materialSeedHctTone(hex);
+  const rampToneAtKey = materialToneAtDisplayStep(primaryPinStep, isDark);
+
+  /** M2-style strip: dark on the left, light on the right (light mode array is reversed). */
+  const rampDisplayOrder = useMemo(
+    () => (isDark ? diagnostics : [...diagnostics].reverse()),
+    [diagnostics, isDark],
+  );
 
   return (
   <>
@@ -134,45 +159,52 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
               }}
             />
           </div>
-        <div
-          role="group"
-          //aria-label="Accent palette derived from your brand color; click a step to set the base color"
-          style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            borderRadius: 8,
-            overflow: 'hidden',
-            border: `1px solid ${panelBorder}`,
-            minHeight: 52,
-            background: isDark ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.03)',
-          }}
-        >
-          {diagnostics.map((s, i) => {
-            const selected = s.step === accentSelectedStep;
-            const barH = selected ? 46 : 32;
-            const isAnchorStep = s.step === 9;
-            const title =
-              selected && isAnchorStep
-                ? `${s.hex} — Your color (step 9)`
-                : selected
-                  ? `${s.hex} — selected`
-                  : isAnchorStep
-                    ? `${s.hex} — step 9 (accent anchor)`
-                    : s.hex;
-            return (
-              <React.Fragment key={s.step}>
-                {i > 0 ? (
-                  <div
-                    style={{
-                      width: 1,
-                      flexShrink: 0,
-                      alignSelf: 'stretch',
-                      minHeight: barH,
-                      background: showcaseRampDivider,
-                    }}
-                  />
-                ) : null}
+        <div>
+          <div
+            style={{
+              fontWeight: 600,
+              fontSize: 10,
+              color: panelMuted,
+              marginBottom: 8,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Primary
+          </div>
+          <div
+            role="group"
+            aria-label="Primary palette from brand color; click a swatch to use that shade"
+            style={{
+              display: 'flex',
+              alignItems: 'stretch',
+              borderRadius: 8,
+              overflow: 'hidden',
+              border: `1px solid ${panelBorder}`,
+              background: isDark ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.03)',
+            }}
+          >
+            {rampDisplayOrder.map((s, visualIndex) => {
+              const selected = s.step === accentSelectedStep;
+              const isKeyColorStep = s.step === primaryPinStep;
+              const tone = materialToneAtDisplayStep(s.step, isDark);
+              const shadeLabel = m2ShadeLabelDarkLeft(visualIndex);
+              const seedToneLabel = seedHctTone != null ? `${Math.round(seedHctTone)}` : '?';
+              const lightSurface = Math.round(tone) >= 88;
+              const pGlyphColor = lightSurface ? '#1a1a1a' : '#fff';
+              const pGlyphShadow = lightSurface ? undefined : '0 0 2px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25)';
+              const title =
+                selected && isKeyColorStep
+                  ? `${s.hex} — primary (your color, HCT ${seedToneLabel})`
+                  : selected
+                    ? `${s.hex} — selected`
+                    : isKeyColorStep
+                      ? `${s.hex} — primary (step ${primaryPinStep}, nominal T${Math.round(rampToneAtKey)})`
+                      : s.hex;
+
+              return (
                 <button
+                  key={s.step}
                   type="button"
                   title={title}
                   onClick={() => {
@@ -183,32 +215,105 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
                     flex: 1,
                     minWidth: 0,
                     display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    justifyContent: 'flex-end',
                     border: 'none',
-                    padding: '0 0 4px',
+                    padding: 0,
+                    margin: 0,
                     cursor: 'pointer',
                     background: 'transparent',
                   }}
                 >
-                  <span
+                  <div
                     style={{
-                      display: 'block',
-                      width: '100%',
-                      height: barH,
-                      background: s.hex,
-                      borderRadius: selected ? 3 : 2,
-                      boxShadow: selected
-                        ? isDark
-                          ? '0 0 0 2px #fafafa'
-                          : '0 0 0 2px #18181b'
-                        : undefined,
+                      flex: 1,
+                      minHeight: RAMP_CIRCLE + 6,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      alignItems: 'center',
+                      padding: isKeyColorStep ? '0 5px' : 0,
+                      boxSizing: 'border-box',
                     }}
-                  />
+                  >
+                    {isKeyColorStep ? (
+                      <div
+                        style={{
+                          width: RAMP_CIRCLE,
+                          height: RAMP_CIRCLE,
+                          borderRadius: '50%',
+                          background: s.hex,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          color: pGlyphColor,
+                          fontWeight: 700,
+                          fontSize: 15,
+                          lineHeight: 1,
+                          fontFamily: "'Inter', ui-sans-serif, sans-serif",
+                          boxShadow:
+                            selected && isDark
+                              ? '0 0 0 2px #fafafa, 0 2px 8px rgba(0,0,0,0.25)'
+                              : selected
+                                ? '0 0 0 2px #18181b, 0 2px 8px rgba(0,0,0,0.2)'
+                                : '0 2px 8px rgba(0,0,0,0.2)',
+                          textShadow: pGlyphShadow,
+                        }}
+                      >
+                        P
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: '100%',
+                          height: RAMP_RECT_H,
+                          background: s.hex,
+                          alignSelf: 'stretch',
+                          boxShadow: selected
+                            ? isDark
+                              ? `inset 0 0 0 2px #fafafa`
+                              : `inset 0 0 0 2px #18181b`
+                            : undefined,
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      padding: '6px 2px 8px',
+                      textAlign: 'center',
+                      borderTop: `1px solid ${showcaseRampDivider}`,
+                      background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(250,250,250,0.95)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: panelFg,
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {shadeLabel}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 500,
+                        color: panelMuted,
+                        marginTop: 2,
+                        fontFamily: "'PT Mono', monospace",
+                      }}
+                    >
+                      T{Math.round(tone)}
+                    </div>
+                  </div>
                 </button>
-              </React.Fragment>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* Advanced — same block as Brand color (no rule above) */}

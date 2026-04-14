@@ -1,6 +1,5 @@
 export { alphaVariantMatchingSolid } from './alpha-variants';
 export { generateDarkScale, generateScale } from './generate-scale';
-export { generateScaleLegacy } from './generate-scale-legacy';
 export {
   buildNeutralSolidCssVars,
   neutralSolidsForMode,
@@ -8,5 +7,16 @@ export {
   NEUTRAL_SOLIDS_LIGHT,
 } from './neutral-ramp';
 export { buildPlaygroundCssVars } from './playground-css-vars';
+export {
+  MATERIAL_LIGHT_END_TONE,
+  MATERIAL_TONAL_STOPS,
+  materialKeyColorStep,
+  materialPinnedPrimaryStep,
+  materialPrimary12Step,
+  materialRamp12FromPaletteWithPin,
+  materialSeedHctTone,
+  materialToneAtDisplayStep,
+  parseMaterialSourceArgb,
+} from './material-palette-engine';
 export { buildColorEngineThemeVars } from './theme-vars';
-export type { ColorStep, GenerateScaleResult, ScaleDiagnostic } from './types';
+export type { GenerateScaleResult, ScaleDiagnostic } from './types';

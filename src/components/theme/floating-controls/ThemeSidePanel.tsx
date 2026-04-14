@@ -5,6 +5,7 @@ import {
   alphaVariantMatchingSolid,
   generateDarkScale,
   generateScale,
+  materialPinnedPrimaryStep,
   neutralSolidsForMode,
 } from '@/lib/color-engine';
 import {
@@ -176,16 +177,17 @@ export const ThemeSidePanel: React.FC<{
   const { diagnostics, brandStep } = useMemo(() => {
     if (isDark) {
       const { diagnostics: steps } = generateDarkScale(hex);
-      return { diagnostics: steps, brandStep: 9 };
+      return { diagnostics: steps, brandStep: materialPinnedPrimaryStep(hex) };
     }
     const { diagnostics: rows } = generateScale(hex);
-    return { diagnostics: rows, brandStep: 9 };
+    return { diagnostics: rows, brandStep: materialPinnedPrimaryStep(hex) };
   }, [hex, isDark]);
 
   const alphaOnBg = useMemo(() => {
     if (diagnostics.length < 1) return [];
     const step1 = diagnostics[0].hex;
-    return [3, 9, 11]
+    const primaryPin = materialPinnedPrimaryStep(hex);
+    return [3, primaryPin, 11]
       .filter(step => step <= diagnostics.length)
       .map(step => {
         const solid = diagnostics[step - 1].hex;
@@ -195,7 +197,7 @@ export const ThemeSidePanel: React.FC<{
           a15: alphaVariantMatchingSolid(solid, step1, 0.15),
         };
       });
-  }, [diagnostics]);
+  }, [diagnostics, hex]);
 
   const neutralScaleHexes = neutralSolidsForMode(isDark);
 

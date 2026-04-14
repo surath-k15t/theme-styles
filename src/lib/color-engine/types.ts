@@ -1,15 +1,4 @@
-export interface ColorStep {
-  step: number;
-  hex: string;
-  l: number;
-  c: number;
-  h: number;
-  contrast: number;
-  /** Light chromatic: picked brand may sit on step 4–9 depending on L/C */
-  isBrand?: boolean;
-}
-
-/** Per-step output from {@link generateScale} (v2 blueprint). */
+/** Per-step output from {@link generateScale} / {@link generateDarkScale}. */
 export interface ScaleDiagnostic {
   step: number;
   l: number;

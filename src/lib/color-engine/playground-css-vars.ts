@@ -1,47 +1,16 @@
-import { converter, parse, wcagContrast } from 'culori';
+import { Scheme, hexFromArgb } from '@material/material-color-utilities';
+import { wcagContrast } from 'culori';
 import { generateDarkScale, generateScale } from './generate-scale';
+import { materialPinnedPrimaryStep, parseMaterialSourceArgb } from './material-palette-engine';
 import { neutralSolidsForMode } from './neutral-ramp';
 
 type CssVarMap = Record<string, string>;
 
-const toOklch = converter('oklch');
-
-/**
- * Gold / yellow / amber solids: prefer light foreground so mid yellows (e.g. `#d69c1f`) read with
- * white label text instead of WCAG’s black-on-gold pick. Skips near-neutral chroma and very pale yellows.
- */
-const ON_SOLID_YELLOW_OKLCH_H_MIN = 58;
-const ON_SOLID_YELLOW_OKLCH_H_MAX = 105;
-const ON_SOLID_YELLOW_CHROMA_MIN = 0.04;
-const ON_SOLID_YELLOW_LIGHTNESS_MAX = 0.82;
-
-function preferWhiteForYellowFamilySolid(bgHex: string): boolean {
-  const rgb = parse(bgHex);
-  if (!rgb) return false;
-  const o = toOklch(rgb);
-  if (!o || o.mode !== 'oklch') return false;
-  const c = o.c ?? 0;
-  if (c < ON_SOLID_YELLOW_CHROMA_MIN) return false;
-  const h = o.h;
-  if (h === undefined || Number.isNaN(h)) return false;
-  if (h < ON_SOLID_YELLOW_OKLCH_H_MIN || h > ON_SOLID_YELLOW_OKLCH_H_MAX) return false;
-  const l = o.l ?? 0;
-  return l <= ON_SOLID_YELLOW_LIGHTNESS_MAX;
-}
-
-/**
- * White’s WCAG contrast is scaled by this before comparing to black, so light text wins on
- * many vibrant brand solids (e.g. `#7b61ff` where black is only slightly “better” on paper).
- * Light pastels still get dark text when black is clearly stronger.
- */
-const ON_SOLID_LIGHT_FOREGROUND_WCAG_BIAS = 1.12;
-
-/** Picks `#ffffff` vs `#111111` for text on solid fills (`--theme-on-primary-color`, search pill, etc.). */
-function onColor(bgHex: string): string {
-  if (preferWhiteForYellowFamilySolid(bgHex)) return '#ffffff';
+/** Plain WCAG pick for neutrals (no legacy yellow / bias overrides). */
+function onColorSimple(bgHex: string): string {
   const onWhite = wcagContrast('#ffffff', bgHex) ?? 1;
   const onBlack = wcagContrast('#111111', bgHex) ?? 1;
-  return onWhite * ON_SOLID_LIGHT_FOREGROUND_WCAG_BIAS >= onBlack ? '#ffffff' : '#111111';
+  return onWhite >= onBlack ? '#ffffff' : '#111111';
 }
 
 /**
@@ -102,12 +71,31 @@ export function buildPlaygroundCssVars(
     ? diagnostics
     : neutral.map(hex => ({ hex }));
 
-  const s9 = applyBrandColor ? diagnostics[8].hex : neutral[8];
+  const pin = materialPinnedPrimaryStep(baseHex);
+  const primaryStepHex = applyBrandColor
+    ? diagnostics[pin - 1]?.hex ?? neutral[pin - 1]
+    : neutral[pin - 1];
   const neutralStep3Hex = neutral[2];
+
+  const sourceArgb = parseMaterialSourceArgb(baseHex);
+  const scheme =
+    applyBrandColor && sourceArgb != null
+      ? scaleIsDark
+        ? Scheme.dark(sourceArgb)
+        : Scheme.light(sourceArgb)
+      : null;
+
+  const primaryVars: CssVarMap = applyBrandColor
+    ? {
+        '--ds-color-brand-700': `var(--palette-step-${pin})`,
+        '--theme-primary-color': `var(--palette-step-${pin})`,
+      }
+    : {};
 
   return {
     ...chromaticStepVars(diagnostics),
     ...paletteStepVars(paletteDiagnostics),
+    ...primaryVars,
     /*
      * Page canvas (`--ds-canvas` → portal/article bg): accent step 1 when brand is on; when off,
      * fixed white (light) or neutral ramp step 1 (dark) so the page floor is not chromatic.
@@ -117,11 +105,15 @@ export function buildPlaygroundCssVars(
       : scaleIsDark
         ? 'var(--gray-1)'
         : '#ffffff',
-    '--theme-on-primary-color': onColor(s9),
+    '--theme-on-primary-color':
+      scheme != null ? hexFromArgb(scheme.onPrimary) : onColorSimple(primaryStepHex),
     /* “Search all” when brand color off: fill is `--gray-3` — contrast vs that hex. */
-    '--theme-on-search-neutral-fill': onColor(neutralStep3Hex),
+    '--theme-on-search-neutral-fill': onColorSimple(neutralStep3Hex),
     ...neutralPortalTextOverrides(),
-    /* Showcase / user icons — always chromatic; not affected by `applyBrandColor` (palette may be neutral). */
-    '--ds-card-icon-color': scaleIsDark ? 'var(--chromatic-step-11)' : 'var(--chromatic-step-9)',
+    '--ds-card-icon-color': applyBrandColor
+      ? `var(--chromatic-step-${pin})`
+      : scaleIsDark
+        ? 'var(--chromatic-step-11)'
+        : 'var(--chromatic-step-9)',
   };
 }

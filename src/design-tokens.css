@@ -11,7 +11,7 @@
 
 /* LAYER 1: Core — brand ramp (generator) + non-color tokens */
 [data-theme-root] {
-  /* 12 palette steps → monotonic 25–950 scale (light → strong) */
+  /* 12 palette steps (light end T98, then T86…T6). Primary / brand-700 set inline when brand is on (pinned step). */
   --ds-color-brand-25: var(--palette-step-1);
   --ds-color-brand-50: var(--palette-step-2);
   --ds-color-brand-100: var(--palette-step-3);

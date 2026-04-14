@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   cacheDir: '/tmp/vite-cache',
   server: {
     host: "::",
-    port: 8080,
+    port: 9000,
     hmr: {
       overlay: false,
     },

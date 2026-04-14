@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/lib/ThemeContext';
 import FloatingControls from '@/components/theme/FloatingControls';
 import Portal from '@/pages/Portal';
 import Article from '@/pages/Article';
+import MaterialPaletteLab from '@/pages/MaterialPaletteLab';
 import NotFound from '@/pages/NotFound';
 
 const App = () => (
@@ -10,6 +11,7 @@ const App = () => (
     <ThemeProvider>
       <Routes>
         <Route path="/" element={<Portal />} />
+        <Route path="/material-palette" element={<MaterialPaletteLab />} />
         <Route path="/article/:appName" element={<Article />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
