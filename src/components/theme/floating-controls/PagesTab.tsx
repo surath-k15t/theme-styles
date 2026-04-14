@@ -64,7 +64,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
     <>
       <CmsCard title="Portal Page">
         <div style={{ marginBottom: 24 }}>
-          <CmsFieldLabel title="Card layout" hint="How app cards are arranged on the portal home." />
+          <CmsFieldLabel title="Card layout" hint="The layout of app cards on the portal home page." />
           <select
             value={cardLayout}
             onChange={e => setCardLayout(e.target.value as CardLayout)}
@@ -81,7 +81,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div style={{ marginBottom: 24 }}>
           <CmsFieldLabel
             title="Icon size"
-            hint={`Icon container in pixels. With a background well, the glyph uses half this size. Spacing (Design → Appearance) sets defaults — Compact & Standard ${spacingSchemes.compact.defaultIconSize}px, Spacious ${spacingSchemes.spacious.defaultIconSize}px; adjust here anytime.`}
+            hint={`The size of the icon container on content source cards.`}
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
             <input
@@ -91,7 +91,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
               step={1}
               value={iconSize}
               onChange={e => setIconSize(Number(e.target.value))}
-              aria-label="App card icon container size in pixels"
+              aria-label="The size of the icon container on content source cards."
               style={{
                 flex: 1,
                 minWidth: 0,
@@ -129,7 +129,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div style={{ marginBottom: 24 }}>
           <CmsFieldLabel
             title="Banner padding"
-            hint="Controls top and bottom padding of the hero banner — higher values make the banner taller."
+            hint="The top and bottom padding of the portal banner"
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
             <input
@@ -177,7 +177,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div style={{ marginBottom: 24 }}>
           <CmsFieldLabel
             title="Banner heading"
-            hint="Color of the main title on the hero banner — Light is white, Dark is black."
+            hint="The text color of the heading on the portal banner."
           />
           <div style={{ display: 'flex', gap: 8 }}>
             <button
@@ -219,7 +219,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div>
           <CmsFieldLabel
             title="Banner"
-            hint="Color uses the theme banner tint. Image adds your picture behind the title (stored in this session only)."
+            hint="The background of the portal banner — either a theme color or a custom image."
           />
           <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
             <button

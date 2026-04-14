@@ -65,7 +65,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
     <div>
       <CmsFieldLabel
         title="Color mode"
-        hint="Sets whether your site supports light mode, dark mode, or both. When both are enabled, visitors can switch using the toggle in the site header."
+        hint="Whether your site supports light mode, dark mode, or both."
       />
       <select
         aria-label="Color mode"
@@ -83,7 +83,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
     <div style={subsectionDivider(panelBorder)}>
       <CmsToggleRow
         label="Apply brand color"
-        description="When off, your site uses the default colors below. Search and interactive highlights still use your brand color."
+        description="Use a custom brand color for your site"
         checked={applyBrandColor}
         onChange={setApplyBrandColor}
         dividerTop={false}
@@ -92,7 +92,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
         <div style={{ marginTop: SECTION_GAP }}>
           <CmsFieldLabel
             title="Brand color"
-            hint="Your brand color generates the accent scale used across your site."
+              hint="Pick the brand color to match your site's brand identity. A full color scale is generated from it."
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
             <input
@@ -136,7 +136,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
           </div>
         <div
           role="group"
-          aria-label="Accent palette derived from your brand color; click a step to set the base color"
+          //aria-label="Accent palette derived from your brand color; click a step to set the base color"
           style={{
             display: 'flex',
             alignItems: 'flex-end',
@@ -144,7 +144,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
             overflow: 'hidden',
             border: `1px solid ${panelBorder}`,
             minHeight: 52,
-            background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.03)',
+            background: isDark ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.03)',
           }}
         >
           {diagnostics.map((s, i) => {
@@ -209,9 +209,6 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
               </React.Fragment>
             );
           })}
-        </div>
-        <div style={{ fontSize: 11, color: panelMuted, marginTop: 10, lineHeight: 1.4 }}>
-          Step 9 is your brand color. The full scale is derived from it.
         </div>
 
         {/* Advanced — same block as Brand color (no rule above) */}
@@ -324,7 +321,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
     <div style={subsectionDivider(panelBorder)}>
       <CmsFieldLabel
         title="Default colors"
-        hint="Shown for reference only. These colors are applied across your site when brand color is off."
+        hint="The default color scale applied across your site when brand color is off."
       />
       <div
         role="group"
