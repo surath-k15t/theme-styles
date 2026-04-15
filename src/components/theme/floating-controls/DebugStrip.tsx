@@ -27,6 +27,7 @@ export const DebugStrip: React.FC<{ preset: PresetId; mode: string }> = ({ prese
     iconSize,
     bannerPaddingX,
     portalBannerHeadingColor,
+    playgroundHex,
   } = useTheme();
   const config = presets[preset];
   const s = config.styles;
@@ -50,7 +51,7 @@ export const DebugStrip: React.FC<{ preset: PresetId; mode: string }> = ({ prese
     },
     { label: 'banner pad', value: `${bannerPaddingX}px` },
     { label: 'banner h1', value: portalBannerHeadingColor },
-    { label: 'primary', value: vars['--theme-primary-color'] ?? '—', color: vars['--theme-primary-color'] },
+    { label: 'brand', value: playgroundHex },
     { label: 'title LH', value: lhNum(scheme.cardTitleLineHeight) },
     { label: 'body LH', value: lhNum(scheme.cardBodyLineHeight) },
     { label: 'content LH', value: lhNum(vars['--theme-content-line-height'] ?? '—') },

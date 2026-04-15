@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ScaleDiagnostic } from '@/lib/color-engine';
+import type { ColorCoverageMode } from '@/lib/colorCoverage';
 import type { ColorModeSetting } from '@/lib/ThemeContext';
 import { useTheme } from '@/lib/ThemeContext';
 import { CMS, SECTION_GAP } from './constants';
@@ -23,8 +24,8 @@ export interface DesignColorCardProps {
   showAdvanced: boolean;
   setShowAdvanced: React.Dispatch<React.SetStateAction<boolean>>;
   alphaOnBg: { step: number; a50: string; a15: string }[];
-  applyBrandColor: boolean;
-  setApplyBrandColor: (v: boolean) => void;
+  colorCoverage: ColorCoverageMode;
+  setColorCoverage: (v: ColorCoverageMode) => void;
 }
 
 function subsectionDivider(panelBorder: string) {
@@ -35,7 +36,7 @@ function subsectionDivider(panelBorder: string) {
   } as const;
 }
 
-/** Design tab — Color: mode; apply brand (with brand + advanced nested when on); default reference strip. */
+/** Design tab — Color: mode → brand / advanced / defaults → color usage (last). */
 export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   hex,
   isDark,
@@ -54,8 +55,8 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   showAdvanced,
   setShowAdvanced,
   alphaOnBg,
-  applyBrandColor,
-  setApplyBrandColor,
+  colorCoverage,
+  setColorCoverage,
 }) => {
   const { colorModeSetting, setColorModeSetting } = useTheme();
 
@@ -79,61 +80,52 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
       </select>
     </div>
 
-    {/* 2. Apply brand color — Brand color + Advanced are part of this group when on */}
+    {/* 2. Brand color, accent ramp, Advanced, Default colors */}
     <div style={subsectionDivider(panelBorder)}>
-      <CmsToggleRow
-        label="Apply brand color"
-        description="Use a custom brand color for your site"
-        checked={applyBrandColor}
-        onChange={setApplyBrandColor}
-        dividerTop={false}
+      <CmsFieldLabel
+        title="Brand color"
+        hint="Your brand color generates the accent scale used across your site."
       />
-      {applyBrandColor ? (
-        <div style={{ marginTop: SECTION_GAP }}>
-          <CmsFieldLabel
-            title="Brand color"
-              hint="Pick the brand color to match your site's brand identity. A full color scale is generated from it."
-          />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-            <input
-              id="design-brand-hex"
-              type="text"
-              value={inputValue}
-              onChange={e => handleHexInput(e.target.value)}
-              placeholder="#0e305c"
-              aria-label="Brand color hex value"
-              style={{
-                flex: 1,
-                minWidth: 0,
-                fontFamily: "'PT Mono', monospace",
-                fontSize: 12,
-                padding: '6px 8px',
-                borderRadius: 6,
-                border: `1px solid ${panelBorder}`,
-                background: 'rgba(0,0,0,0.04)',
-                color: panelFg,
-                outline: 'none',
-              }}
-            />
-            <input
-              type="color"
-              value={hex}
-              onChange={e => {
-                setPlaygroundHex(e.target.value);
-                setInputValue(e.target.value);
-              }}
-              aria-label="Pick brand color with color picker"
-              style={{
-                width: 36,
-                height: 32,
-                borderRadius: 6,
-                border: `1px solid ${panelBorder}`,
-                cursor: 'pointer',
-                padding: 2,
-                background: 'transparent',
-              }}
-            />
-          </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        <input
+          id="design-brand-hex"
+          type="text"
+          value={inputValue}
+          onChange={e => handleHexInput(e.target.value)}
+          placeholder="#0e305c"
+          aria-label="Accent color hex value"
+          style={{
+            flex: 1,
+            minWidth: 0,
+            fontFamily: "'PT Mono', monospace",
+            fontSize: 12,
+            padding: '6px 8px',
+            borderRadius: 6,
+            border: `1px solid ${panelBorder}`,
+            background: 'rgba(0,0,0,0.04)',
+            color: panelFg,
+            outline: 'none',
+          }}
+        />
+        <input
+          type="color"
+          value={hex}
+          onChange={e => {
+            setPlaygroundHex(e.target.value);
+            setInputValue(e.target.value);
+          }}
+          aria-label="Pick accent color with color picker"
+          style={{
+            width: 36,
+            height: 32,
+            borderRadius: 6,
+            border: `1px solid ${panelBorder}`,
+            cursor: 'pointer',
+            padding: 2,
+            background: 'transparent',
+          }}
+        />
+      </div>
         <div
           role="group"
           //aria-label="Accent palette derived from your brand color; click a step to set the base color"
@@ -211,7 +203,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
           })}
         </div>
 
-        {/* Advanced — same block as Brand color (no rule above) */}
+        {/* Advanced — scale diagnostics + alpha (chromatic ramp) */}
         <div style={{ marginTop: SECTION_GAP }}>
           <CmsToggleRow
             label="Advanced"
@@ -313,38 +305,82 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
             </div>
           ) : null}
         </div>
+
+      <div style={{ marginTop: SECTION_GAP }}>
+        <CmsFieldLabel
+          title="Default colors"
+          hint="The neutral colors used across your site."
+        />
+        <div
+          role="group"
+          aria-label="Default neutral colors, read-only"
+          style={{
+            display: 'flex',
+            alignItems: 'stretch',
+            borderRadius: 8,
+            overflow: 'hidden',
+            border: `1px dashed ${panelBorder}`,
+            minHeight: 36,
+            opacity: 0.95,
+          }}
+        >
+          {neutralScaleHexes.map((hexValue, i) => (
+            <React.Fragment key={`${hexValue}-${i}`}>
+              {i > 0 ? <div style={{ width: 1, background: showcaseRampDivider, flexShrink: 0 }} /> : null}
+              <div
+                title={`${hexValue} (reference)`}
+                style={{ flex: 1, minWidth: 0, minHeight: 36, background: hexValue }}
+              />
+            </React.Fragment>
+          ))}
         </div>
-      ) : null}
+      </div>
     </div>
 
-    {/* 3. Default colors — read-only reference, always visible */}
+    {/* 3. Color usage — last subsection */}
     <div style={subsectionDivider(panelBorder)}>
       <CmsFieldLabel
-        title="Default colors"
-        hint="The default color scale applied across your site when brand color is off."
+        title="Color usage"
+        hint="Choose how your brand colors are applied to the UI."
       />
       <div
-        role="group"
-        aria-label="Default neutral colors, read-only"
-        style={{
-          display: 'flex',
-          alignItems: 'stretch',
-          borderRadius: 8,
-          overflow: 'hidden',
-          border: `1px dashed ${panelBorder}`,
-          minHeight: 36,
-          opacity: 0.95,
-        }}
+        role="radiogroup"
+        aria-label="Color usage"
+        style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}
       >
-        {neutralScaleHexes.map((hexValue, i) => (
-          <React.Fragment key={`${hexValue}-${i}`}>
-            {i > 0 ? <div style={{ width: 1, background: showcaseRampDivider, flexShrink: 0 }} /> : null}
-            <div
-              title={`${hexValue} (reference)`}
-              style={{ flex: 1, minWidth: 0, minHeight: 36, background: hexValue }}
-            />
-          </React.Fragment>
-        ))}
+        {(
+          [
+            { id: 'minimal' as const, label: 'Minimal' },
+            { id: 'subtle' as const, label: 'Subtle' },
+            { id: 'standard' as const, label: 'Standard' },
+          ] as const
+        ).map(({ id, label }) => {
+          const selected = colorCoverage === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              onClick={() => setColorCoverage(id)}
+              style={{
+                flex: '1 1 90px',
+                minWidth: 0,
+                padding: '8px 10px',
+                borderRadius: 4,
+                border: `2px solid ${selected ? CMS.primary : CMS.border}`,
+                background: selected ? 'rgba(12, 102, 228, 0.08)' : CMS.inputBg,
+                color: CMS.text,
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: "'Inter', ui-sans-serif, sans-serif",
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
     </div>
   </>

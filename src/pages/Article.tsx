@@ -46,7 +46,7 @@ const Article: React.FC = () => {
           style={{
             width: 320,
             minWidth: 320,
-            borderRight: '1px solid var(--ds-border-brand-strong)',
+            borderRight: '1px solid var(--K15t-border-brand-strong)',
             padding: s.sidebarPadding,
             flexShrink: 0,
             fontSize: 'var(--ds-font-size-sm)',
@@ -59,7 +59,7 @@ const Article: React.FC = () => {
                 style={{
                   padding: '8px 12px 8px 24px',
                   fontWeight: 'var(--ds-font-weight-medium)' as any,
-                  color: 'var(--ds-foreground)',
+                  color: 'var(--K15t-foreground)',
                   fontSize: 13,
                   display: 'flex',
                   alignItems: 'center',
@@ -118,14 +118,14 @@ const Article: React.FC = () => {
           <div
             style={{
               fontSize: 'var(--ds-font-size-sm)',
-              color: 'var(--ds-foreground-subtle)',
+              color: 'var(--K15t-foreground-subtle)',
               marginBottom: 24,
               display: 'flex',
               gap: 6,
             }}
           >
             <span
-              style={{ color: 'var(--ds-link)', cursor: 'pointer' }}
+              style={{ color: 'var(--K15t-link)', cursor: 'pointer' }}
               onClick={() => navigate('/')}
             >
               Home
@@ -147,7 +147,7 @@ const Article: React.FC = () => {
           </h1>
           <p
             style={{
-              color: 'var(--ds-foreground-subtle)',
+              color: 'var(--K15t-foreground-subtle)',
               fontSize: 'var(--ds-font-size-lg)',
               marginBottom: 'calc(var(--theme-content-spacing) * 2)',
             }}
@@ -195,8 +195,8 @@ const Article: React.FC = () => {
           {/* Screenshot placeholder */}
           <div
             style={{
-              background: 'var(--ds-background-neutral)',
-              border: '1px solid var(--ds-border-brand-strong)',
+              background: 'var(--K15t-background-neutral)',
+              border: '1px solid var(--K15t-border-brand-strong)',
               borderRadius: 'var(--ds-radius-medium)',
               height: 240,
               display: 'flex',
@@ -207,7 +207,7 @@ const Article: React.FC = () => {
           >
             <span
               className="material-symbols-outlined"
-              style={{ fontSize: 48, color: 'var(--ds-foreground-subtle)', opacity: 0.4 }}
+              style={{ fontSize: 48, color: 'var(--K15t-foreground-subtle)', opacity: 0.4 }}
             >
               image
             </span>
@@ -240,7 +240,7 @@ const Article: React.FC = () => {
             style={{
               fontSize: 12,
               fontWeight: 'var(--ds-font-weight-medium)' as any,
-              color: 'var(--ds-foreground)',
+              color: 'var(--K15t-foreground)',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
               margin: '0 0 10px 0',

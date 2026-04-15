@@ -57,7 +57,7 @@ const Banner: React.FC = () => {
               position: 'absolute',
               inset: 0,
               background:
-                'linear-gradient(90deg, var(--ds-color-brand-100) 0%, var(--ds-color-brand-400) 51.3%, var(--ds-color-brand-700) 100%)',
+                'linear-gradient(90deg, var(--K15t-color-brand-100) 0%, var(--K15t-color-brand-400) 51.3%, var(--K15t-color-brand-700) 100%)',
               opacity: 0.8,
             }}
           />

@@ -3,7 +3,11 @@ import type { PresetId, ThemeMode } from './presets';
 import { presets } from './presets';
 import { defaultIconSizeForSpacingScheme, type CardLayout, type SpacingScheme } from './presets/spacingSchemes';
 import { buildColorEngineThemeVars } from './color-engine';
+import type { ColorCoverageMode, ColorUsageMode } from './colorCoverage';
+import { persistColorUsage, readStoredColorUsage } from './colorCoverage';
 import type { PanelBackgroundMode } from './panelSurfaceGlass';
+
+export type { ColorCoverageMode, ColorUsageMode } from './colorCoverage';
 
 const PRESET_ID: PresetId = 'playground';
 
@@ -17,7 +21,6 @@ const PORTAL_BANNER_IMAGE_KEY = 'playground:portalBannerImage';
 export const DEFAULT_PORTAL_BANNER_IMAGE_SRC = '/origin/banner.svg';
 const BANNER_PADDING_X_SESSION_KEY = 'playground:bannerPaddingX';
 const PORTAL_BANNER_HEADING_COLOR_KEY = 'playground:portalBannerHeadingColor';
-const PLAYGROUND_APPLY_BRAND_COLOR_KEY = 'playground:applyBrandColor';
 const PLAYGROUND_PANEL_BACKGROUND_KEY = 'playground:panelBackgroundMode';
 const PLAYGROUND_COLOR_MODE_SETTING_KEY = 'playground:colorModeSetting';
 /** Same key as `PLAYGROUND_IS_DARK_KEY` in floating-controls/constants (avoid circular import). */
@@ -113,13 +116,6 @@ function readStoredPortalBannerHeadingColor(fallback: PortalBannerHeadingColor):
   return fallback;
 }
 
-function readStoredApplyBrandColor(fallback: boolean): boolean {
-  if (typeof window === 'undefined') return fallback;
-  const raw = window.sessionStorage.getItem(PLAYGROUND_APPLY_BRAND_COLOR_KEY);
-  if (raw == null) return fallback;
-  return raw === 'true';
-}
-
 function readStoredPanelBackgroundMode(fallback: PanelBackgroundMode): PanelBackgroundMode {
   if (typeof window === 'undefined') return fallback;
   const raw = window.sessionStorage.getItem(PLAYGROUND_PANEL_BACKGROUND_KEY);
@@ -189,9 +185,9 @@ interface ThemeContextType {
   /** Portal banner main heading: white vs black. */
   portalBannerHeadingColor: PortalBannerHeadingColor;
   setPortalBannerHeadingColor: (v: PortalBannerHeadingColor) => void;
-  /** When false, `--palette-step-*` follow the neutral ramp; hovers stay chromatic. */
-  applyBrandColor: boolean;
-  setApplyBrandColor: (v: boolean) => void;
+  /** Playground color usage: Standard (full ramp), Subtle (neutral surfaces + chromatic accents), Minimal (like Subtle + neutral canvas/header + flat cards). */
+  colorCoverage: ColorUsageMode;
+  setColorCoverage: (v: ColorUsageMode) => void;
   /** Header, cards, search: solid vs frosted glass (45% + blur). */
   panelBackgroundMode: PanelBackgroundMode;
   setPanelBackgroundMode: (v: PanelBackgroundMode) => void;
@@ -241,7 +237,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [portalBannerHeadingColor, setPortalBannerHeadingColorState] = useState<PortalBannerHeadingColor>(() =>
     readStoredPortalBannerHeadingColor('light'),
   );
-  const [applyBrandColor, setApplyBrandColorState] = useState(() => readStoredApplyBrandColor(true));
+  const [colorCoverage, setColorCoverageState] = useState<ColorUsageMode>(() => readStoredColorUsage('standard'));
   const [panelBackgroundMode, setPanelBackgroundModeState] = useState<PanelBackgroundMode>(() =>
     readStoredPanelBackgroundMode('solid'),
   );
@@ -324,11 +320,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  const setApplyBrandColor = useCallback((v: boolean) => {
-    setApplyBrandColorState(v);
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(PLAYGROUND_APPLY_BRAND_COLOR_KEY, String(v));
-    }
+  const setColorCoverage = useCallback((v: ColorUsageMode) => {
+    setColorCoverageState(v);
+    persistColorUsage(v);
   }, []);
 
   const setPanelBackgroundMode = useCallback((v: PanelBackgroundMode) => {
@@ -339,7 +333,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const currentPreset = presets[PRESET_ID];
-  const colorEngineVars = buildColorEngineThemeVars(playgroundHex, playgroundIsDark, applyBrandColor);
+  const colorEngineVars = buildColorEngineThemeVars(playgroundHex, playgroundIsDark, colorCoverage);
   const themeStyle = {
     ...currentPreset.cssVars,
     ...(playgroundIsDark ? currentPreset.darkCssVars : {}),
@@ -379,8 +373,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setBannerPaddingX,
         portalBannerHeadingColor,
         setPortalBannerHeadingColor,
-        applyBrandColor,
-        setApplyBrandColor,
+        colorCoverage,
+        setColorCoverage,
         panelBackgroundMode,
         setPanelBackgroundMode,
       }}
@@ -390,6 +384,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         data-preset={PRESET_ID}
         data-mode={mode}
         data-panel-surface={panelBackgroundMode}
+        data-color-usage={colorCoverage}
         style={themeStyle}
       >
         {children}

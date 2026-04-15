@@ -1,9 +1,11 @@
 /**
- * Fixed 12-step neutral scale / neutral ramp (app bg → text+). Not derived from the chromatic scale.
- * Injected on `data-theme-root` as `--gray-1`…`--gray-12` (legacy token names); `design-tokens.css` maps `--ds-color-neutral-*` to these.
+ * Fixed 14-step neutral scale (engine primitives). Not derived from the chromatic scale.
+ * Injected on `data-theme-root` as `--neutral-0`…`--neutral-13`.
+ * Core tokens (`--K15t-color-neutral-*` in CSS) reference these.
  */
 
 export const NEUTRAL_SOLIDS_LIGHT = [
+  '#ffffff',
   '#fcfcfc',
   '#f9f9f9',
   '#f0f0f0',
@@ -16,10 +18,12 @@ export const NEUTRAL_SOLIDS_LIGHT = [
   '#818181',
   '#636363',
   '#1f1f1f',
+  '#000000',
 ] as const;
 
 export const NEUTRAL_SOLIDS_DARK = [
-  '#000',
+  '#000000',
+  '#0a0a0a',
   '#121212',
   '#1f1f1f',
   '#282828',
@@ -30,7 +34,8 @@ export const NEUTRAL_SOLIDS_DARK = [
   '#6d6d6d',
   '#7a7a7a',
   '#b3b3b3',
-  '#eee',
+  '#eeeeee',
+  '#ffffff',
 ] as const;
 
 export function neutralSolidsForMode(isDark: boolean): readonly string[] {
@@ -39,12 +44,12 @@ export function neutralSolidsForMode(isDark: boolean): readonly string[] {
 
 export type CssVarMap = Record<string, string>;
 
-/** Emits neutral ramp CSS vars `--gray-1`…`--gray-12` for the active engine theme (`playgroundIsDark` / `data-mode`). */
+/** Emits `--neutral-0`…`--neutral-13` for the active engine theme (`playgroundIsDark` / `data-mode`). */
 export function buildNeutralSolidCssVars(isDark: boolean): CssVarMap {
   const solids = neutralSolidsForMode(isDark);
   const out: CssVarMap = {};
-  for (let i = 0; i < 12; i++) {
-    out[`--gray-${i + 1}`] = solids[i];
+  for (let i = 0; i < 14; i++) {
+    out[`--neutral-${i}`] = solids[i]!;
   }
   return out;
 }

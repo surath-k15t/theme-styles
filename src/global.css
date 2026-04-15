@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   BASE STYLES (Tailwind + app shell)
+   Token CSS is imported from `lib/presets/baseStyles.ts`.
+   ============================================ */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--ds-font-family-body);
+    color: var(--K15t-foreground);
+    background: var(--K15t-surface);
+    line-height: var(--ds-line-height-medium);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  [data-theme-root] {
+    min-height: 100vh;
+    background: var(--K15t-surface);
+    color: var(--K15t-foreground);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Material Symbols sizing */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

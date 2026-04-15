@@ -37,7 +37,7 @@ const AppIcon: React.FC<AppIconProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: hasBackground ? 'var(--ds-radius-small)' : undefined,
-        /* Well fill: chromatic step 3 — not `--ds-color-brand-100` so “Apply brand color” off does not gray it out. */
+        /* Well fill: chromatic step 3 — not `--K15t-color-brand-100` so Subtle usage does not gray it out. */
         background: hasBackground ? 'var(--chromatic-step-3)' : undefined,
         fontSize: iconType === 'emoji' ? iconRenderSize : undefined,
         flexShrink: 0,
@@ -82,11 +82,12 @@ const AppIcon: React.FC<AppIconProps> = ({
 };
 
 const AppCards: React.FC = () => {
-  const { preset, spacingScheme, cardLayout: layout, iconSize, panelBackgroundMode, mode } = useTheme();
+  const { preset, spacingScheme, cardLayout: layout, iconSize, panelBackgroundMode, mode, colorCoverage } = useTheme();
   const config = presets[preset];
   const s = config.styles;
   const navigate = useNavigate();
   const transl = panelBackgroundMode === 'translucent';
+  const minimalCards = colorCoverage === 'minimal';
   const cardReadabilityShadow =
     transl && mode === 'light'
       ? '0 1px 2px rgba(0,0,0,0.14)'
@@ -145,9 +146,11 @@ const AppCards: React.FC = () => {
             style={{
               border: s.cardBorder,
               borderRadius: 'var(--ds-radius-medium)',
-              background: panelSurfaceBackground(s.cardBackground, panelBackgroundMode),
-              backdropFilter: transl ? 'blur(30px)' : s.cardBackdropFilter,
-              WebkitBackdropFilter: transl ? 'blur(30px)' : s.cardBackdropFilter,
+              background: minimalCards
+                ? s.cardBackground
+                : panelSurfaceBackground(s.cardBackground, panelBackgroundMode),
+              backdropFilter: minimalCards ? undefined : transl ? 'blur(30px)' : s.cardBackdropFilter,
+              WebkitBackdropFilter: minimalCards ? undefined : transl ? 'blur(30px)' : s.cardBackdropFilter,
               padding: cardPadding,
               cursor: 'pointer',
               transition: PANEL_SURFACE_TRANSITION,
@@ -158,6 +161,10 @@ const AppCards: React.FC = () => {
             }}
             onMouseEnter={e => {
               const el = e.currentTarget as HTMLElement;
+              if (minimalCards) {
+                el.style.background = s.cardBackgroundHover;
+                return;
+              }
               el.style.background = panelSurfaceBackground(s.cardBackgroundHover, panelBackgroundMode);
               if (s.cardBorderHover) {
                 el.style.borderColor = s.cardBorderHover;
@@ -165,6 +172,10 @@ const AppCards: React.FC = () => {
             }}
             onMouseLeave={e => {
               const el = e.currentTarget as HTMLElement;
+              if (minimalCards) {
+                el.style.background = s.cardBackground;
+                return;
+              }
               el.style.background = panelSurfaceBackground(s.cardBackground, panelBackgroundMode);
               if (s.cardBorderHover) {
                 el.style.border = s.cardBorder;

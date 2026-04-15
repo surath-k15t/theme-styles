@@ -56,8 +56,8 @@ export const ThemeSidePanel: React.FC<{
     setBannerPaddingX,
     portalBannerHeadingColor,
     setPortalBannerHeadingColor,
-    applyBrandColor,
-    setApplyBrandColor,
+    colorCoverage,
+    setColorCoverage,
     panelBackgroundMode,
     setPanelBackgroundMode,
   } = useTheme();
@@ -422,8 +422,8 @@ export const ThemeSidePanel: React.FC<{
                   showAdvanced={showAdvanced}
                   setShowAdvanced={setShowAdvanced}
                   alphaOnBg={alphaOnBg}
-                    applyBrandColor={applyBrandColor}
-                    setApplyBrandColor={setApplyBrandColor}
+                    colorCoverage={colorCoverage}
+                    setColorCoverage={setColorCoverage}
                   />
                 </CmsCollapsibleCard>
                 <CmsCollapsibleCard

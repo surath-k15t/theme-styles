@@ -1,3 +1,7 @@
+import '../../design-tokens/core-tokens.css';
+import '../../design-tokens/alias-tokens.css';
+import '../../design-tokens/theme-tokens.css';
+
 import type { PresetStyles } from './types';
 
 /* ────────────────────────────────────────────
@@ -41,41 +45,41 @@ export const baseStyles: PresetStyles = {
   // Typography: P (card descriptions, body text)
   pSize: 'var(--ds-font-size-sm)',
   pWeight: 'var(--ds-font-weight-regular)',
-  pColor: 'var(--ds-foreground-subtle)',
+  pColor: 'var(--K15t-foreground-subtle)',
 
-  portalCanvasBackground: 'var(--ds-canvas)',
-  articleCanvasBackground: 'var(--ds-canvas)',
+  portalCanvasBackground: 'var(--K15t-canvas)',
+  articleCanvasBackground: 'var(--K15t-canvas)',
 
   spacingScheme: 'standard',
   roundness: 2,
 
-  cardBorder: '1px solid var(--ds-border-brand-strong)',
-  cardBackground: 'var(--ds-surface)',
-  cardBackgroundHover: 'var(--ds-surface-hovered)',
+  cardBorder: 'var(--K15t-app-card-border)',
+  cardBackground: 'var(--K15t-app-card-background)',
+  cardBackgroundHover: 'var(--K15t-app-card-background-hover)',
   cardBorderHover: 'var(--palette-step-8)',
   iconSize: 58,
-  cardIconColor: 'var(--ds-card-icon-color)',
-  //cardIconBackground: 'var(--ds-background-neutral)',
+  cardIconColor: 'var(--K15t-card-icon-color)',
+  //cardIconBackground: 'var(--K15t-background-neutral)',
 
   sidebarPadding: '20px 0',
   contentPadding: '32px 48px',
   tocPadding: '32px 24px 32px 16px',
-  tocBoxBorder: '1px solid var(--ds-border-brand-strong)',
+  tocBoxBorder: '1px solid var(--K15t-border-brand-strong)',
   tocBoxPadding: '16px',
 
   // Page tree colors
-  sidebarItemColor: 'var(--ds-foreground-subtle)',
-  sidebarItemHoverBackground: 'var(--ds-background-neutral-subtle-hovered)',
-  sidebarSelectedColor: 'var(--theme-primary-color)',
-  sidebarSelectedBackground: 'var(--ds-background-neutral)',
-  sidebarSelectedBorder: '2px solid var(--theme-primary-color)',
+  sidebarItemColor: 'var(--K15t-foreground-subtle)',
+  sidebarItemHoverBackground: 'var(--K15t-background-neutral-subtle-hovered)',
+  sidebarSelectedColor: 'var(--chromatic-step-9)',
+  sidebarSelectedBackground: 'var(--K15t-background-neutral)',
+  sidebarSelectedBorder: '2px solid var(--chromatic-step-9)',
 
   // TOC colors
-  tocItemColor: 'var(--ds-foreground-subtle)',
-  tocItemHoverColor: 'var(--ds-foreground)',
-  tocItemHoverBackground: 'var(--ds-background-neutral-subtle-hovered)',
-  tocSelectedColor: 'var(--ds-foreground)',
-  tocSelectedBorder: '2px solid var(--theme-primary-color)',
+  tocItemColor: 'var(--K15t-foreground-subtle)',
+  tocItemHoverColor: 'var(--K15t-foreground)',
+  tocItemHoverBackground: 'var(--K15t-background-neutral-subtle-hovered)',
+  tocSelectedColor: 'var(--K15t-foreground)',
+  tocSelectedBorder: '2px solid var(--chromatic-step-9)',
 
   footerPadding: '20px 24px',
 

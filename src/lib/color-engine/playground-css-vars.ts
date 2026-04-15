@@ -1,4 +1,6 @@
 import { converter, parse, wcagContrast } from 'culori';
+import type { ColorUsageMode } from '@/lib/colorCoverage';
+import { usesStandardPalette } from '@/lib/colorCoverage';
 import { generateDarkScale, generateScale } from './generate-scale';
 import { neutralSolidsForMode } from './neutral-ramp';
 
@@ -44,28 +46,6 @@ function onColor(bgHex: string): string {
   return onWhite * ON_SOLID_LIGHT_FOREGROUND_WCAG_BIAS >= onBlack ? '#ffffff' : '#111111';
 }
 
-/**
- * Portal copy uses the fixed neutral scale from `neutral-ramp.ts` (injected as `--gray-*` on the theme root):
- * - Text (step 11) → `--gray-11` — paragraphs, card descriptions, footer tagline (inherits), etc.
- * - Text+ (step 12) → `--gray-12` — headings, banner H1, header nav/chrome (`--theme-header-text-color`)
- * `scaleIsDark` must match `data-mode` on `data-theme-root` (both driven from the same state in ThemeContext).
- */
-function neutralPortalTextOverrides(): CssVarMap {
-  const text = 'var(--gray-11)';
-  const textPlus = 'var(--gray-12)';
-  return {
-    '--neutral-text': text,
-    '--neutral-text-plus': textPlus,
-    '--theme-header-text-color': textPlus,
-    '--theme-banner-text-color': textPlus,
-    '--theme-footer-text-color': text,
-    '--theme-text-color': text,
-    '--theme-headline-color': textPlus,
-    '--ds-foreground': text,
-    '--ds-foreground-subtle': text,
-  };
-}
-
 function paletteStepVars(diagnostics: { hex: string }[]): CssVarMap {
   const out: CssVarMap = {};
   for (let i = 0; i < 12; i++) {
@@ -84,44 +64,34 @@ function chromaticStepVars(diagnostics: { hex: string }[]): CssVarMap {
 }
 
 /**
- * Injects `--palette-step-*` (chromatic or neutral copy) plus on-primary and portal text overrides.
+ * Injects `--palette-step-*` (chromatic or neutral copy) and contrast picks that depend on hex math.
  *
- * `applyBrandColor`: when false, `--palette-step-*` mirror the neutral scale; semantic tokens that map
- * through `--ds-color-brand-*` (e.g. `--ds-surface`, `--ds-surface-hovered`) follow that ramp.
+ * **Standard**: chromatic ramp on `--palette-step-*`.
+ *
+ * **Subtle / Minimal**: `--palette-step-*` mirror neutrals; chromatic ramp on `--chromatic-step-*`.
+ * Usage-specific canvas/cards/search/logo colors live in `src/design-tokens/alias-tokens.css` under `[data-color-usage]`.
  */
 export function buildPlaygroundCssVars(
   baseHex: string,
   scaleIsDark: boolean,
-  applyBrandColor = true,
+  colorUsage: ColorUsageMode = 'standard',
 ): CssVarMap {
   const { diagnostics } = scaleIsDark ? generateDarkScale(baseHex) : generateScale(baseHex);
   if (diagnostics.length < 12) return {};
 
   const neutral = neutralSolidsForMode(scaleIsDark);
-  const paletteDiagnostics = applyBrandColor
+  const paletteDiagnostics = usesStandardPalette(colorUsage)
     ? diagnostics
     : neutral.map(hex => ({ hex }));
 
-  const s9 = applyBrandColor ? diagnostics[8].hex : neutral[8];
-  const neutralStep3Hex = neutral[2];
+  const chromaticStep9Hex = diagnostics[8]!.hex;
+  /** Neutral step used for search fill contrast — index 3 on the 14-step ramp. */
+  const neutralStep3Hex = neutral[3]!;
 
   return {
     ...chromaticStepVars(diagnostics),
     ...paletteStepVars(paletteDiagnostics),
-    /*
-     * Page canvas (`--ds-canvas` → portal/article bg): accent step 1 when brand is on; when off,
-     * fixed white (light) or neutral ramp step 1 (dark) so the page floor is not chromatic.
-     */
-    '--ds-canvas': applyBrandColor
-      ? 'var(--palette-step-1)'
-      : scaleIsDark
-        ? 'var(--gray-1)'
-        : '#ffffff',
-    '--theme-on-primary-color': onColor(s9),
-    /* “Search all” when brand color off: fill is `--gray-3` — contrast vs that hex. */
+    '--theme-on-primary-color': onColor(chromaticStep9Hex),
     '--theme-on-search-neutral-fill': onColor(neutralStep3Hex),
-    ...neutralPortalTextOverrides(),
-    /* Showcase / user icons — always chromatic; not affected by `applyBrandColor` (palette may be neutral). */
-    '--ds-card-icon-color': scaleIsDark ? 'var(--chromatic-step-11)' : 'var(--chromatic-step-9)',
   };
 }

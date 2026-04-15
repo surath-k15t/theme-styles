@@ -19,8 +19,8 @@ const Logo: React.FC = () => {
           width: 28,
           height: 28,
           borderRadius: 'var(--ds-radius-small)',
-          background: 'var(--theme-primary-color)',
-          color: 'var(--theme-on-primary-color)',
+          background: 'var(--K15t-header-logo-badge-fill)',
+          color: 'var(--K15t-header-logo-badge-fg)',
           fontSize: 11,
           fontWeight: 700,
           fontFamily: 'var(--ds-font-family-headline)',
@@ -117,7 +117,7 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
     ? onDarkBanner
       ? '1px solid rgba(255,255,255,0.14)'
       : '1px solid rgba(0,0,0,0.08)'
-    : s.headerBorderBottom;
+    : 'var(--theme-header-border-bottom, none)';
 
   const linkReadabilityShadow = bannerDrivenNav
     ? onDarkBanner

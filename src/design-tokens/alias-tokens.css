@@ -1,0 +1,207 @@
+/* LAYER 2: K15t aliases — tokens that stay the same for every `data-color-usage`. */
+[data-theme-root] {
+  --K15t-surface: var(--K15t-color-brand-25);
+  --K15t-surface-hovered: var(--K15t-color-brand-50);
+  --K15t-surface-raised: var(--K15t-color-brand-25);
+  --K15t-surface-raised-hovered: var(--K15t-color-brand-50);
+
+  --K15t-background-neutral: var(--K15t-color-neutral-50);
+  --K15t-background-neutral-hovered: var(--K15t-color-neutral-75);
+  --K15t-background-neutral-subtle: transparent;
+  --K15t-background-neutral-subtle-hovered: var(--K15t-color-neutral-25);
+  --K15t-background-neutral-strong: var(--K15t-color-neutral-700);
+
+  --K15t-background-brand-strong: var(--K15t-color-brand-600);
+  --K15t-background-information: var(--K15t-color-brand-50);
+
+  --K15t-border-neutral: var(--K15t-color-neutral-100);
+  --K15t-border-neutral-hovered: var(--K15t-color-neutral-400);
+  --K15t-border-neutral-strong: var(--K15t-color-neutral-400);
+  --K15t-border-neutral-strong-hovered: var(--K15t-color-neutral-500);
+
+  --K15t-foreground-on-strong: var(--K15t-color-neutral-0);
+
+  --K15t-icon-brand: var(--K15t-color-brand-700);
+  --K15t-icon-brand-muted: var(--K15t-color-brand-500);
+  --K15t-icon-information: var(--K15t-icon-brand);
+
+  /* App cards: width + shorthand; `--K15t-app-card-border-color` and fills are set per usage. */
+  --K15t-app-card-border-width: 1px;
+  --K15t-app-card-border: var(--K15t-app-card-border-width) solid var(--K15t-app-card-border-color);
+
+  /* Portal chrome — defaults (not floating-control slots); brand steps come from the color engine. */
+  --theme-text-color: var(--neutral-11);
+  --theme-headline-color: var(--neutral-12);
+  --theme-header-text-color: var(--neutral-12);
+  --theme-banner-text-color: var(--neutral-12);
+  --theme-footer-text-color: var(--neutral-11);
+  --theme-header-background-color: var(--K15t-color-brand-50);
+  --theme-header-border-bottom: none;
+  --theme-banner-background-color: var(--K15t-color-brand-25);
+  --theme-footer-background-color: var(--K15t-color-brand-50);
+
+  /* Semantic foreground / links — chromatic scale from engine (not `--theme-primary-*`). */
+  --K15t-foreground: var(--theme-text-color, var(--K15t-color-neutral-900));
+  --K15t-foreground-subtle: var(--theme-text-color, var(--K15t-color-neutral-300));
+  --K15t-foreground-brand: var(--K15t-icon-brand);
+  --K15t-link: var(--K15t-icon-brand);
+}
+
+/* Color usage (`data-color-usage`) — canvas, cards, search/logo fills; engine injects steps + on-color vars. */
+[data-theme-root][data-color-usage="standard"] {
+  --K15t-border-brand: var(--K15t-color-brand-300);
+  --K15t-border-brand-hovered: var(--K15t-color-brand-400);
+  --K15t-border-brand-strong: var(--K15t-color-brand-200);
+  --K15t-border-brand-strong-hovered: var(--K15t-color-brand-500);
+
+  --K15t-canvas: var(--K15t-color-brand-25);
+  --K15t-app-card-background: var(--K15t-surface);
+  --K15t-app-card-background-hover: var(--K15t-surface-hovered);
+  --K15t-app-card-border-color: var(--K15t-border-brand-strong);
+  --K15t-search-brand-button-fill: var(--chromatic-step-9);
+  --K15t-header-logo-badge-fill: var(--chromatic-step-9);
+  --K15t-header-logo-badge-fg: var(--theme-on-primary-color);
+}
+
+[data-theme-root][data-color-usage="subtle"] {
+  --K15t-canvas: var(--K15t-color-neutral-0);
+  --K15t-app-card-background: var(--K15t-surface);
+  --K15t-app-card-background-hover: var(--K15t-surface-hovered);
+  --K15t-app-card-border-color: var(--K15t-color-neutral-300);
+  --K15t-border-brand: var(--K15t-color-neutral-300);
+  --K15t-border-brand-hovered: var(--K15t-color-neutral-400);
+  --K15t-border-brand-strong: var(--K15t-color-neutral-200);
+  --K15t-border-brand-strong-hovered: var(--K15t-color-neutral-500);
+  --K15t-search-brand-button-fill: var(--chromatic-step-9);
+}
+
+[data-theme-root][data-color-usage="minimal"] {
+  --K15t-border-brand: var(--K15t-color-neutral-300);
+  --K15t-border-brand-hovered: var(--K15t-color-neutral-400);
+  --K15t-border-brand-strong: var(--K15t-color-neutral-200);
+  --K15t-border-brand-strong-hovered: var(--K15t-color-neutral-500);
+  --K15t-search-brand-button-fill: var(--chromatic-step-9);
+  --theme-header-background-color: var(--neutral-1);
+  --theme-header-border-bottom: var(--K15t-app-card-border-width) solid var(--neutral-3);
+}
+
+[data-theme-root][data-color-usage="minimal"][data-mode="light"] {
+  --K15t-canvas: var(--K15t-color-neutral-25);
+  --K15t-app-card-background: var(--K15t-color-neutral-0);
+  --K15t-app-card-background-hover: var(--K15t-color-neutral-0);
+  --K15t-app-card-border-color: var(--K15t-color-neutral-0);
+}
+
+[data-theme-root][data-color-usage="minimal"][data-mode="dark"] {
+  --K15t-canvas: var(--K15t-color-neutral-0);
+  --K15t-app-card-background: var(--K15t-color-neutral-50);
+  --K15t-app-card-background-hover: var(--K15t-color-neutral-50);
+  --K15t-app-card-border-color: var(--K15t-color-neutral-50);
+}
+
+[data-theme-root][data-color-usage="subtle"][data-mode="light"],
+[data-theme-root][data-color-usage="minimal"][data-mode="light"] {
+  --K15t-header-logo-badge-fill: var(--neutral-10);
+  --K15t-header-logo-badge-fg: var(--neutral-1);
+}
+
+[data-theme-root][data-color-usage="subtle"][data-mode="dark"],
+[data-theme-root][data-color-usage="minimal"][data-mode="dark"] {
+  --K15t-header-logo-badge-fill: var(--neutral-8);
+  --K15t-header-logo-badge-fg: var(--neutral-12);
+}
+
+/* Light mode: alpha ramp + solids reference engine `--neutral-*` on `data-theme-root`. */
+[data-theme-root][data-mode="light"] {
+  --gray-a1: #00000003;
+  --gray-a2: #00000006;
+  --gray-a3: #0000000f;
+  --gray-a4: #00000017;
+  --gray-a5: #0000001e;
+  --gray-a6: #00000026;
+  --gray-a7: #00000031;
+  --gray-a8: #00000044;
+  --gray-a9: #00000073;
+  --gray-a10: #0000007e;
+  --gray-a11: #0000009c;
+  --gray-a12: #000000e0;
+
+  --gray-contrast: #ffffff;
+  --gray-surface: #ffffffcc;
+  --gray-indicator: var(--neutral-9);
+  --gray-track: var(--neutral-9);
+
+  --K15t-card-icon-color: var(--chromatic-step-9);
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+  @media (color-gamut: p3) {
+    [data-theme-root][data-mode="light"] {
+      --gray-a1: color(display-p3 0 0 0 / 0.0118);
+      --gray-a2: color(display-p3 0 0 0 / 0.0235);
+      --gray-a3: color(display-p3 0 0 0 / 0.0588);
+      --gray-a4: color(display-p3 0 0 0 / 0.0902);
+      --gray-a5: color(display-p3 0 0 0 / 0.1176);
+      --gray-a6: color(display-p3 0 0 0 / 0.149);
+      --gray-a7: color(display-p3 0 0 0 / 0.1922);
+      --gray-a8: color(display-p3 0 0 0 / 0.2667);
+      --gray-a9: color(display-p3 0 0 0 / 0.451);
+      --gray-a10: color(display-p3 0 0 0 / 0.4941);
+      --gray-a11: color(display-p3 0 0 0 / 0.6118);
+      --gray-a12: color(display-p3 0 0 0 / 0.8784);
+
+      --gray-contrast: #ffffff;
+      --gray-surface: color(display-p3 1 1 1 / 80%);
+      --gray-indicator: oklch(63.9% 0 none);
+      --gray-track: oklch(63.9% 0 none);
+    }
+  }
+}
+
+/* Dark mode: alpha ramp; default app surface uses neutral (not chromatic step 1). */
+[data-theme-root][data-mode="dark"] {
+  --gray-a1: #00000000;
+  --gray-a2: #ffffff12;
+  --gray-a3: #ffffff1f;
+  --gray-a4: #ffffff28;
+  --gray-a5: #ffffff30;
+  --gray-a6: #ffffff3a;
+  --gray-a7: #ffffff47;
+  --gray-a8: #ffffff60;
+  --gray-a9: #ffffff6d;
+  --gray-a10: #ffffff7a;
+  --gray-a11: #ffffffb3;
+  --gray-a12: #ffffffee;
+
+  --gray-contrast: #ffffff;
+  --gray-surface: rgba(0, 0, 0, 0.05);
+  --gray-indicator: var(--neutral-9);
+  --gray-track: var(--neutral-9);
+
+  --K15t-surface: var(--K15t-color-neutral-25);
+  --K15t-card-icon-color: var(--chromatic-step-11);
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+  @media (color-gamut: p3) {
+    [data-theme-root][data-mode="dark"] {
+      --gray-a1: color(display-p3 0 0 0 / 0);
+      --gray-a2: color(display-p3 1 1 1 / 0.0706);
+      --gray-a3: color(display-p3 1 1 1 / 0.1216);
+      --gray-a4: color(display-p3 1 1 1 / 0.1569);
+      --gray-a5: color(display-p3 1 1 1 / 0.1882);
+      --gray-a6: color(display-p3 1 1 1 / 0.2275);
+      --gray-a7: color(display-p3 1 1 1 / 0.2784);
+      --gray-a8: color(display-p3 1 1 1 / 0.3765);
+      --gray-a9: color(display-p3 1 1 1 / 0.4275);
+      --gray-a10: color(display-p3 1 1 1 / 0.4784);
+      --gray-a11: color(display-p3 1 1 1 / 0.702);
+      --gray-a12: color(display-p3 1 1 1 / 0.9333);
+
+      --gray-contrast: #ffffff;
+      --gray-surface: color(display-p3 0 0 0 / 5%);
+      --gray-indicator: oklch(53.4% 0 none);
+      --gray-track: oklch(53.4% 0 none);
+    }
+  }
+}

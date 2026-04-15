@@ -147,7 +147,7 @@ export interface PresetConfig {
    * Controls how the banner background is rendered:
    * - 'none'     — blends with the portal canvas (no distinct banner bg)
    * - 'colored'  — solid/custom color set via `styles.bannerBackground`
-   * - 'gradient' — flowing gradient from `--ds-color-brand-100|400|700` (palette steps 3/6/9)
+   * - 'gradient' — flowing gradient from `--K15t-color-brand-100|400|700` (palette steps 3/6/9)
    * - 'image'    — full-width decorative image (set via `bannerImage`)
    */
   bannerStyle: 'none' | 'colored' | 'gradient' | 'image';

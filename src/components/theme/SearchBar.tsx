@@ -16,18 +16,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
   showDropdown = true,
   boxShadow = '0 4px 20px rgba(0,0,0,0.10)',
 }) => {
-  const { preset, applyBrandColor, panelBackgroundMode, mode } = useTheme();
+  const { preset, panelBackgroundMode, mode } = useTheme();
   const s = presets[preset].styles;
   const transl = panelBackgroundMode === 'translucent';
 
-  /** Foreground for the trailing “Search all” + chevron. */
+  /** Foreground for the trailing “Search all” + chevron (chromatic fill uses on-primary in both coverage modes). */
   const searchTrailingForeground =
     s.searchButtonTextColor ??
-    (s.searchButtonBrand
-      ? applyBrandColor
-        ? 'var(--theme-on-primary-color)'
-        : 'var(--theme-on-search-neutral-fill)'
-      : 'var(--ds-foreground)');
+    (s.searchButtonBrand ? 'var(--theme-on-primary-color)' : 'var(--K15t-foreground)');
 
   const fgReadabilityShadow =
     transl && mode === 'light'
@@ -44,10 +40,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
     padding: '0 16px',
     margin: 0,
     background: s.searchButtonBrand
-      ? applyBrandColor
-        ? 'var(--theme-primary-color)'
-        : 'var(--gray-3)'
-      : 'var(--ds-background-neutral)',
+      ? 'var(--K15t-search-brand-button-fill)'
+      : 'var(--K15t-background-neutral)',
     color: searchTrailingForeground,
     border: 'none',
     borderLeft: 'none',
@@ -65,13 +59,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   // Gradient border technique: paint the border gradient via background-clip
   // when searchBorderGradient is set. The fill sits in padding-box, the gradient
   // in border-box — a transparent border lets the gradient show through.
-  const glassFill = s.searchGlassBackground ?? 'var(--ds-surface)';
+  const glassFill = s.searchGlassBackground ?? 'var(--K15t-surface)';
   const wrapperBackground = s.searchBorderGradient
     ? `linear-gradient(${glassFill}, ${glassFill}) padding-box, ${s.searchBorderGradient} border-box`
     : glassFill;
   const translucentNeutralSearchBorder =
     transl && !s.searchBorderGradient
-      ? `1px solid color-mix(in srgb, var(--gray-${mode === 'dark' ? '12' : '1'}) 25%, transparent)`
+      ? `1px solid color-mix(in srgb, var(--neutral-${mode === 'dark' ? '12' : '1'}) 25%, transparent)`
       : undefined;
 
   /** Solid panel mode: fixed chrome on the pill (translucent keeps neutral mix above). */
@@ -84,7 +78,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const wrapperBorder = s.searchBorderGradient
     ? '2px solid transparent'
-    : translucentNeutralSearchBorder ?? solidPanelSearchBorder ?? s.searchBorder ?? '1px solid var(--ds-border-neutral)';
+    : translucentNeutralSearchBorder ?? solidPanelSearchBorder ?? s.searchBorder ?? '1px solid var(--K15t-border-neutral)';
 
   const outerBackground = s.searchBorderGradient
     ? wrapperBackground
@@ -114,7 +108,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         style={{
           fontSize: 18,
           padding: '0 12px',
-          color: s.searchForegroundColor ?? 'var(--ds-foreground-subtle)',
+          color: s.searchForegroundColor ?? 'var(--K15t-foreground-subtle)',
           //textShadow: fgReadabilityShadow,
           flexShrink: 0,
           display: 'flex',
@@ -128,7 +122,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <input
         type="text"
         placeholder={placeholder}
-        className={transl && mode === 'light' ? 'placeholder:text-[var(--gray-11)]' : undefined}
+        className={transl && mode === 'light' ? 'placeholder:text-[var(--neutral-11)]' : undefined}
         style={{
           flex: 1,
           border: 'none',
@@ -137,7 +131,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           fontSize: 'var(--ds-font-size-md)',
           fontFamily: 'var(--ds-font-family-body)',
           fontWeight: 500,
-          color: s.searchForegroundColor ?? 'var(--ds-foreground)',
+          color: s.searchForegroundColor ?? 'var(--K15t-foreground)',
           //textShadow: fgReadabilityShadow,
           background: 'transparent',
           minWidth: 0,
