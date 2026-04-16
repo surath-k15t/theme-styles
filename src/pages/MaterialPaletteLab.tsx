@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { argbFromHex, Hct } from '@material/material-color-utilities';
 import {
   MATERIAL_LIGHT_END_TONE,
+  materialAllToneShades,
   materialPinnedPrimaryStep,
   materialPrimary12Step,
   materialToneAtDisplayStep,
@@ -58,6 +59,7 @@ const MaterialPaletteLab: React.FC = () => {
 
   const primaryScale = primaryScaleResult?.scale ?? [];
   const primaryPinnedStep = primaryArgb != null ? materialPinnedPrimaryStep(primaryHex) : null;
+  const allToneShades = useMemo(() => materialAllToneShades(primaryHex), [primaryHex]);
 
   const primaryColorInputValue = /^#[0-9a-fA-F]{6}$/.test(primaryHex) ? primaryHex : '#6750a4';
 
@@ -106,7 +108,7 @@ const MaterialPaletteLab: React.FC = () => {
         <p style={{ margin: '0 0 24px', fontSize: 14, color: '#546e7a', lineHeight: 1.65, maxWidth: 820 }}>
           Single primary ramp (same as the app). Step <strong>1</strong> uses HCT tone <strong>T{MATERIAL_LIGHT_END_TONE}</strong>{' '}
           so the light end reads almost white but keeps the key hue; steps <strong>2–12</strong> follow{' '}
-          <strong>T86…T6</strong>. M2-style shade labels are a reading aid only. Your exact primary hex is pinned at step{' '}
+          <strong>T86…T6</strong>. M2-style shade labels are a reading aid only. Your exact primary hex is pinned at fixed step{' '}
           {primaryPinnedStep ?? '—'}.
         </p>
 
@@ -155,7 +157,7 @@ const MaterialPaletteLab: React.FC = () => {
         </Panel>
 
         {sourceHct && primaryScale.length === 12 ? (
-          <Panel style={{ marginBottom: 0 }}>
+          <Panel style={{ marginBottom: 24 }}>
             <div style={sectionOverline}>Ramp</div>
             <p style={{ margin: '0 0 16px', fontSize: 13, color: '#757575' }}>
               Source tonal curve + exact primary pin (light ordering).
@@ -167,10 +169,74 @@ const MaterialPaletteLab: React.FC = () => {
             </div>
           </Panel>
         ) : (
-          <Panel>
+          <Panel style={{ marginBottom: 24 }}>
             <span style={{ fontSize: 14, color: '#c62828' }}>Enter a valid primary hex (#RRGGBB).</span>
           </Panel>
         )}
+
+        {allToneShades.length > 0 ? (
+          <Panel style={{ marginBottom: 0 }}>
+            <div style={sectionOverline}>All Material tones</div>
+            <p style={{ margin: '0 0 16px', fontSize: 13, color: '#757575' }}>
+              Full source tonal palette <strong>T100 → T0</strong>. Click any shade to set it as the active color.
+            </p>
+            <div
+              role="group"
+              aria-label="All generated Material tones"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
+                gap: 8,
+              }}
+            >
+              {allToneShades.map(({ tone, hex }) => {
+                const selected = hex.toLowerCase() === primaryColorInputValue.toLowerCase();
+                return (
+                  <button
+                    key={`tone-${tone}`}
+                    type="button"
+                    onClick={() => setPrimaryHex(hex)}
+                    title={`T${tone} — ${hex}`}
+                    style={{
+                      border: selected ? '2px solid #0d47a1' : '1px solid #bdbdbd',
+                      borderRadius: 2,
+                      padding: 0,
+                      cursor: 'pointer',
+                      background: '#fafafa',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div style={{ height: 26, background: hex }} />
+                    <div
+                      style={{
+                        padding: '4px 2px 5px',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: '#616161',
+                        lineHeight: 1.1,
+                        fontFamily: 'ui-monospace, monospace',
+                      }}
+                    >
+                      <div>T{tone}</div>
+                      <div
+                        style={{
+                          marginTop: 2,
+                          fontSize: 9,
+                          fontWeight: 500,
+                          color: '#757575',
+                          lineHeight: 1.15,
+                          wordBreak: 'break-all',
+                        }}
+                      >
+                        {hex}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </Panel>
+        ) : null}
       </div>
     </div>
   );

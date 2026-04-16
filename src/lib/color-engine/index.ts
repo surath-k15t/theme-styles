@@ -8,6 +8,7 @@ export {
 } from './neutral-ramp';
 export { buildPlaygroundCssVars } from './playground-css-vars';
 export {
+  materialAllToneShades,
   MATERIAL_LIGHT_END_TONE,
   MATERIAL_TONAL_STOPS,
   materialKeyColorStep,

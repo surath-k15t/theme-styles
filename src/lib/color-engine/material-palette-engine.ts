@@ -14,10 +14,15 @@ const toOklch = converter('oklch');
  * Step 1 (lightest in light mode) uses {@link MATERIAL_LIGHT_END_TONE} instead of T94 so the swatch
  * reads almost white while keeping the palette’s hue/chroma.
  */
-export const MATERIAL_TONAL_STOPS = [6, 14, 22, 30, 38, 46, 54, 62, 70, 78, 86, 94] as const;
+export const MATERIAL_TONAL_STOPS = [24, 44, 53, 30, 70, 82, 88, 91, 93, 95, 97, 99] as const;
 
 /** HCT tone for ramp step 1 in light ordering — near-white with a hint of the key color. */
 export const MATERIAL_LIGHT_END_TONE = 98;
+
+export interface MaterialToneShade {
+  tone: number;
+  hex: string;
+}
 
 function parseSourceArgb(inputHex: string): number | null {
   const raw = inputHex.trim();
@@ -30,31 +35,15 @@ function parseSourceArgb(inputHex: string): number | null {
   }
 }
 
-function nearestMaterialToneIndex(seedTone: number): number {
-  let bestIdx = 0;
-  let bestDist = Infinity;
-  for (let i = 0; i < MATERIAL_TONAL_STOPS.length; i++) {
-    const t = MATERIAL_TONAL_STOPS[i]!;
-    const d = Math.abs(t - seedTone);
-    if (d < bestDist) {
-      bestDist = d;
-      bestIdx = i;
-    }
-  }
-  return bestIdx;
-}
+/** Fixed 1-based ramp slot where the exact user primary hex is always pinned. */
+export const MATERIAL_PRIMARY_PINNED_STEP = 9;
 
 /**
- * 1-based ramp slot (same in light and dark) where the **exact user hex** is pinned: nearest
- * {@link MATERIAL_TONAL_STOPS} to the seed’s HCT tone, using light-style ordering (step 1 = lightest).
- * Primary UI color always references this step.
+ * 1-based ramp slot (same in light and dark) where the **exact user hex** is pinned.
+ * This is fixed so primary UI tokens always use the chosen brand color at a stable step.
  */
-export function materialPinnedPrimaryStep(inputHex: string): number {
-  const argb = parseSourceArgb(inputHex);
-  if (argb == null) return 8;
-  const seedTone = Hct.fromInt(argb).tone;
-  const j = nearestMaterialToneIndex(seedTone);
-  return MATERIAL_TONAL_STOPS.length - j;
+export function materialPinnedPrimaryStep(_inputHex: string): number {
+  return MATERIAL_PRIMARY_PINNED_STEP;
 }
 
 /** @deprecated Use {@link materialPinnedPrimaryStep}; `isDark` is ignored (pin is mode-agnostic). */
@@ -91,6 +80,18 @@ export function materialSeedHctTone(inputHex: string): number | null {
  */
 function primaryPaletteFromSourceArgb(sourceArgb: number) {
   return TonalPalette.fromInt(sourceArgb);
+}
+
+/** Full Material source tonal shades (T0…T100), ordered light → dark for easy picking. */
+export function materialAllToneShades(inputHex: string): MaterialToneShade[] {
+  const sourceArgb = parseSourceArgb(inputHex);
+  if (sourceArgb == null) return [];
+  const primary = primaryPaletteFromSourceArgb(sourceArgb);
+  const shades: MaterialToneShade[] = [];
+  for (let tone = 100; tone >= 0; tone--) {
+    shades.push({ tone, hex: hexFromArgb(primary.tone(tone)) });
+  }
+  return shades;
 }
 
 function toneForStep(stepIndex: number, mode: 'light' | 'dark'): number {

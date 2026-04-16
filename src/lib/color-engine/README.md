@@ -1,6 +1,6 @@
 # Color engine
 
-**Material 3** for `data-theme-root`: **12** tones **T6–T94** on [`TonalPalette.fromInt`](https://github.com/material-foundation/material-color-utilities) (seed), then the **exact user hex** is **pinned** at {@link materialPinnedPrimaryStep} (nearest stop to the seed HCT tone). **`--theme-primary-color`**, **`--ds-color-brand-700`**, and card icon use that step. **`Scheme`** still supplies **`--theme-on-primary-color`**. Neutrals → **`--gray-*`**. **`alphaVariantMatchingSolid`** (Culori) for translucent UI.
+**Material 3** for `data-theme-root`: **12** tones **T6–T94** on [`TonalPalette.fromInt`](https://github.com/material-foundation/material-color-utilities) (seed), then the **exact user hex** is **pinned** at a fixed step via {@link materialPinnedPrimaryStep}. **`--theme-primary-color`**, **`--ds-color-brand-700`**, and card icon use that step. **`Scheme`** still supplies **`--theme-on-primary-color`**. Neutrals → **`--gray-*`**. **`alphaVariantMatchingSolid`** (Culori) for translucent UI.
 
 ## Layout
 

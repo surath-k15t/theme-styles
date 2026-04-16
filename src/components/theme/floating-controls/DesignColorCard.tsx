@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import {
+  materialAllToneShades,
   materialPinnedPrimaryStep,
   materialSeedHctTone,
   materialToneAtDisplayStep,
@@ -83,6 +84,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
     () => (isDark ? diagnostics : [...diagnostics].reverse()),
     [diagnostics, isDark],
   );
+  const allToneShades = useMemo(() => materialAllToneShades(hex), [hex]);
 
   return (
   <>
@@ -316,6 +318,72 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
           </div>
         </div>
 
+        <div style={{ marginTop: SECTION_GAP }}>
+          <div
+            style={{
+              fontWeight: 600,
+              fontSize: 10,
+              color: panelMuted,
+              marginBottom: 8,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}
+          >
+            All generated shades (T100 to T0)
+          </div>
+          <div
+            role="group"
+            aria-label="All generated Material shades; click a swatch to use that shade"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(10, minmax(0, 1fr))',
+              gap: 6,
+            }}
+          >
+            {allToneShades.map(({ tone, hex: shadeHex }) => {
+              const selected = shadeHex.toLowerCase() === hex.toLowerCase();
+              return (
+                <button
+                  key={tone}
+                  type="button"
+                  title={`${shadeHex} — T${tone}`}
+                  onClick={() => {
+                    setPlaygroundHex(shadeHex);
+                    setInputValue(shadeHex);
+                  }}
+                  style={{
+                    border: selected
+                      ? isDark
+                        ? '2px solid #fafafa'
+                        : '2px solid #18181b'
+                      : `1px solid ${panelBorder}`,
+                    borderRadius: 6,
+                    padding: 0,
+                    margin: 0,
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ height: 26, background: shadeHex }} />
+                  <div
+                    style={{
+                      padding: '3px 2px',
+                      fontSize: 9,
+                      fontWeight: 600,
+                      lineHeight: 1.1,
+                      color: panelMuted,
+                      fontFamily: "'PT Mono', monospace",
+                    }}
+                  >
+                    T{tone}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Advanced — same block as Brand color (no rule above) */}
         <div style={{ marginTop: SECTION_GAP }}>
           <CmsToggleRow
@@ -333,8 +401,6 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
                 border: `1px solid ${panelBorder}`,
                 padding: 12,
                 marginTop: 12,
-                maxHeight: 220,
-                overflowY: 'auto',
                 color: panelFg,
               }}
             >
