@@ -1,6 +1,4 @@
 import { converter, parse, wcagContrast } from 'culori';
-import type { ColorUsageMode } from '@/lib/colorCoverage';
-import { usesStandardPalette } from '@/lib/colorCoverage';
 import { generateDarkScale, generateScale } from './generate-scale';
 import { neutralSolidsForMode } from './neutral-ramp';
 
@@ -64,25 +62,17 @@ function chromaticStepVars(diagnostics: { hex: string }[]): CssVarMap {
 }
 
 /**
- * Injects `--palette-step-*` (chromatic or neutral copy) and contrast picks that depend on hex math.
- *
- * **Standard**: chromatic ramp on `--palette-step-*`.
- *
- * **Subtle / Minimal**: `--palette-step-*` mirror neutrals; chromatic ramp on `--chromatic-step-*`.
- * Usage-specific canvas/cards/search/logo colors live in `src/design-tokens/alias-tokens.css` under `[data-color-usage]`.
+ * Injects accent steps (`--palette-step-*`, `--chromatic-step-*`) and contrast picks from hex math.
+ * Color coverage is not handled here; usage behavior lives in `src/design-tokens/alias-tokens.css`.
  */
 export function buildPlaygroundCssVars(
   baseHex: string,
   scaleIsDark: boolean,
-  colorUsage: ColorUsageMode = 'standard',
 ): CssVarMap {
   const { diagnostics } = scaleIsDark ? generateDarkScale(baseHex) : generateScale(baseHex);
   if (diagnostics.length < 12) return {};
 
   const neutral = neutralSolidsForMode(scaleIsDark);
-  const paletteDiagnostics = usesStandardPalette(colorUsage)
-    ? diagnostics
-    : neutral.map(hex => ({ hex }));
 
   const chromaticStep9Hex = diagnostics[8]!.hex;
   /** Neutral step used for search fill contrast — index 3 on the 14-step ramp. */
@@ -90,7 +80,7 @@ export function buildPlaygroundCssVars(
 
   return {
     ...chromaticStepVars(diagnostics),
-    ...paletteStepVars(paletteDiagnostics),
+    ...paletteStepVars(diagnostics),
     '--theme-on-primary-color': onColor(chromaticStep9Hex),
     '--theme-on-search-neutral-fill': onColor(neutralStep3Hex),
   };

@@ -24,6 +24,9 @@ export interface PagesTabProps {
   setBannerPaddingX: (v: number) => void;
   portalBannerHeadingColor: PortalBannerHeadingColor;
   setPortalBannerHeadingColor: (v: PortalBannerHeadingColor) => void;
+  portalBannerSolidBackgroundHex: string | null;
+  setPortalBannerSolidBackgroundHex: (v: string | null) => void;
+  portalBannerSolidBackgroundDefaultHex: string;
 }
 
 /** Pages tab: portal page layout and banner options. */
@@ -40,6 +43,9 @@ export const PagesTab: React.FC<PagesTabProps> = ({
   setBannerPaddingX,
   portalBannerHeadingColor,
   setPortalBannerHeadingColor,
+  portalBannerSolidBackgroundHex,
+  setPortalBannerSolidBackgroundHex,
+  portalBannerSolidBackgroundDefaultHex,
 }) => {
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
@@ -219,7 +225,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div>
           <CmsFieldLabel
             title="Banner"
-            hint="The background of the portal banner — either a theme color or a custom image."
+            hint="Solid uses a flat banner fill (pick a color below). Image uses an uploaded graphic."
           />
           <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
             <button
@@ -237,7 +243,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
                 cursor: 'pointer',
               }}
             >
-              Color
+              Solid
             </button>
             <button
               type="button"
@@ -257,6 +263,59 @@ export const PagesTab: React.FC<PagesTabProps> = ({
               Image
             </button>
           </div>
+          {portalBannerStyle === 'colored' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+              <CmsFieldLabel
+                title="Banner background"
+                hint="Overrides the solid banner fill. Reset falls back to the theme default (brand tint from the color ramp)."
+              />
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10 }}>
+                <input
+                  type="color"
+                  aria-label="Banner background color"
+                  value={portalBannerSolidBackgroundHex ?? portalBannerSolidBackgroundDefaultHex}
+                  onChange={e => setPortalBannerSolidBackgroundHex(e.target.value)}
+                  style={{
+                    width: 44,
+                    height: 32,
+                    padding: 0,
+                    border: `1px solid ${CMS.border}`,
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    background: CMS.inputBg,
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    fontFamily: "'PT Mono', ui-monospace, monospace",
+                    color: CMS.text,
+                  }}
+                >
+                  {portalBannerSolidBackgroundHex
+                    ? portalBannerSolidBackgroundHex
+                    : `${portalBannerSolidBackgroundDefaultHex} (theme ramp)`}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPortalBannerSolidBackgroundHex(null)}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: 4,
+                    border: `1px solid ${CMS.border}`,
+                    background: CMS.inputBg,
+                    color: CMS.text,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Use theme default
+                </button>
+              </div>
+            </div>
+          )}
           {portalBannerStyle === 'image' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <input

@@ -56,6 +56,9 @@ export const ThemeSidePanel: React.FC<{
     setBannerPaddingX,
     portalBannerHeadingColor,
     setPortalBannerHeadingColor,
+    portalBannerSolidBackgroundHex,
+    setPortalBannerSolidBackgroundHex,
+    portalBannerSolidBackgroundDefaultHex,
     colorCoverage,
     setColorCoverage,
     panelBackgroundMode,
@@ -467,6 +470,9 @@ export const ThemeSidePanel: React.FC<{
                     setBannerPaddingX={setBannerPaddingX}
                     portalBannerHeadingColor={portalBannerHeadingColor}
                     setPortalBannerHeadingColor={setPortalBannerHeadingColor}
+                    portalBannerSolidBackgroundHex={portalBannerSolidBackgroundHex}
+                    setPortalBannerSolidBackgroundHex={setPortalBannerSolidBackgroundHex}
+                    portalBannerSolidBackgroundDefaultHex={portalBannerSolidBackgroundDefaultHex}
                   />
                 )}
 

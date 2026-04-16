@@ -16,6 +16,8 @@ const CARD_LAYOUT_SESSION_KEY = 'playground:cardLayout';
 const ICON_SIZE_SESSION_KEY = 'playground:iconSize';
 const PORTAL_BANNER_STYLE_KEY = 'playground:portalBannerStyle';
 const PORTAL_BANNER_IMAGE_KEY = 'playground:portalBannerImage';
+/** Solid banner (`colored`): optional hex override for `--theme-banner-background-color`. */
+const PORTAL_BANNER_SOLID_HEX_KEY = 'playground:portalBannerSolidBackgroundHex';
 
 /** Shipped asset (Vite `public/origin/banner.svg`) — default portal banner when no upload is stored. */
 export const DEFAULT_PORTAL_BANNER_IMAGE_SRC = '/origin/banner.svg';
@@ -99,6 +101,14 @@ function readStoredPortalBannerImage(): string | null {
   return null;
 }
 
+function readStoredPortalBannerSolidHex(): string | null {
+  if (typeof window === 'undefined') return null;
+  const raw = window.sessionStorage.getItem(PORTAL_BANNER_SOLID_HEX_KEY);
+  if (!raw) return null;
+  if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw.toLowerCase();
+  return null;
+}
+
 function readStoredBannerPaddingX(fallback: number): number {
   const fb = clampBannerPaddingX(fallback);
   if (typeof window === 'undefined') return fb;
@@ -179,6 +189,11 @@ interface ThemeContextType {
   /** Banner image: data URL from upload and/or default `/origin/banner.svg` when `portalBannerStyle === 'image'`. */
   portalBannerImage: string | null;
   setPortalBannerImage: (v: string | null) => void;
+  /** Solid banner only: custom fill hex, or null to use `--theme-banner-background-color` from tokens. */
+  portalBannerSolidBackgroundHex: string | null;
+  setPortalBannerSolidBackgroundHex: (v: string | null) => void;
+  /** Engine `--palette-step-1` for the solid-banner color input when no custom hex is stored. */
+  portalBannerSolidBackgroundDefaultHex: string;
   /** Drives portal banner top/bottom padding (same role as `PresetStyles.bannerPaddingX`). */
   bannerPaddingX: number;
   setBannerPaddingX: (v: number) => void;
@@ -240,6 +255,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [colorCoverage, setColorCoverageState] = useState<ColorUsageMode>(() => readStoredColorUsage('standard'));
   const [panelBackgroundMode, setPanelBackgroundModeState] = useState<PanelBackgroundMode>(() =>
     readStoredPanelBackgroundMode('solid'),
+  );
+  const [portalBannerSolidBackgroundHex, setPortalBannerSolidBackgroundHexState] = useState<string | null>(() =>
+    readStoredPortalBannerSolidHex(),
   );
 
   const mode: ThemeMode = playgroundIsDark ? 'dark' : 'light';
@@ -332,13 +350,28 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
+  const setPortalBannerSolidBackgroundHex = useCallback((v: string | null) => {
+    setPortalBannerSolidBackgroundHexState(v);
+    if (typeof window !== 'undefined') {
+      if (v && /^#[0-9a-fA-F]{6}$/.test(v)) {
+        window.sessionStorage.setItem(PORTAL_BANNER_SOLID_HEX_KEY, v.toLowerCase());
+      } else {
+        window.sessionStorage.removeItem(PORTAL_BANNER_SOLID_HEX_KEY);
+      }
+    }
+  }, []);
+
   const currentPreset = presets[PRESET_ID];
-  const colorEngineVars = buildColorEngineThemeVars(playgroundHex, playgroundIsDark, colorCoverage);
+  const colorEngineVars = buildColorEngineThemeVars(playgroundHex, playgroundIsDark);
+  const portalBannerSolidBackgroundDefaultHex = colorEngineVars['--palette-step-1'] ?? '#f4f5f7';
   const themeStyle = {
     ...currentPreset.cssVars,
     ...(playgroundIsDark ? currentPreset.darkCssVars : {}),
     ...colorEngineVars,
     '--theme-roundness': String(THEME_RADIUS_TIER_VALUES[themeRadiusTier]),
+    ...(portalBannerStyle === 'colored' && portalBannerSolidBackgroundHex
+      ? { '--theme-banner-background-color': portalBannerSolidBackgroundHex }
+      : {}),
   } as React.CSSProperties;
 
   return (
@@ -369,6 +402,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setPortalBannerStyle,
         portalBannerImage,
         setPortalBannerImage,
+        portalBannerSolidBackgroundHex,
+        setPortalBannerSolidBackgroundHex,
+        portalBannerSolidBackgroundDefaultHex,
         bannerPaddingX,
         setBannerPaddingX,
         portalBannerHeadingColor,

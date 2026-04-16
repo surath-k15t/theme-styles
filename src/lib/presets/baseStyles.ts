@@ -56,10 +56,10 @@ export const baseStyles: PresetStyles = {
   cardBorder: 'var(--K15t-app-card-border)',
   cardBackground: 'var(--K15t-app-card-background)',
   cardBackgroundHover: 'var(--K15t-app-card-background-hover)',
-  cardBorderHover: 'var(--palette-step-8)',
+  cardBorderHover: 'var(--K15t-app-card-border-color-hovered)',
   iconSize: 58,
   cardIconColor: 'var(--K15t-card-icon-color)',
-  //cardIconBackground: 'var(--K15t-background-neutral)',
+  cardIconBackground: 'var(--K15t-background-neutral)',
 
   sidebarPadding: '20px 0',
   contentPadding: '32px 48px',
