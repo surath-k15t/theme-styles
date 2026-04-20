@@ -102,7 +102,7 @@ export interface DesignAppearanceCardProps {
   setPanelBackgroundMode: (v: PanelBackgroundMode) => void;
 }
 
-/** Design tab — Appearance: radius, spacing, background style (aligned with Color card rhythm). */
+/** Brand tab — Appearance: radius, spacing, background style (aligned with Color card rhythm). */
 export const DesignAppearanceCard: React.FC<DesignAppearanceCardProps> = ({
   themeRadiusTier,
   setThemeRadiusTier,

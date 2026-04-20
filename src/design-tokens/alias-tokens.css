@@ -33,6 +33,14 @@
   --theme-banner-background-color: var(--K15t-color-brand-25);
   --theme-footer-background-color: var(--K15t-color-brand-50);
 
+  /* Optional overrides from app (`--theme-custom-*` on `[data-theme-root]`). Slots keep preset wiring on `var(...)`. */
+  --theme-header-background-slot: var(--theme-custom-header-bg, var(--theme-header-background-color));
+  --theme-header-text-slot: var(--theme-custom-header-text, var(--theme-header-text-color));
+  --theme-footer-background-slot: var(--theme-custom-footer-bg, var(--theme-footer-background-color));
+  --theme-footer-text-slot: var(--theme-custom-footer-text, var(--theme-footer-text-color));
+  --theme-banner-background-slot: var(--theme-custom-banner-bg, var(--theme-banner-background-color));
+  --theme-banner-text-slot: var(--theme-custom-banner-text, var(--theme-banner-text-color));
+
   --K15t-foreground: var(--K15t-color-neutral-900);
   --K15t-foreground-subtle: var(--K15t-color-neutral-800);
   --K15t-foreground-brand: var(--K15t-color-brand-700);
@@ -95,9 +103,9 @@
 }
 
 [data-theme-root][data-color-usage="minimal"][data-mode="light"] {
-  --K15t-canvas: var(--K15t-color-neutral-25);
+  --K15t-canvas: var(--K15t-color-neutral-50);
   --K15t-app-card-background: var(--K15t-color-neutral-0);
-  --K15t-app-card-background-hover: var(--K15t-color-neutral-50);
+  --K15t-app-card-background-hover: var(--K15t-color-neutral-75);
   --K15t-app-card-border-color: transparent;
   --K15t-app-card-border: 1px solid transparent;
   --K15t-app-card-border-color-hovered: transparent;

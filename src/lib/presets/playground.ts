@@ -32,6 +32,7 @@ export const playgroundPreset: PresetConfig = {
     '--theme-content-spacing':     '1rem',
   },
   darkCssVars: {},
+  advanced: false,
   styles: {
     ...baseStyles,
     roundness: 3.5,

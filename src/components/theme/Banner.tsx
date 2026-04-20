@@ -11,6 +11,8 @@ const Banner: React.FC = () => {
     bannerPaddingX,
     portalBannerHeadingColor,
     panelBackgroundMode,
+    customColorsEnabled,
+    customChrome,
   } = useTheme();
   const config = presets[preset];
   const s = config.styles;
@@ -35,7 +37,11 @@ const Banner: React.FC = () => {
   const bottomPad = bannerStyle === 'none' ? Math.round(x * 0.5) : x;
   const computedPadding = `${topPad}px 24px ${bottomPad}px`;
 
-  const bannerHeadingColorHex = portalBannerHeadingColor === 'light' ? '#ffffff' : '#0a0a0a';
+  const bannerHeadingColorHex = customColorsEnabled
+    ? customChrome.bannerText
+    : portalBannerHeadingColor === 'light'
+      ? '#ffffff'
+      : '#0a0a0a';
 
   return (
     <div

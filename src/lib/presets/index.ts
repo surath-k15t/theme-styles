@@ -1,4 +1,5 @@
 export type { PresetId, ThemeMode, PresetStyles, PresetConfig } from './types';
+export { presetAdvancedColorPanelEnabled } from './types';
 export { baseStyles } from './baseStyles';
 
 import type { PresetId, PresetConfig } from './types';

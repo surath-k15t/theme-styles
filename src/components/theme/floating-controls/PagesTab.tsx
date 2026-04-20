@@ -1,13 +1,11 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   THEME_BANNER_PADDING_X_MAX,
   THEME_BANNER_PADDING_X_MIN,
   THEME_ICON_SIZE_MAX,
   THEME_ICON_SIZE_MIN,
-  type PortalBannerHeadingColor,
-  type PortalBannerStyle,
 } from '@/lib/ThemeContext';
-import { spacingSchemes, type CardLayout } from '@/lib/presets/spacingSchemes';
+import { type CardLayout } from '@/lib/presets/spacingSchemes';
 import { CARD_LAYOUT_LABELS, CARD_LAYOUT_OPTIONS, CMS } from './constants';
 import { CmsCard, CmsFieldLabel, cmsSelectStyle } from './cms-ui';
 
@@ -16,17 +14,11 @@ export interface PagesTabProps {
   setCardLayout: (v: CardLayout) => void;
   iconSize: number;
   setIconSize: (v: number) => void;
-  portalBannerStyle: PortalBannerStyle;
-  setPortalBannerStyle: (v: PortalBannerStyle) => void;
+  setPortalBannerStyle: (v: 'image') => void;
   portalBannerImage: string | null;
   setPortalBannerImage: (v: string | null) => void;
   bannerPaddingX: number;
   setBannerPaddingX: (v: number) => void;
-  portalBannerHeadingColor: PortalBannerHeadingColor;
-  setPortalBannerHeadingColor: (v: PortalBannerHeadingColor) => void;
-  portalBannerSolidBackgroundHex: string | null;
-  setPortalBannerSolidBackgroundHex: (v: string | null) => void;
-  portalBannerSolidBackgroundDefaultHex: string;
 }
 
 /** Pages tab: portal page layout and banner options. */
@@ -35,19 +27,17 @@ export const PagesTab: React.FC<PagesTabProps> = ({
   setCardLayout,
   iconSize,
   setIconSize,
-  portalBannerStyle,
   setPortalBannerStyle,
   portalBannerImage,
   setPortalBannerImage,
   bannerPaddingX,
   setBannerPaddingX,
-  portalBannerHeadingColor,
-  setPortalBannerHeadingColor,
-  portalBannerSolidBackgroundHex,
-  setPortalBannerSolidBackgroundHex,
-  portalBannerSolidBackgroundDefaultHex,
 }) => {
   const bannerFileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setPortalBannerStyle('image');
+  }, [setPortalBannerStyle]);
 
   const onBannerFile = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,213 +170,77 @@ export const PagesTab: React.FC<PagesTabProps> = ({
             <span>{THEME_BANNER_PADDING_X_MAX}px</span>
           </div>
         </div>
-        <div style={{ marginBottom: 24 }}>
-          <CmsFieldLabel
-            title="Banner heading"
-            hint="The text color of the heading on the portal banner."
-          />
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              type="button"
-              onClick={() => setPortalBannerHeadingColor('light')}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                borderRadius: 4,
-                border: `2px solid ${portalBannerHeadingColor === 'light' ? CMS.primary : CMS.border}`,
-                background: portalBannerHeadingColor === 'light' ? 'rgba(12, 102, 228, 0.08)' : CMS.inputBg,
-                color: CMS.text,
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Light
-            </button>
-            <button
-              type="button"
-              onClick={() => setPortalBannerHeadingColor('dark')}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                borderRadius: 4,
-                border: `2px solid ${portalBannerHeadingColor === 'dark' ? CMS.primary : CMS.border}`,
-                background: portalBannerHeadingColor === 'dark' ? 'rgba(12, 102, 228, 0.08)' : CMS.inputBg,
-                color: CMS.text,
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Dark
-            </button>
-          </div>
-        </div>
         <div>
-          <CmsFieldLabel
-            title="Banner"
-            hint="Solid uses a flat banner fill (pick a color below). Image uses an uploaded graphic."
-          />
-          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-            <button
-              type="button"
-              onClick={() => setPortalBannerStyle('colored')}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                borderRadius: 4,
-                border: `2px solid ${portalBannerStyle === 'colored' ? CMS.primary : CMS.border}`,
-                background: portalBannerStyle === 'colored' ? 'rgba(12, 102, 228, 0.08)' : CMS.inputBg,
-                color: CMS.text,
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Solid
-            </button>
-            <button
-              type="button"
-              onClick={() => setPortalBannerStyle('image')}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                borderRadius: 4,
-                border: `2px solid ${portalBannerStyle === 'image' ? CMS.primary : CMS.border}`,
-                background: portalBannerStyle === 'image' ? 'rgba(12, 102, 228, 0.08)' : CMS.inputBg,
-                color: CMS.text,
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Image
-            </button>
-          </div>
-          {portalBannerStyle === 'colored' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
-              <CmsFieldLabel
-                title="Banner background"
-                hint="Overrides the solid banner fill. Reset falls back to the theme default (brand tint from the color ramp)."
-              />
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10 }}>
-                <input
-                  type="color"
-                  aria-label="Banner background color"
-                  value={portalBannerSolidBackgroundHex ?? portalBannerSolidBackgroundDefaultHex}
-                  onChange={e => setPortalBannerSolidBackgroundHex(e.target.value)}
-                  style={{
-                    width: 44,
-                    height: 32,
-                    padding: 0,
-                    border: `1px solid ${CMS.border}`,
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                    background: CMS.inputBg,
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    fontFamily: "'PT Mono', ui-monospace, monospace",
-                    color: CMS.text,
-                  }}
-                >
-                  {portalBannerSolidBackgroundHex
-                    ? portalBannerSolidBackgroundHex
-                    : `${portalBannerSolidBackgroundDefaultHex} (theme ramp)`}
-                </span>
+          <CmsFieldLabel title="Banner Image" hint="Set an image for the banner." />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <input
+              ref={bannerFileRef}
+              type="file"
+              accept="image/*"
+              onChange={onBannerFile}
+              aria-label="Upload banner image"
+              style={{ display: 'none' }}
+            />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+              <button
+                type="button"
+                onClick={() => bannerFileRef.current?.click()}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: 4,
+                  border: `1px solid ${CMS.border}`,
+                  background: CMS.inputBg,
+                  color: CMS.text,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontFamily: "'Inter', ui-sans-serif, sans-serif",
+                }}
+              >
+                Choose image…
+              </button>
+              {portalBannerImage ? (
                 <button
                   type="button"
-                  onClick={() => setPortalBannerSolidBackgroundHex(null)}
-                  style={{
-                    padding: '8px 12px',
-                    borderRadius: 4,
-                    border: `1px solid ${CMS.border}`,
-                    background: CMS.inputBg,
-                    color: CMS.text,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Use theme default
-                </button>
-              </div>
-            </div>
-          )}
-          {portalBannerStyle === 'image' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <input
-                ref={bannerFileRef}
-                type="file"
-                accept="image/*"
-                onChange={onBannerFile}
-                aria-label="Upload banner image"
-                style={{ display: 'none' }}
-              />
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-                <button
-                  type="button"
-                  onClick={() => bannerFileRef.current?.click()}
+                  onClick={() => setPortalBannerImage(null)}
                   style={{
                     padding: '8px 14px',
                     borderRadius: 4,
                     border: `1px solid ${CMS.border}`,
-                    background: CMS.inputBg,
-                    color: CMS.text,
+                    background: CMS.pageBg,
+                    color: CMS.textMuted,
                     fontSize: 13,
                     fontWeight: 600,
                     cursor: 'pointer',
                     fontFamily: "'Inter', ui-sans-serif, sans-serif",
                   }}
                 >
-                  Choose image…
+                  Remove image
                 </button>
-                {portalBannerImage ? (
-                  <button
-                    type="button"
-                    onClick={() => setPortalBannerImage(null)}
-                    style={{
-                      padding: '8px 14px',
-                      borderRadius: 4,
-                      border: `1px solid ${CMS.border}`,
-                      background: CMS.pageBg,
-                      color: CMS.textMuted,
-                      fontSize: 13,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      fontFamily: "'Inter', ui-sans-serif, sans-serif",
-                    }}
-                  >
-                    Remove image
-                  </button>
-                ) : null}
-              </div>
-              {portalBannerImage ? (
-                <div
-                  style={{
-                    borderRadius: 8,
-                    overflow: 'hidden',
-                    border: `1px solid ${CMS.border}`,
-                    maxHeight: 120,
-                    background: CMS.inputBg,
-                  }}
-                >
-                  <img
-                    src={portalBannerImage}
-                    alt="Banner preview"
-                    style={{ width: '100%', height: '100%', maxHeight: 120, objectFit: 'cover', display: 'block' }}
-                  />
-                </div>
-              ) : (
-                <p style={{ margin: 0, fontSize: 12, color: CMS.textMuted, lineHeight: 1.45 }}>
-                  No image yet — upload one to show it on the portal banner.
-                </p>
-              )}
+              ) : null}
             </div>
-          )}
+            {portalBannerImage ? (
+              <div
+                style={{
+                  borderRadius: 8,
+                  overflow: 'hidden',
+                  border: `1px solid ${CMS.border}`,
+                  maxHeight: 120,
+                  background: CMS.inputBg,
+                }}
+              >
+                <img
+                  src={portalBannerImage}
+                  alt="Banner preview"
+                  style={{ width: '100%', height: '100%', maxHeight: 120, objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+            ) : (
+              <p style={{ margin: 0, fontSize: 12, color: CMS.textMuted, lineHeight: 1.45 }}>
+                No image yet — upload one to show it on the portal banner.
+              </p>
+            )}
+          </div>
         </div>
       </CmsCard>
     </>

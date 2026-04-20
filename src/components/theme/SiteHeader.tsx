@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTheme } from '@/lib/ThemeContext';
+import { buildColorEngineThemeVars, siteHeaderForegroundHex } from '@/lib/color-engine';
 import { PANEL_SURFACE_TRANSITION, panelSurfaceBackground } from '@/lib/panelSurfaceGlass';
 import { presets } from '@/lib/presets';
 import { useNavigate } from 'react-router-dom';
@@ -96,31 +97,74 @@ interface SiteHeaderProps {
 }
 
 const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) => {
-  const { preset, mode, toggleMode, panelBackgroundMode, portalBannerHeadingColor, colorModeSetting } = useTheme();
+  const {
+    preset,
+    mode,
+    toggleMode,
+    panelBackgroundMode,
+    colorModeSetting,
+    playgroundHex,
+    playgroundIsDark,
+    colorCoverage,
+    portalBannerStyle,
+    portalBannerSolidBackgroundHex,
+    portalBannerSolidBackgroundDefaultHex,
+    customColorsEnabled,
+    customChrome,
+  } = useTheme();
   const showSiteColorToggle = colorModeSetting === 'light-and-dark';
   const config = presets[preset];
   const s = config.styles;
   const navigate = useNavigate();
 
+  const engineVars = useMemo(
+    () => buildColorEngineThemeVars(playgroundHex, playgroundIsDark),
+    [playgroundHex, playgroundIsDark],
+  );
+
+  const headerText = useMemo(() => {
+    if (customColorsEnabled) return customChrome.headerText;
+    return siteHeaderForegroundHex({
+      variant,
+      panelBackgroundMode,
+      mode,
+      colorCoverage,
+      engineVars,
+      portalBannerStyle,
+      portalBannerSolidBackgroundHex,
+      portalBannerSolidBackgroundDefaultHex,
+    });
+  }, [
+    customColorsEnabled,
+    customChrome.headerText,
+    variant,
+    panelBackgroundMode,
+    mode,
+    colorCoverage,
+    engineVars,
+    portalBannerStyle,
+    portalBannerSolidBackgroundHex,
+    portalBannerSolidBackgroundDefaultHex,
+  ]);
+
   const transl = panelBackgroundMode === 'translucent';
-  /** Portal + glass: nav sits over the hero banner — match banner heading contrast (white / black). */
+  /** Portal + glass: nav sits over the hero — chrome tuned for readability on that stack. */
   const bannerDrivenNav = variant === 'portal' && transl;
-  const onDarkBanner = portalBannerHeadingColor === 'light';
-  const headerText = bannerDrivenNav ? (onDarkBanner ? '#ffffff' : '#0a0a0a') : 'var(--theme-header-text-color)';
+  const headerOnLightText = headerText === '#ffffff';
   const brandTitleColor = bannerDrivenNav ? headerText : 'var(--theme-headline-color)';
   const navChromeBorder = bannerDrivenNav
-    ? onDarkBanner
+    ? headerOnLightText
       ? '1px solid rgba(255,255,255,0.28)'
       : '1px solid rgba(0,0,0,0.18)'
     : s.headerPickerBorder;
   const headerBottomRule = bannerDrivenNav
-    ? onDarkBanner
+    ? headerOnLightText
       ? '1px solid rgba(255,255,255,0.14)'
       : '1px solid rgba(0,0,0,0.08)'
     : 'var(--theme-header-border-bottom, none)';
 
   const linkReadabilityShadow = bannerDrivenNav
-    ? onDarkBanner
+    ? headerOnLightText
       ? '0 1px 3px rgba(0,0,0,0.55)'
       : '0 1px 2px rgba(255,255,255,0.45)'
     : transl && mode === 'light'
@@ -275,7 +319,7 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
             </div>
           )}
 
-          {/* header-pickers: mode toggle — only when Design allows both themes */}
+          {/* header-pickers: mode toggle — only when Brand allows both themes */}
           {showSiteColorToggle ? (
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <button

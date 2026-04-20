@@ -5,6 +5,7 @@ import type { ColorModeSetting } from '@/lib/ThemeContext';
 import { useTheme } from '@/lib/ThemeContext';
 import { CMS, SECTION_GAP } from './constants';
 import { CmsFieldLabel, cmsSelectStyle, CmsToggleRow } from './cms-ui';
+import { CustomColorsCard } from './CustomColorsCard';
 
 export interface DesignColorCardProps {
   hex: string;
@@ -15,12 +16,11 @@ export interface DesignColorCardProps {
   setInputValue: (v: string) => void;
   diagnostics: ScaleDiagnostic[];
   accentSelectedStep: number;
-  neutralScaleHexes: string[];
+  neutralScaleHexes: readonly string[];
   panelBorder: string;
   panelFg: string;
   panelMuted: string;
   panelDrawerBg: string;
-  showcaseRampDivider: string;
   showAdvanced: boolean;
   setShowAdvanced: React.Dispatch<React.SetStateAction<boolean>>;
   alphaOnBg: { step: number; a50: string; a15: string }[];
@@ -36,7 +36,7 @@ function subsectionDivider(panelBorder: string) {
   } as const;
 }
 
-/** Design tab — Color: mode → brand / advanced / defaults → color usage (last). */
+/** Brand tab — Color: mode → brand / advanced / defaults → color usage (last). */
 export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   hex,
   isDark,
@@ -51,14 +51,28 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   panelFg,
   panelMuted,
   panelDrawerBg,
-  showcaseRampDivider,
   showAdvanced,
   setShowAdvanced,
   alphaOnBg,
   colorCoverage,
   setColorCoverage,
 }) => {
-  const { colorModeSetting, setColorModeSetting } = useTheme();
+  const { colorModeSetting, setColorModeSetting, advancedColorPanelEnabled } = useTheme();
+  /** Light → dark (left → right): all 12 engine steps = `--palette-step-1`…`12` (brand-25 … brand-950). */
+  const brandScaleStops = [
+    { tone: '25', step: 1 },
+    { tone: '50', step: 2 },
+    { tone: '100', step: 3 },
+    { tone: '200', step: 4 },
+    { tone: '300', step: 5 },
+    { tone: '400', step: 6 },
+    { tone: '500', step: 7 },
+    { tone: '600', step: 8 },
+    { tone: '700', step: 9 },
+    { tone: '800', step: 10 },
+    { tone: '900', step: 11 },
+    { tone: '950', step: 12 },
+  ] as const;
 
   return (
   <>
@@ -126,185 +140,173 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
           }}
         />
       </div>
-        <div
-          role="group"
-          //aria-label="Accent palette derived from your brand color; click a step to set the base color"
-          style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            borderRadius: 8,
-            overflow: 'hidden',
-            border: `1px solid ${panelBorder}`,
-            minHeight: 52,
-            background: isDark ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.03)',
-          }}
-        >
-          {diagnostics.map((s, i) => {
-            const selected = s.step === accentSelectedStep;
-            const barH = selected ? 46 : 32;
-            const isAnchorStep = s.step === 9;
-            const title =
-              selected && isAnchorStep
-                ? `${s.hex} — Your color (step 9)`
-                : selected
-                  ? `${s.hex} — selected`
-                  : isAnchorStep
-                    ? `${s.hex} — step 9 (accent anchor)`
-                    : s.hex;
-            return (
-              <React.Fragment key={s.step}>
-                {i > 0 ? (
-                  <div
-                    style={{
-                      width: 1,
-                      flexShrink: 0,
-                      alignSelf: 'stretch',
-                      minHeight: barH,
-                      background: showcaseRampDivider,
-                    }}
-                  />
-                ) : null}
-                <button
-                  type="button"
-                  title={title}
-                  onClick={() => {
-                    setPlaygroundHex(s.hex);
-                    setInputValue(s.hex);
-                  }}
-                  style={{
-                    flex: 1,
-                    minWidth: 0,
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'center',
-                    border: 'none',
-                    padding: '0 0 4px',
-                    cursor: 'pointer',
-                    background: 'transparent',
-                  }}
-                >
-                  <span
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      height: barH,
-                      background: s.hex,
-                      borderRadius: selected ? 3 : 2,
-                      boxShadow: selected
-                        ? isDark
-                          ? '0 0 0 2px #fafafa'
-                          : '0 0 0 2px #18181b'
-                        : undefined,
-                    }}
-                  />
-                </button>
-              </React.Fragment>
-            );
-          })}
-        </div>
-
-        {/* Advanced — scale diagnostics + alpha (chromatic ramp) */}
-        <div style={{ marginTop: SECTION_GAP }}>
-          <CmsToggleRow
-            label="Advanced"
-            description="View the full color scale values and alpha variants."
-            checked={showAdvanced}
-            onChange={setShowAdvanced}
-            dividerTop={false}
-          />
-          {showAdvanced ? (
-            <div
+      <div
+        role="group"
+        aria-label="Brand color palette; selected step shows a checkmark with large rounded corners"
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'stretch',
+          gap: 0,
+          width: '100%',
+          minWidth: 0,
+          padding: 0,
+        }}
+      >
+        {brandScaleStops.map(({ tone, step }) => {
+          const swatch = diagnostics[step - 1];
+          if (!swatch) return null;
+          const selected = step === accentSelectedStep;
+          const checkFg = step >= 6 ? '#ffffff' : '#0a0a0a';
+          return (
+            <button
+              key={step}
+              type="button"
+              title={`${swatch.hex} — brand ${tone}`}
+              aria-label={`Brand ${tone}, ${swatch.hex}`}
+              aria-current={selected ? 'true' : undefined}
+              onClick={() => {
+                setPlaygroundHex(swatch.hex);
+                setInputValue(swatch.hex);
+              }}
               style={{
-                borderRadius: 10,
-                background: panelDrawerBg,
-                border: `1px solid ${panelBorder}`,
-                padding: 12,
-                marginTop: 12,
-                maxHeight: 220,
-                overflowY: 'auto',
-                color: panelFg,
+                flex: '1 1 0',
+                minWidth: 0,
+                width: '100%',
+                aspectRatio: '1',
+                height: 'auto',
+                border: 'none',
+                borderRadius: selected ? 100 : 0,
+                background: swatch.hex,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                flexShrink: 0,
+                boxShadow: 'none',
               }}
             >
-              <div
-                style={{
-                  fontWeight: 700,
-                  fontSize: 10,
-                  color: panelMuted,
-                  marginBottom: 8,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Scale diagnostics
-              </div>
-              {!isDark && alphaOnBg.length > 0 && (
-                <div style={{ marginBottom: 10 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 11, color: panelMuted }}>
-                    Alpha variants
+              {selected ? (
+                <span
+                  className="material-symbols-outlined"
+                  aria-hidden
+                  style={{ color: checkFg, fontSize: 16, fontWeight: 700 }}
+                >
+                  check
+                </span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+
+        {advancedColorPanelEnabled ? (
+          <>
+            {/* Advanced — scale diagnostics + alpha (chromatic ramp) */}
+            <div style={{ marginTop: SECTION_GAP }}>
+              <CmsToggleRow
+                label="Advanced"
+                description="View the full color scale values and alpha variants."
+                checked={showAdvanced}
+                onChange={setShowAdvanced}
+                dividerTop={false}
+              />
+              {showAdvanced ? (
+                <div
+                  style={{
+                    borderRadius: 10,
+                    background: panelDrawerBg,
+                    border: `1px solid ${panelBorder}`,
+                    padding: 12,
+                    marginTop: 12,
+                    maxHeight: 220,
+                    overflowY: 'auto',
+                    color: panelFg,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      fontSize: 10,
+                      color: panelMuted,
+                      marginBottom: 8,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    Scale diagnostics
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-                    {alphaOnBg.map(({ step, a50, a15 }) => (
-                      <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ fontFamily: "'PT Mono', monospace", fontSize: 10, color: panelFg }}>S{step}</span>
-                        <span
-                          title={a50}
-                          style={{
-                            width: 24,
-                            height: 14,
-                            borderRadius: 3,
-                            background: a50,
-                            border: `1px solid ${panelBorder}`,
-                          }}
-                        />
-                        <span
-                          title={a15}
-                          style={{
-                            width: 24,
-                            height: 14,
-                            borderRadius: 3,
-                            background: a15,
-                            border: `1px solid ${panelBorder}`,
-                          }}
-                        />
+                  {!isDark && alphaOnBg.length > 0 && (
+                    <div style={{ marginBottom: 10 }}>
+                      <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 11, color: panelMuted }}>
+                        Alpha variants
                       </div>
-                    ))}
-                  </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+                        {alphaOnBg.map(({ step, a50, a15 }) => (
+                          <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontFamily: "'PT Mono', monospace", fontSize: 10, color: panelFg }}>S{step}</span>
+                            <span
+                              title={a50}
+                              style={{
+                                width: 24,
+                                height: 14,
+                                borderRadius: 3,
+                                background: a50,
+                                border: `1px solid ${panelBorder}`,
+                              }}
+                            />
+                            <span
+                              title={a15}
+                              style={{
+                                width: 24,
+                                height: 14,
+                                borderRadius: 3,
+                                background: a15,
+                                border: `1px solid ${panelBorder}`,
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <table
+                    style={{
+                      width: '100%',
+                      borderCollapse: 'collapse',
+                      fontFamily: "'PT Mono', monospace",
+                      fontSize: 10,
+                    }}
+                  >
+                    <thead>
+                      <tr style={{ borderBottom: `1px solid ${panelBorder}` }}>
+                        {['#', 'L', 'C', 'Hex'].map(col => (
+                          <th
+                            key={col}
+                            style={{ textAlign: 'left', padding: '3px 4px 6px', color: panelMuted, fontWeight: 600 }}
+                          >
+                            {col}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {diagnostics.map(s => (
+                        <tr key={s.step} style={{ borderBottom: `1px solid ${panelBorder}33` }}>
+                          <td style={{ padding: '4px', color: panelMuted }}>{s.step}</td>
+                          <td style={{ padding: '4px', color: panelFg }}>{s.l.toFixed(3)}</td>
+                          <td style={{ padding: '4px', color: panelFg }}>{s.c.toFixed(4)}</td>
+                          <td style={{ padding: '4px', color: panelFg }}>{s.hex}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              )}
-              <table
-                style={{
-                  width: '100%',
-                  borderCollapse: 'collapse',
-                  fontFamily: "'PT Mono', monospace",
-                  fontSize: 10,
-                }}
-              >
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${panelBorder}` }}>
-                    {['#', 'L', 'C', 'Hex'].map(col => (
-                      <th
-                        key={col}
-                        style={{ textAlign: 'left', padding: '3px 4px 6px', color: panelMuted, fontWeight: 600 }}
-                      >
-                        {col}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {diagnostics.map(s => (
-                    <tr key={s.step} style={{ borderBottom: `1px solid ${panelBorder}33` }}>
-                      <td style={{ padding: '4px', color: panelMuted }}>{s.step}</td>
-                      <td style={{ padding: '4px', color: panelFg }}>{s.l.toFixed(3)}</td>
-                      <td style={{ padding: '4px', color: panelFg }}>{s.c.toFixed(4)}</td>
-                      <td style={{ padding: '4px', color: panelFg }}>{s.hex}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              ) : null}
             </div>
-          ) : null}
-        </div>
+          </>
+        ) : null}
 
       <div style={{ marginTop: SECTION_GAP }}>
         <CmsFieldLabel
@@ -316,22 +318,30 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
           aria-label="Default neutral colors, read-only"
           style={{
             display: 'flex',
-            alignItems: 'stretch',
-            borderRadius: 8,
-            overflow: 'hidden',
-            border: `1px dashed ${panelBorder}`,
-            minHeight: 36,
-            opacity: 0.95,
+            alignItems: 'flex-start',
+            justifyContent: 'stretch',
+            gap: 0,
+            width: '100%',
+            minWidth: 0,
+            padding: 0,
           }}
         >
-          {neutralScaleHexes.map((hexValue, i) => (
-            <React.Fragment key={`${hexValue}-${i}`}>
-              {i > 0 ? <div style={{ width: 1, background: showcaseRampDivider, flexShrink: 0 }} /> : null}
-              <div
-                title={`${hexValue} (reference)`}
-                style={{ flex: 1, minWidth: 0, minHeight: 36, background: hexValue }}
-              />
-            </React.Fragment>
+          {neutralScaleHexes.slice(1, -1).map((hexValue, i) => (
+            <div
+              key={`${hexValue}-${i}`}
+              title={`${hexValue} (reference)`}
+              aria-hidden
+              style={{
+                flex: '1 1 0',
+                minWidth: 0,
+                width: '100%',
+                aspectRatio: '1',
+                height: 'auto',
+                background: hexValue,
+                boxShadow: 'none',
+                borderRadius: 0,
+              }}
+            />
           ))}
         </div>
       </div>
@@ -383,6 +393,8 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
         })}
       </div>
     </div>
+
+    <CustomColorsCard panelBorder={panelBorder} panelFg={panelFg} />
   </>
   );
 };

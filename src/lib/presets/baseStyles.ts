@@ -16,8 +16,8 @@ export const baseStyles: PresetStyles = {
   headerPickerBorder: '1px solid rgba(255,255,255,0.22)',
 
   bannerPaddingX: 158,
-  bannerBackground: 'var(--theme-banner-background-color)',
-  bannerTextColor: 'var(--theme-banner-text-color)',
+  bannerBackground: 'var(--theme-banner-background-slot)',
+  bannerTextColor: 'var(--theme-banner-text-slot)',
   bannerOverlapHeader: false,
 
   // Typography: H1 (banner main heading)
@@ -27,7 +27,7 @@ export const baseStyles: PresetStyles = {
   h1LetterSpacing: 'normal',
   h1LineHeight: 'var(--ds-line-height-x-small)',
   h1PaddingBottom: '0px',
-  headerBackground: 'var(--theme-header-background-color)',
+  headerBackground: 'var(--theme-header-background-slot)',
 
   // Typography: H2 (section headings like "Our Apps")
   h2Size: 'var(--ds-font-size-xl)',

@@ -54,21 +54,20 @@ export const ThemeSidePanel: React.FC<{
     setPortalBannerImage,
     bannerPaddingX,
     setBannerPaddingX,
-    portalBannerHeadingColor,
-    setPortalBannerHeadingColor,
-    portalBannerSolidBackgroundHex,
-    setPortalBannerSolidBackgroundHex,
-    portalBannerSolidBackgroundDefaultHex,
     colorCoverage,
     setColorCoverage,
     panelBackgroundMode,
     setPanelBackgroundMode,
+    advancedColorPanelEnabled,
   } = useTheme();
 
   const [inputValue, setInputValue] = useState(() =>
     getSessionString(PLAYGROUND_INPUT_KEY, playgroundHex),
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
+  useEffect(() => {
+    if (!advancedColorPanelEnabled) setShowAdvanced(false);
+  }, [advancedColorPanelEnabled]);
   const [activeNav, setActiveNav] = useState<'design' | 'pages' | 'site'>('design');
   const [designColorOpen, setDesignColorOpen] = useState(true);
   const [designAppearanceOpen, setDesignAppearanceOpen] = useState(true);
@@ -206,8 +205,6 @@ export const ThemeSidePanel: React.FC<{
   const panelFg = '#18181b';
   const panelMuted = '#71717a';
   const panelDrawerBg = 'rgba(250, 250, 250, 0.98)';
-  const showcaseRampDivider = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
-
   function handleHexInput(val: string) {
     setInputValue(val);
     if (/^#[0-9a-fA-F]{6}$/.test(val)) setPlaygroundHex(val);
@@ -247,7 +244,7 @@ export const ThemeSidePanel: React.FC<{
       }}
     >
       <nav
-        aria-label="Site, Design, and Pages settings"
+        aria-label="Site, Brand, and Pages settings"
         style={{
           width: SIDEBAR_WIDTH,
           flexShrink: 0,
@@ -267,7 +264,7 @@ export const ThemeSidePanel: React.FC<{
         />
         <CmsNavItem
           icon="palette"
-          label="Design"
+          label="Brand"
           active={activeNav === 'design'}
           onClick={() => setActiveNav('design')}
         />
@@ -342,7 +339,7 @@ export const ThemeSidePanel: React.FC<{
               minWidth: 0,
             }}
           >
-            {activeNav === 'site' ? 'Site' : activeNav === 'design' ? 'Design' : 'Pages'}
+            {activeNav === 'site' ? 'Site' : activeNav === 'design' ? 'Brand' : 'Pages'}
           </h1>
           {activeNav === 'design' && colorModeSetting === 'light-and-dark' ? (
             <button
@@ -421,7 +418,6 @@ export const ThemeSidePanel: React.FC<{
                     panelFg={panelFg}
                     panelMuted={panelMuted}
                     panelDrawerBg={panelDrawerBg}
-                    showcaseRampDivider={showcaseRampDivider}
                   showAdvanced={showAdvanced}
                   setShowAdvanced={setShowAdvanced}
                   alphaOnBg={alphaOnBg}
@@ -462,17 +458,11 @@ export const ThemeSidePanel: React.FC<{
                     setCardLayout={setCardLayout}
                     iconSize={iconSize}
                     setIconSize={setIconSize}
-                    portalBannerStyle={portalBannerStyle}
                     setPortalBannerStyle={setPortalBannerStyle}
                     portalBannerImage={portalBannerImage}
                     setPortalBannerImage={setPortalBannerImage}
                     bannerPaddingX={bannerPaddingX}
                     setBannerPaddingX={setBannerPaddingX}
-                    portalBannerHeadingColor={portalBannerHeadingColor}
-                    setPortalBannerHeadingColor={setPortalBannerHeadingColor}
-                    portalBannerSolidBackgroundHex={portalBannerSolidBackgroundHex}
-                    setPortalBannerSolidBackgroundHex={setPortalBannerSolidBackgroundHex}
-                    portalBannerSolidBackgroundDefaultHex={portalBannerSolidBackgroundDefaultHex}
                   />
                 )}
 

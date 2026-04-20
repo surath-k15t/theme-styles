@@ -158,4 +158,17 @@ export interface PresetConfig {
   /** Dark-mode overrides merged on top of cssVars when mode === 'dark' */
   darkCssVars: Record<string, string>;
   styles: PresetStyles;
+  /**
+   * Feature flag for the Brand panel “Advanced” color diagnostics toggle (scale table + alpha).
+   * `true` or string `'true'` enables it; `false`, `'false'`, or omitted hides it (default).
+   */
+  advanced?: boolean | 'true' | 'false';
+}
+
+/** Whether the preset enables the Advanced color diagnostics UI. */
+export function presetAdvancedColorPanelEnabled(
+  advanced: PresetConfig['advanced'],
+): boolean {
+  if (advanced === true || advanced === 'true') return true;
+  return false;
 }

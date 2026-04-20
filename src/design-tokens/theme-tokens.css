@@ -1,4 +1,5 @@
 /* LAYER 3: Theme tokens — slots wired from presets / floating controls only (typography, rhythm, radius). */
+/* Optional chrome overrides (set on `[data-theme-root]` from app): `--theme-custom-header-bg`, `--theme-custom-header-text`, `--theme-custom-footer-bg`, `--theme-custom-footer-text`, `--theme-custom-banner-bg`, `--theme-custom-banner-text` — see alias `--theme-*-slot` tokens. */
 [data-theme-root] {
   --theme-text-font: initial;
   --theme-headline-font: initial;

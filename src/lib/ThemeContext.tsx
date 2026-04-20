@@ -1,13 +1,20 @@
-import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import type { PresetId, ThemeMode } from './presets';
-import { presets } from './presets';
+import { presets, presetAdvancedColorPanelEnabled } from './presets';
 import { defaultIconSizeForSpacingScheme, type CardLayout, type SpacingScheme } from './presets/spacingSchemes';
 import { buildColorEngineThemeVars } from './color-engine';
 import type { ColorCoverageMode, ColorUsageMode } from './colorCoverage';
 import { persistColorUsage, readStoredColorUsage } from './colorCoverage';
+import {
+  computePaletteChromeColors,
+  persistCustomChrome,
+  readStoredCustomChrome,
+  type CustomChromeColors,
+} from './customChromeColors';
 import type { PanelBackgroundMode } from './panelSurfaceGlass';
 
 export type { ColorCoverageMode, ColorUsageMode } from './colorCoverage';
+export type { CustomChromeColors } from './customChromeColors';
 
 const PRESET_ID: PresetId = 'playground';
 
@@ -85,11 +92,11 @@ function readStoredIconSize(fallback: number): number {
   return clampIconSize(n);
 }
 
-function readStoredPortalBannerStyle(fallback: PortalBannerStyle): PortalBannerStyle {
-  if (typeof window === 'undefined') return fallback;
+function readStoredPortalBannerStyle(_fallback: PortalBannerStyle): PortalBannerStyle {
+  if (typeof window === 'undefined') return 'image';
   const raw = window.sessionStorage.getItem(PORTAL_BANNER_STYLE_KEY);
-  if (raw === 'colored' || raw === 'image') return raw;
-  return fallback;
+  if (raw === 'image') return 'image';
+  return 'image';
 }
 
 function readStoredPortalBannerImage(): string | null {
@@ -206,6 +213,14 @@ interface ThemeContextType {
   /** Header, cards, search: solid vs frosted glass (45% + blur). */
   panelBackgroundMode: PanelBackgroundMode;
   setPanelBackgroundMode: (v: PanelBackgroundMode) => void;
+  /** From preset `advanced`: show the Brand panel “Advanced” color diagnostics toggle. */
+  advancedColorPanelEnabled: boolean;
+  /** When true, `--theme-custom-*` on the theme root override header/footer/banner chrome. */
+  customColorsEnabled: boolean;
+  setCustomColorsEnabled: (v: boolean) => void;
+  customChrome: CustomChromeColors;
+  setCustomChrome: (patch: Partial<CustomChromeColors>) => void;
+  resetCustomChromeSection: (section: 'header' | 'footer' | 'banner') => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -260,6 +275,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     readStoredPortalBannerSolidHex(),
   );
 
+  const defaultChromePlaceholder: CustomChromeColors = {
+    headerBg: '#f4f5f7',
+    headerText: '#0a0a0a',
+    footerBg: '#f4f5f7',
+    footerText: '#636363',
+    bannerBg: '#f4f5f7',
+    bannerText: '#ffffff',
+  };
+  const [customColorsEnabled, setCustomColorsEnabledState] = useState(() => readStoredCustomChrome()?.enabled ?? false);
+  const [customChrome, setCustomChromeState] = useState<CustomChromeColors>(() => {
+    const s = readStoredCustomChrome();
+    return s?.colors ?? defaultChromePlaceholder;
+  });
+
   const mode: ThemeMode = playgroundIsDark ? 'dark' : 'light';
   const toggleMode = useCallback(() => {
     setPlaygroundIsDark(v => !v);
@@ -308,10 +337,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  const setPortalBannerStyle = useCallback((v: PortalBannerStyle) => {
-    setPortalBannerStyleState(v);
+  const setPortalBannerStyle = useCallback((_v: PortalBannerStyle) => {
+    const next: PortalBannerStyle = 'image';
+    setPortalBannerStyleState(next);
     if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(PORTAL_BANNER_STYLE_KEY, v);
+      window.sessionStorage.setItem(PORTAL_BANNER_STYLE_KEY, next);
     }
   }, []);
 
@@ -362,8 +392,92 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const currentPreset = presets[PRESET_ID];
+  const advancedColorPanelEnabled = presetAdvancedColorPanelEnabled(currentPreset.advanced);
   const colorEngineVars = buildColorEngineThemeVars(playgroundHex, playgroundIsDark);
   const portalBannerSolidBackgroundDefaultHex = colorEngineVars['--palette-step-1'] ?? '#f4f5f7';
+
+  const setCustomColorsEnabled = useCallback(
+    (enabled: boolean) => {
+      setCustomColorsEnabledState(enabled);
+      if (enabled) {
+        setCustomChromeState(
+          computePaletteChromeColors({
+            engineVars: colorEngineVars,
+            colorCoverage,
+            mode,
+            panelBackgroundMode,
+            portalBannerStyle,
+            portalBannerSolidBackgroundHex,
+            portalBannerSolidBackgroundDefaultHex,
+            portalBannerHeadingColor,
+          }),
+        );
+      }
+    },
+    [
+      colorEngineVars,
+      colorCoverage,
+      mode,
+      panelBackgroundMode,
+      portalBannerStyle,
+      portalBannerSolidBackgroundHex,
+      portalBannerSolidBackgroundDefaultHex,
+      portalBannerHeadingColor,
+    ],
+  );
+
+  const setCustomChrome = useCallback((patch: Partial<CustomChromeColors>) => {
+    setCustomChromeState(c => ({ ...c, ...patch }));
+  }, []);
+
+  const resetCustomChromeSection = useCallback(
+    (section: 'header' | 'footer' | 'banner') => {
+      const d = computePaletteChromeColors({
+        engineVars: colorEngineVars,
+        colorCoverage,
+        mode,
+        panelBackgroundMode,
+        portalBannerStyle,
+        portalBannerSolidBackgroundHex,
+        portalBannerSolidBackgroundDefaultHex,
+        portalBannerHeadingColor,
+      });
+      if (section === 'header') {
+        setCustomChromeState(c => ({ ...c, headerBg: d.headerBg, headerText: d.headerText }));
+      } else if (section === 'footer') {
+        setCustomChromeState(c => ({ ...c, footerBg: d.footerBg, footerText: d.footerText }));
+      } else {
+        setCustomChromeState(c => ({ ...c, bannerBg: d.bannerBg, bannerText: d.bannerText }));
+      }
+    },
+    [
+      colorEngineVars,
+      colorCoverage,
+      mode,
+      panelBackgroundMode,
+      portalBannerStyle,
+      portalBannerSolidBackgroundHex,
+      portalBannerSolidBackgroundDefaultHex,
+      portalBannerHeadingColor,
+    ],
+  );
+
+  useEffect(() => {
+    persistCustomChrome(customColorsEnabled, customChrome);
+  }, [customColorsEnabled, customChrome]);
+
+  const customChromeCss = useMemo(() => {
+    if (!customColorsEnabled) return {} as React.CSSProperties;
+    return {
+      '--theme-custom-header-bg': customChrome.headerBg,
+      '--theme-custom-header-text': customChrome.headerText,
+      '--theme-custom-footer-bg': customChrome.footerBg,
+      '--theme-custom-footer-text': customChrome.footerText,
+      '--theme-custom-banner-bg': customChrome.bannerBg,
+      '--theme-custom-banner-text': customChrome.bannerText,
+    } as React.CSSProperties;
+  }, [customColorsEnabled, customChrome]);
+
   const themeStyle = {
     ...currentPreset.cssVars,
     ...(playgroundIsDark ? currentPreset.darkCssVars : {}),
@@ -372,6 +486,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     ...(portalBannerStyle === 'colored' && portalBannerSolidBackgroundHex
       ? { '--theme-banner-background-color': portalBannerSolidBackgroundHex }
       : {}),
+    ...customChromeCss,
   } as React.CSSProperties;
 
   return (
@@ -413,6 +528,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setColorCoverage,
         panelBackgroundMode,
         setPanelBackgroundMode,
+        advancedColorPanelEnabled,
+        customColorsEnabled,
+        setCustomColorsEnabled,
+        customChrome,
+        setCustomChrome,
+        resetCustomChromeSection,
       }}
     >
       <div
@@ -421,6 +542,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         data-mode={mode}
         data-panel-surface={panelBackgroundMode}
         data-color-usage={colorCoverage}
+        data-custom-colors={customColorsEnabled ? 'on' : 'off'}
         style={themeStyle}
       >
         {children}

@@ -10,8 +10,8 @@ const SiteFooter: React.FC = () => {
   return (
     <footer
       style={{
-        background: 'var(--theme-footer-background-color)',
-        color: 'var(--theme-footer-text-color)',
+        background: 'var(--theme-footer-background-slot)',
+        color: 'var(--theme-footer-text-slot)',
         padding: s.footerPadding,
         fontSize: 'var(--ds-font-size-sm)',
         fontFamily: 'var(--ds-font-family-body)',
