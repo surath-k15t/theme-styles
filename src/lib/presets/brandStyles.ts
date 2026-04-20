@@ -84,9 +84,9 @@ export function createPlaygroundDefaultBrandStyleSnapshot(): BrandStyleSnapshot 
     portalBannerHeadingColor: 'light',
     colorCoverage: 'standard',
     panelBackgroundMode: 'solid',
-    customColorsEnabled: false,
+    customColorsEnabled: true,
     customChrome: {
-      headerBg: '#f4f5f7',
+      headerBg: '#ffffff',
       headerText: '#0a0a0a',
       footerBg: '#f4f5f7',
       footerText: '#636363',
@@ -107,7 +107,6 @@ function cloneBrandStyleSnapshot(s: BrandStyleSnapshot): BrandStyleSnapshot {
   };
 }
 
-/** Monochrome light look: black brand, subtle ramp, flat chrome, compact density, no banner image. */
 const monoBrandStyleSnapshot: BrandStyleSnapshot = {
   playgroundHex: '#000000',
   playgroundIsDark: false,
@@ -134,7 +133,6 @@ const monoBrandStyleSnapshot: BrandStyleSnapshot = {
   },
 };
 
-/** Bold dark look: gold brand, standard ramp, glass panels, spacious list layout, bold banner art. */
 const igniteBrandStyleSnapshot: BrandStyleSnapshot = {
   playgroundHex: '#EDB007',
   playgroundIsDark: true,
@@ -153,7 +151,6 @@ const igniteBrandStyleSnapshot: BrandStyleSnapshot = {
   bannerPaddingX: 300,
 };
 
-/** Aurora: light, violet brand, standard ramp, solid panels, list-3col + aura banner art; overrides on with black banner title only. */
 const auroraBrandStyleSnapshot: BrandStyleSnapshot = {
   playgroundHex: '#7056FF',
   playgroundIsDark: false,
@@ -175,7 +172,6 @@ const auroraBrandStyleSnapshot: BrandStyleSnapshot = {
   bannerPaddingX: 115,
 };
 
-/** Corporate: gold brand, subtle ramp, gray header / charcoal footer, list-2col + legacy banner. */
 const corporateBrandStyleSnapshot: BrandStyleSnapshot = {
   playgroundHex: '#AF7B0E',
   playgroundIsDark: false,
