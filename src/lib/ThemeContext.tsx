@@ -12,11 +12,31 @@ import {
   type CustomChromeColors,
 } from './customChromeColors';
 import type { PanelBackgroundMode } from './panelSurfaceGlass';
+import type { BrandStylePresetId } from './brandStylePresets';
+import { getBrandStyleSnapshot, isBrandStylePresetId } from './brandStylePresets';
+import {
+  buildMergedCustomChromeForSnapshot,
+  playgroundMatchesBrandSnapshot,
+  type BrandStyleComparePin,
+} from './brandStyleApplyHelpers';
 
 export type { ColorCoverageMode, ColorUsageMode } from './colorCoverage';
 export type { CustomChromeColors } from './customChromeColors';
+export type { BrandStylePresetId, BrandStyleSnapshot } from './brandStylePresets';
+
+export type BrandStyleSiteLabel = 'none' | 'custom' | BrandStylePresetId;
 
 const PRESET_ID: PresetId = 'playground';
+
+/** Default chrome slot values when merging partial snapshots (matches playground defaults). */
+const PLAYGROUND_DEFAULT_CUSTOM_CHROME: CustomChromeColors = {
+  headerBg: '#f4f5f7',
+  headerText: '#0a0a0a',
+  footerBg: '#f4f5f7',
+  footerText: '#636363',
+  bannerBg: '#f4f5f7',
+  bannerText: '#ffffff',
+};
 
 const SPACING_SCHEME_SESSION_KEY = 'playground:spacingScheme';
 const CARD_LAYOUT_SESSION_KEY = 'playground:cardLayout';
@@ -34,6 +54,10 @@ const PLAYGROUND_PANEL_BACKGROUND_KEY = 'playground:panelBackgroundMode';
 const PLAYGROUND_COLOR_MODE_SETTING_KEY = 'playground:colorModeSetting';
 /** Same key as `PLAYGROUND_IS_DARK_KEY` in floating-controls/constants (avoid circular import). */
 const PLAYGROUND_IS_DARK_STORAGE_KEY = 'color-engine:isDark';
+const BRAND_LAST_APPLIED_STYLE_KEY = 'playground:lastAppliedBrandStylePresetId';
+/** Legacy keys — read once for migration, cleared on next preset apply. */
+const BRAND_PRESET_STEP1_KEY = 'playground:brandPresetStep1';
+const BRAND_STYLE_PRESET_ID_KEY = 'playground:brandStylePresetId';
 
 /** How the preview may switch between light and dark. */
 export type ColorModeSetting = 'light-only' | 'dark-only' | 'light-and-dark';
@@ -155,6 +179,16 @@ function readStoredPlaygroundIsDark(fallback: boolean): boolean {
   return fallback;
 }
 
+function readStoredLastAppliedBrandStyleId(): BrandStylePresetId | null {
+  if (typeof window === 'undefined') return null;
+  const primary = window.sessionStorage.getItem(BRAND_LAST_APPLIED_STYLE_KEY);
+  if (primary && isBrandStylePresetId(primary)) return primary;
+  const legacyStep = window.sessionStorage.getItem(BRAND_PRESET_STEP1_KEY);
+  const legacyId = window.sessionStorage.getItem(BRAND_STYLE_PRESET_ID_KEY);
+  if (legacyStep === 'change-style' && legacyId && isBrandStylePresetId(legacyId)) return legacyId;
+  return null;
+}
+
 /** Radix-style radius steps → `--theme-roundness` / `--ds-radius-factor`. */
 export type ThemeRadiusTier = 'none' | 'small' | 'medium' | 'large' | 'full';
 
@@ -217,10 +251,17 @@ interface ThemeContextType {
   advancedColorPanelEnabled: boolean;
   /** When true, `--theme-custom-*` on the theme root override header/footer/banner chrome. */
   customColorsEnabled: boolean;
-  setCustomColorsEnabled: (v: boolean) => void;
+  /** When enabling, optional `chromeOverride` skips palette-derived defaults (used for brand style snapshots). */
+  setCustomColorsEnabled: (v: boolean, chromeOverride?: CustomChromeColors) => void;
   customChrome: CustomChromeColors;
   setCustomChrome: (patch: Partial<CustomChromeColors>) => void;
   resetCustomChromeSection: (section: 'header' | 'footer' | 'banner') => void;
+  /** Last style applied from Site → Browse style presets (null = none). */
+  lastAppliedBrandStylePresetId: BrandStylePresetId | null;
+  /** Apply a named snapshot and persist as last applied. */
+  applyBrandStylePreset: (id: BrandStylePresetId) => void;
+  /** Site tab “Current” line: none / preset id still matching / custom after edits. */
+  brandStyleSiteLabel: BrandStyleSiteLabel;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -275,19 +316,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     readStoredPortalBannerSolidHex(),
   );
 
-  const defaultChromePlaceholder: CustomChromeColors = {
-    headerBg: '#f4f5f7',
-    headerText: '#0a0a0a',
-    footerBg: '#f4f5f7',
-    footerText: '#636363',
-    bannerBg: '#f4f5f7',
-    bannerText: '#ffffff',
-  };
   const [customColorsEnabled, setCustomColorsEnabledState] = useState(() => readStoredCustomChrome()?.enabled ?? false);
   const [customChrome, setCustomChromeState] = useState<CustomChromeColors>(() => {
     const s = readStoredCustomChrome();
-    return s?.colors ?? defaultChromePlaceholder;
+    return s?.colors ?? PLAYGROUND_DEFAULT_CUSTOM_CHROME;
   });
+  const [lastAppliedBrandStylePresetId, setLastAppliedBrandStylePresetIdState] =
+    useState<BrandStylePresetId | null>(() => readStoredLastAppliedBrandStyleId());
 
   const mode: ThemeMode = playgroundIsDark ? 'dark' : 'light';
   const toggleMode = useCallback(() => {
@@ -337,11 +372,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  const setPortalBannerStyle = useCallback((_v: PortalBannerStyle) => {
-    const next: PortalBannerStyle = 'image';
-    setPortalBannerStyleState(next);
+  const setPortalBannerStyle = useCallback((v: PortalBannerStyle) => {
+    setPortalBannerStyleState(v);
     if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(PORTAL_BANNER_STYLE_KEY, next);
+      window.sessionStorage.setItem(PORTAL_BANNER_STYLE_KEY, v);
     }
   }, []);
 
@@ -397,20 +431,21 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const portalBannerSolidBackgroundDefaultHex = colorEngineVars['--palette-step-1'] ?? '#f4f5f7';
 
   const setCustomColorsEnabled = useCallback(
-    (enabled: boolean) => {
+    (enabled: boolean, chromeOverride?: CustomChromeColors) => {
       setCustomColorsEnabledState(enabled);
       if (enabled) {
         setCustomChromeState(
-          computePaletteChromeColors({
-            engineVars: colorEngineVars,
-            colorCoverage,
-            mode,
-            panelBackgroundMode,
-            portalBannerStyle,
-            portalBannerSolidBackgroundHex,
-            portalBannerSolidBackgroundDefaultHex,
-            portalBannerHeadingColor,
-          }),
+          chromeOverride ??
+            computePaletteChromeColors({
+              engineVars: colorEngineVars,
+              colorCoverage,
+              mode,
+              panelBackgroundMode,
+              portalBannerStyle,
+              portalBannerSolidBackgroundHex,
+              portalBannerSolidBackgroundDefaultHex,
+              portalBannerHeadingColor,
+            }),
         );
       }
     },
@@ -465,6 +500,107 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     persistCustomChrome(customColorsEnabled, customChrome);
   }, [customColorsEnabled, customChrome]);
+
+  const applyBrandStylePreset = useCallback(
+    (id: BrandStylePresetId) => {
+      const snap = getBrandStyleSnapshot(id);
+      if (snap.colorModeSetting !== undefined) setColorModeSetting(snap.colorModeSetting);
+      if (snap.playgroundIsDark !== undefined) setPlaygroundIsDark(snap.playgroundIsDark);
+      if (snap.playgroundHex !== undefined) setPlaygroundHex(snap.playgroundHex);
+      if (snap.themeRadiusTier !== undefined) setThemeRadiusTier(snap.themeRadiusTier);
+      if (snap.panelBackgroundMode !== undefined) setPanelBackgroundMode(snap.panelBackgroundMode);
+      if (snap.colorCoverage !== undefined) setColorCoverage(snap.colorCoverage);
+      if (snap.portalBannerStyle !== undefined) setPortalBannerStyle(snap.portalBannerStyle);
+      if (snap.portalBannerSolidBackgroundHex !== undefined) {
+        setPortalBannerSolidBackgroundHex(snap.portalBannerSolidBackgroundHex);
+      }
+      if (snap.portalBannerImage !== undefined) setPortalBannerImage(snap.portalBannerImage);
+      if (snap.bannerPaddingX !== undefined) setBannerPaddingX(snap.bannerPaddingX);
+      if (snap.portalBannerHeadingColor !== undefined) {
+        setPortalBannerHeadingColor(snap.portalBannerHeadingColor);
+      }
+      if (snap.spacingScheme !== undefined) setSpacingScheme(snap.spacingScheme);
+      if (snap.cardLayout !== undefined) setCardLayout(snap.cardLayout);
+      if (snap.iconSize !== undefined) setIconSize(snap.iconSize);
+      if (snap.customColorsEnabled !== undefined) {
+        if (snap.customColorsEnabled) {
+          setCustomColorsEnabled(true, buildMergedCustomChromeForSnapshot(snap));
+        } else {
+          setCustomColorsEnabled(false);
+        }
+      }
+      setLastAppliedBrandStylePresetIdState(id);
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem(BRAND_LAST_APPLIED_STYLE_KEY, id);
+        window.sessionStorage.removeItem(BRAND_PRESET_STEP1_KEY);
+        window.sessionStorage.removeItem(BRAND_STYLE_PRESET_ID_KEY);
+      }
+    },
+    [
+      setColorModeSetting,
+      setPlaygroundIsDark,
+      setPlaygroundHex,
+      setThemeRadiusTier,
+      setPanelBackgroundMode,
+      setColorCoverage,
+      setPortalBannerStyle,
+      setPortalBannerSolidBackgroundHex,
+      setPortalBannerImage,
+      setBannerPaddingX,
+      setPortalBannerHeadingColor,
+      setSpacingScheme,
+      setCardLayout,
+      setIconSize,
+      setCustomColorsEnabled,
+    ],
+  );
+
+  const brandStyleComparePin = useMemo<BrandStyleComparePin>(
+    () => ({
+      playgroundHex,
+      playgroundIsDark,
+      colorModeSetting,
+      themeRadiusTier,
+      spacingScheme,
+      cardLayout,
+      iconSize,
+      portalBannerStyle,
+      portalBannerImage,
+      portalBannerSolidBackgroundHex,
+      bannerPaddingX,
+      portalBannerHeadingColor,
+      colorCoverage,
+      panelBackgroundMode,
+      customColorsEnabled,
+      customChrome,
+    }),
+    [
+      playgroundHex,
+      playgroundIsDark,
+      colorModeSetting,
+      themeRadiusTier,
+      spacingScheme,
+      cardLayout,
+      iconSize,
+      portalBannerStyle,
+      portalBannerImage,
+      portalBannerSolidBackgroundHex,
+      bannerPaddingX,
+      portalBannerHeadingColor,
+      colorCoverage,
+      panelBackgroundMode,
+      customColorsEnabled,
+      customChrome,
+    ],
+  );
+
+  const brandStyleSiteLabel = useMemo((): BrandStyleSiteLabel => {
+    if (lastAppliedBrandStylePresetId == null) return 'none';
+    const snap = getBrandStyleSnapshot(lastAppliedBrandStylePresetId);
+    return playgroundMatchesBrandSnapshot(snap, brandStyleComparePin)
+      ? lastAppliedBrandStylePresetId
+      : 'custom';
+  }, [lastAppliedBrandStylePresetId, brandStyleComparePin]);
 
   const customChromeCss = useMemo(() => {
     if (!customColorsEnabled) return {} as React.CSSProperties;
@@ -534,6 +670,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         customChrome,
         setCustomChrome,
         resetCustomChromeSection,
+        lastAppliedBrandStylePresetId,
+        applyBrandStylePreset,
+        brandStyleSiteLabel,
       }}
     >
       <div
@@ -543,6 +682,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         data-panel-surface={panelBackgroundMode}
         data-color-usage={colorCoverage}
         data-custom-colors={customColorsEnabled ? 'on' : 'off'}
+        data-brand-style-applied={lastAppliedBrandStylePresetId ?? ''}
+        data-brand-style-site-label={brandStyleSiteLabel}
         style={themeStyle}
       >
         {children}

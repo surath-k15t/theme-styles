@@ -79,18 +79,18 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
     {/* 1. Color mode */}
     <div>
       <CmsFieldLabel
-        title="Color mode"
-        hint="Whether your site supports light mode, dark mode, or both."
+        title="Color theme"
+        hint="Whether your site supports light, dark, or both."
       />
       <select
-        aria-label="Color mode"
+        aria-label="Color theme"
         value={colorModeSetting}
         onChange={e => setColorModeSetting(e.target.value as ColorModeSetting)}
         style={cmsSelectStyle}
       >
-        <option value="light-only">Light mode only</option>
-        <option value="dark-only">Dark mode only</option>
-        <option value="light-and-dark">Light and dark mode</option>
+        <option value="light-only">Light</option>
+        <option value="dark-only">Dark</option>
+        <option value="light-and-dark">Light and dark</option>
       </select>
     </div>
 

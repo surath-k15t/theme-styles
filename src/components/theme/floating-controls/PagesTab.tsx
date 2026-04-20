@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   THEME_BANNER_PADDING_X_MAX,
   THEME_BANNER_PADDING_X_MIN,
   THEME_ICON_SIZE_MAX,
   THEME_ICON_SIZE_MIN,
+  type PortalBannerStyle,
 } from '@/lib/ThemeContext';
 import { type CardLayout } from '@/lib/presets/spacingSchemes';
 import { CARD_LAYOUT_LABELS, CARD_LAYOUT_OPTIONS, CMS } from './constants';
@@ -14,7 +15,7 @@ export interface PagesTabProps {
   setCardLayout: (v: CardLayout) => void;
   iconSize: number;
   setIconSize: (v: number) => void;
-  setPortalBannerStyle: (v: 'image') => void;
+  setPortalBannerStyle: (v: PortalBannerStyle) => void;
   portalBannerImage: string | null;
   setPortalBannerImage: (v: string | null) => void;
   bannerPaddingX: number;
@@ -34,10 +35,6 @@ export const PagesTab: React.FC<PagesTabProps> = ({
   setBannerPaddingX,
 }) => {
   const bannerFileRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setPortalBannerStyle('image');
-  }, [setPortalBannerStyle]);
 
   const onBannerFile = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
