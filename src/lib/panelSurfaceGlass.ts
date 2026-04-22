@@ -11,4 +11,4 @@ export function panelSurfaceBackdrop(mode: PanelBackgroundMode): string | undefi
 }
 
 export const PANEL_SURFACE_TRANSITION =
-  'background 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease' as const;
+  'background 0.22s ease, backdrop-filter 0.22s ease, -webkit-backdrop-filter 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease' as const;

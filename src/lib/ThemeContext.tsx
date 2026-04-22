@@ -555,6 +555,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     ],
   );
 
+  /** `/?brandPreview=<id>` applies that brand style once on load (used by “Preview” links in Browse style presets). */
+  const brandPreviewUrlHydratedRef = useRef(false);
+  useEffect(() => {
+    if (typeof window === 'undefined' || brandPreviewUrlHydratedRef.current) return;
+    const raw = new URLSearchParams(window.location.search).get('brandPreview');
+    if (!raw || !isBrandStylePresetId(raw)) return;
+    brandPreviewUrlHydratedRef.current = true;
+    applyBrandStylePreset(raw);
+  }, [applyBrandStylePreset]);
+
   const brandStyleComparePin = useMemo<BrandStyleComparePin>(
     () => ({
       playgroundHex,
