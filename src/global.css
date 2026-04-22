@@ -30,6 +30,25 @@
   }
 }
 
+/* Smooth hover / focus feedback for playground UI (inline hovers still animate these properties). */
+@layer base {
+  :where([data-theme-root], .theme-playground-portal) :where(
+    button,
+    [role='button'],
+    [role='switch'],
+    [role='tab'],
+    a,
+    select,
+    textarea,
+    input:not([type='hidden'])
+  ) {
+    transition-property: background-color, color, border-color, border, box-shadow, opacity, filter,
+      transform, outline-color, text-decoration-color, border-radius;
+    transition-duration: 0.22s;
+    transition-timing-function: ease;
+  }
+}
+
 /* Material Symbols sizing */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;

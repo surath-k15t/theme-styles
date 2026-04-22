@@ -181,7 +181,7 @@ export function CmsToggleRow({
           flexShrink: 0,
           background: checked ? CMS.primary : CMS.border,
           position: 'relative',
-          transition: 'background 0.15s ease',
+          transition: 'background 0.22s ease',
         }}
       >
         <span
@@ -192,7 +192,7 @@ export function CmsToggleRow({
             borderRadius: '50%',
             background: '#fff',
             marginLeft: checked ? 20 : 0,
-            transition: 'margin 0.15s ease',
+            transition: 'margin 0.22s ease',
             boxShadow: '0 1px 2px rgba(9, 30, 66, 0.2)',
           }}
         />
@@ -238,7 +238,7 @@ export function CmsExpansionChip({
         style={{
           fontSize: 16,
           color: active ? CMS.primary : CMS.textMuted,
-          transition: 'transform 0.15s ease',
+          transition: 'transform 0.22s ease',
           transform: active ? 'rotate(180deg)' : 'rotate(0deg)',
         }}
       >

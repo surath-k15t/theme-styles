@@ -288,7 +288,7 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({ variant = 'portal', appName }) 
                       opacity: 0.85,
                       fontSize: 13,
                       whiteSpace: 'nowrap',
-                      transition: 'opacity 0.15s',
+                      transition: 'opacity 0.22s ease',
                       textShadow: linkReadabilityShadow,
                     }}
                     onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')}

@@ -51,7 +51,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     fontWeight: s.searchButtonFontWeight ?? 400,
     cursor: 'pointer',
     whiteSpace: 'nowrap' as const,
-    transition: 'opacity 0.15s',
+    transition: 'opacity 0.22s ease',
     flexShrink: 0,
     textShadow: fgReadabilityShadow,
   };

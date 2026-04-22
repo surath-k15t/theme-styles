@@ -140,7 +140,7 @@ const igniteBrandStyleSnapshot: BrandStyleSnapshot = {
   themeRadiusTier: 'medium',
   spacingScheme: 'spacious',
   panelBackgroundMode: 'translucent',
-  colorCoverage: 'standard',
+  colorCoverage: 'subtle',
   customColorsEnabled: false,
   portalBannerStyle: 'image',
   portalBannerImage: '/bold/bannerImageForBold.png',

@@ -212,7 +212,7 @@ export const CustomColorsCard: React.FC<{
             flexShrink: 0,
             background: customColorsEnabled ? CMS.primary : CMS.border,
             position: 'relative',
-            transition: 'background 0.15s ease',
+            transition: 'background 0.22s ease',
             marginTop: 2,
           }}
         >
@@ -224,7 +224,7 @@ export const CustomColorsCard: React.FC<{
               borderRadius: '50%',
               background: '#fff',
               marginLeft: customColorsEnabled ? 20 : 0,
-              transition: 'margin 0.15s ease',
+              transition: 'margin 0.22s ease',
               boxShadow: '0 1px 2px rgba(9, 30, 66, 0.2)',
             }}
           />

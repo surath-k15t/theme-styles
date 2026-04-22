@@ -84,7 +84,7 @@ const Article: React.FC = () => {
                       background: i === 0 ? s.sidebarSelectedBackground : 'transparent',
                       borderLeft: i === 0 ? s.sidebarSelectedBorder : '2px solid transparent',
                       borderRadius: 'var(--ds-radius-small)',
-                      transition: 'background 0.15s',
+                      transition: 'background 0.22s ease',
                       fontSize: 13,
                     }}
                     onMouseEnter={e => {
@@ -266,7 +266,7 @@ const Article: React.FC = () => {
                     fontSize: 13,
                     textDecoration: 'none',
                     borderRadius: '0 var(--ds-radius-small) var(--ds-radius-small) 0',
-                    transition: 'color 0.15s, background 0.15s',
+                    transition: 'color 0.22s ease, background 0.22s ease',
                   }}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLAnchorElement;
@@ -294,7 +294,7 @@ const Article: React.FC = () => {
                             fontSize: 12,
                             textDecoration: 'none',
                             borderRadius: 'var(--ds-radius-small)',
-                            transition: 'color 0.15s, background 0.15s',
+                            transition: 'color 0.22s ease, background 0.22s ease',
                           }}
                           onMouseEnter={e => {
                             const el = e.currentTarget as HTMLAnchorElement;

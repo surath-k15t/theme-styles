@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { PresetConfig } from '@/lib/presets';
 import {
@@ -27,21 +27,28 @@ function currentPresetDisplayLine(label: BrandStyleSiteLabel): string {
   return BRAND_STYLE_PRESET_LABELS[label];
 }
 
+function brandStylePreviewHref(id: BrandStylePresetId): string {
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  return `${origin}/?brandPreview=${encodeURIComponent(id)}`;
+}
+
 function PresetThumb({ presetId }: { presetId: BrandStylePresetId }) {
   const hex = getBrandStyleSnapshot(presetId).playgroundHex ?? '#0e305c';
   return (
     <div
       style={{
-        height: 64,
+        width: 112,
+        height: 76,
         borderRadius: 6,
         overflow: 'hidden',
         border: `1px solid ${CMS.border}`,
         background: CMS.inputBg,
         display: 'flex',
         flexDirection: 'column',
+        flexShrink: 0,
       }}
     >
-      <div style={{ height: 18, background: hex, flexShrink: 0 }} />
+      <div style={{ height: 20, background: hex, flexShrink: 0 }} />
       <div style={{ flex: 1, padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 5 }}>
         <div style={{ height: 5, borderRadius: 2, background: CMS.border, opacity: 0.85 }} />
         <div style={{ height: 5, borderRadius: 2, background: CMS.border, opacity: 0.65 }} />
@@ -89,10 +96,25 @@ export const SiteTab: React.FC<SiteTabProps> = ({
     setBrowseOpen(false);
   }, [applyBrandStylePreset, modalPick]);
 
+  const previewLinkStyle = useMemo(
+    () =>
+      ({
+        fontSize: 13,
+        fontWeight: 600,
+        color: CMS.primary,
+        textDecoration: 'none',
+        whiteSpace: 'nowrap',
+        padding: '6px 4px',
+        borderRadius: 4,
+      }) as const,
+    [],
+  );
+
   const modal =
     browseOpen && typeof document !== 'undefined'
       ? createPortal(
           <div
+            className="theme-playground-portal"
             role="presentation"
             style={{
               position: 'fixed',
@@ -113,7 +135,7 @@ export const SiteTab: React.FC<SiteTabProps> = ({
               onClick={e => e.stopPropagation()}
               style={{
                 width: '100%',
-                maxWidth: 520,
+                maxWidth: 600,
                 maxHeight: '90vh',
                 overflow: 'auto',
                 borderRadius: 8,
@@ -128,56 +150,79 @@ export const SiteTab: React.FC<SiteTabProps> = ({
                   id="browse-style-presets-title"
                   style={{ margin: 0, fontSize: 18, fontWeight: 700, color: CMS.text, letterSpacing: '-0.02em' }}
                 >
-                  Browse style presets
+                  Browse brand presets
                 </h2>
                 <p style={{ margin: '8px 0 0', fontSize: 13, color: CMS.textMuted, lineHeight: 1.5 }}>
-                  Applying a preset updates your Brand settings. You can adjust them afterwards.
+                  Choose a brand preset to get started quickly. You can customise anything afterwards.
                 </p>
               </div>
-              <div style={{ padding: 16 }}>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: 12,
-                  }}
-                >
-                  {BRAND_STYLE_PRESET_IDS.map(id => {
-                    const selected = modalPick === id;
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        onClick={() => setModalPick(id)}
+              <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {BRAND_STYLE_PRESET_IDS.map(id => {
+                  const selected = modalPick === id;
+                  const n = countBrandStylePresetAffectedSettings(id);
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setModalPick(id)}
+                      aria-pressed={selected}
+                      aria-label={`${BRAND_STYLE_PRESET_LABELS[id]}, ${n} settings`}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'stretch',
+                        gap: 16,
+                        padding: 14,
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        border: selected ? `2px solid ${CMS.primary}` : `1px solid ${CMS.border}`,
+                        background: selected ? 'rgba(12, 102, 228, 0.06)' : CMS.pageBg,
+                        outline: 'none',
+                        fontFamily: 'inherit',
+                        textAlign: 'left',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      <PresetThumb presetId={id} />
+                      <div
                         style={{
-                          textAlign: 'left',
-                          padding: 12,
-                          borderRadius: 8,
-                          cursor: 'pointer',
-                          border: selected ? `2px solid ${CMS.primary}` : `1px solid ${CMS.border}`,
-                          background: selected ? 'rgba(12, 102, 228, 0.06)' : CMS.pageBg,
-                          outline: 'none',
-                          fontFamily: 'inherit',
+                          flex: 1,
+                          minWidth: 0,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          gap: 6,
                         }}
                       >
-                        <PresetThumb presetId={id} />
-                        <div
-                          style={{
-                            marginTop: 10,
-                            fontSize: 14,
-                            fontWeight: 700,
-                            color: CMS.text,
-                          }}
-                        >
+                        <div style={{ fontSize: 15, fontWeight: 700, color: CMS.text, lineHeight: 1.25 }}>
                           {BRAND_STYLE_PRESET_LABELS[id]}
                         </div>
-                        <div style={{ marginTop: 4, fontSize: 12, fontWeight: 500, color: CMS.textMuted }}>
-                          {countBrandStylePresetAffectedSettings(id)} settings
+                        <div style={{ fontSize: 12, fontWeight: 500, color: CMS.textMuted, lineHeight: 1.4 }}>
+                          {n} settings are affected
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      </div>
+                      <div
+                        style={{
+                          flexShrink: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          alignSelf: 'center',
+                        }}
+                      >
+                        <a
+                          href={brandStylePreviewHref(id)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          style={previewLinkStyle}
+                        >
+                          Preview
+                        </a>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
               <div
                 style={{
@@ -239,7 +284,7 @@ export const SiteTab: React.FC<SiteTabProps> = ({
           {playgroundConfig.description}
         </p>
       </CmsCard>
-      <CmsCard title="Style preset">
+      <CmsCard title="Brand preset">
         <p style={{ margin: '0 0 14px', fontSize: 13, color: CMS.textMuted, lineHeight: 1.5 }}>
           Start from a preset and customize from there.
         </p>
