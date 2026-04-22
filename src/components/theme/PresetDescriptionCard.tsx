@@ -10,8 +10,8 @@ const PresetDescriptionCard: React.FC = () => {
     <div style={{ maxWidth: 680, margin: '32px auto', padding: '0 24px' }}>
       <div
         style={{
-          background: 'var(--ds-surface)',
-          border: '1px solid var(--ds-border-neutral-strong)',
+          background: 'var(--K15t-surface)',
+          border: '1px solid var(--K15t-border-brand-strong)',
           borderRadius: 'var(--ds-radius-medium)',
           padding: '24px 28px',
           fontFamily: 'var(--ds-font-family-body)',
@@ -32,7 +32,7 @@ const PresetDescriptionCard: React.FC = () => {
             style={{
               marginLeft: 8,
               fontStyle: 'italic',
-              color: 'var(--ds-foreground-subtle)',
+              color: 'var(--K15t-foreground-subtle)',
               fontSize: 'var(--ds-font-size-sm)',
             }}
           >
@@ -41,7 +41,7 @@ const PresetDescriptionCard: React.FC = () => {
         </div>
         <p
           style={{
-            color: 'var(--ds-foreground-subtle)',
+            color: 'var(--K15t-foreground-subtle)',
             lineHeight: 'var(--theme-content-line-height)',
             fontSize: 'var(--ds-font-size-md)',
             marginBottom: 16,
@@ -56,9 +56,9 @@ const PresetDescriptionCard: React.FC = () => {
               style={{
                 padding: '3px 10px',
                 borderRadius: 'var(--ds-radius-small)',
-                border: '1px solid var(--ds-border-neutral-strong)',
+                border: '1px solid var(--K15t-border-brand-strong)',
                 fontSize: 12,
-                color: 'var(--ds-foreground-subtle)',
+                color: 'var(--K15t-foreground-subtle)',
                 fontFamily: 'var(--ds-font-family-body)',
               }}
             >

@@ -89,7 +89,8 @@ src/
 │       ├── aurora.ts
 │       └── playground.ts
 ├── pages/              # Portal, Article page layouts
-├── design-tokens.css   # Global CSS custom property definitions
+├── global.css          # Tailwind + base shell styles
+├── design-tokens/      # core-tokens.css, alias-tokens.css, theme-tokens.css (imported from baseStyles.ts)
 └── index.css
 ```
 

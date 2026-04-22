@@ -1,5 +1,5 @@
 /* ⚠️  DEPRECATED — no longer imported.
-   All design tokens now live in design-tokens.css.
+   Token CSS is imported from `lib/presets/baseStyles.ts`; Tailwind/base in `global.css`.
    Preset-specific CSS vars have moved into each
    preset's .ts file (cssVars / darkCssVars) and
    are applied as inline styles by ThemeContext.

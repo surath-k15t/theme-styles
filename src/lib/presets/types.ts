@@ -1,9 +1,9 @@
-import { SpacingScheme } from './spacingSchemes';
+import type { CardLayout, SpacingScheme } from './spacingSchemes';
 
-export type PresetId = 'origin' | 'vector' | 'ignite' | 'legacy' | 'lucid' | 'aurora' | 'playground';
+export type PresetId = 'playground';
 export type ThemeMode = 'light' | 'dark';
 
-export type { SpacingScheme, CardLayout } from './spacingSchemes';
+export type { CardLayout, SpacingScheme } from './spacingSchemes';
 
 export interface PresetStyles {
   // Header
@@ -142,12 +142,12 @@ export interface PresetConfig {
   apps: { name: string; icon: string; iconType: 'material' | 'emoji' | 'image'; description?: string }[];
   /** Section heading above the app cards grid (defaults to "Our apps") */
   cardsSectionHeading?: string;
-  cardLayout: string;
+  cardLayout: CardLayout;
   /**
    * Controls how the banner background is rendered:
    * - 'none'     — blends with the portal canvas (no distinct banner bg)
    * - 'colored'  — solid/custom color set via `styles.bannerBackground`
-   * - 'gradient' — flowing gradient driven by `--aurora-color-*` CSS vars
+   * - 'gradient' — flowing gradient from `--K15t-color-brand-100|400|700` (palette steps 3/6/9)
    * - 'image'    — full-width decorative image (set via `bannerImage`)
    */
   bannerStyle: 'none' | 'colored' | 'gradient' | 'image';
@@ -158,4 +158,17 @@ export interface PresetConfig {
   /** Dark-mode overrides merged on top of cssVars when mode === 'dark' */
   darkCssVars: Record<string, string>;
   styles: PresetStyles;
+  /**
+   * Feature flag for the Brand panel “Advanced” color diagnostics toggle (scale table + alpha).
+   * `true` or string `'true'` enables it; `false`, `'false'`, or omitted hides it (default).
+   */
+  advanced?: boolean | 'true' | 'false';
+}
+
+/** Whether the preset enables the Advanced color diagnostics UI. */
+export function presetAdvancedColorPanelEnabled(
+  advanced: PresetConfig['advanced'],
+): boolean {
+  if (advanced === true || advanced === 'true') return true;
+  return false;
 }

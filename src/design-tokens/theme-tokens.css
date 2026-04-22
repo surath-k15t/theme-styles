@@ -1,0 +1,16 @@
+/* LAYER 3: Theme tokens — slots wired from presets / floating controls only (typography, rhythm, radius). */
+/* Optional chrome overrides (set on `[data-theme-root]` from app): `--theme-custom-header-bg`, `--theme-custom-header-text`, `--theme-custom-footer-bg`, `--theme-custom-footer-text`, `--theme-custom-banner-bg`, `--theme-custom-banner-text` — see alias `--theme-*-slot` tokens. */
+[data-theme-root] {
+  --theme-text-font: initial;
+  --theme-headline-font: initial;
+  --theme-headline-scale: initial;
+  --theme-content-width: 860px;
+  --theme-content-line-height: var(--ds-line-height-large);
+  --theme-content-spacing: 1rem;
+  --theme-roundness: 2;
+
+  --ds-font-family-body: var(--theme-text-font, var(--ds-font-family-sans));
+  --ds-font-family-headline: var(--theme-headline-font, var(--ds-font-family-body));
+  --ds-font-size-scale-large: var(--theme-headline-scale, 1);
+  --ds-radius-factor: var(--theme-roundness);
+}

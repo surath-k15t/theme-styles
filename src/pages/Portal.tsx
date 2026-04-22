@@ -7,13 +7,15 @@ import { useTheme } from '@/lib/ThemeContext';
 import { presets } from '@/lib/presets';
 
 const Portal: React.FC = () => {
-  const { preset } = useTheme();
+  const { preset, panelBackgroundMode } = useTheme();
   const s = presets[preset].styles;
+  const pullBannerUnderNav =
+    s.bannerOverlapHeader === true || panelBackgroundMode === 'translucent';
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <SiteHeader variant="portal" />
-      <div style={{ marginTop: s.bannerOverlapHeader ? -s.headerHeight : 0 }}>
+      <div style={{ marginTop: pullBannerUnderNav ? -s.headerHeight : 0 }}>
         <Banner />
       </div>
       <div style={{ flex: 1, background: s.portalCanvasBackground }}>

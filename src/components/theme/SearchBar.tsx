@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '@/lib/ThemeContext';
+import { PANEL_SURFACE_TRANSITION, panelSurfaceBackground } from '@/lib/panelSurfaceGlass';
 import { presets } from '@/lib/presets';
 
 interface SearchBarProps {
@@ -15,8 +16,21 @@ const SearchBar: React.FC<SearchBarProps> = ({
   showDropdown = true,
   boxShadow = '0 4px 20px rgba(0,0,0,0.10)',
 }) => {
-  const { preset } = useTheme();
+  const { preset, panelBackgroundMode, mode } = useTheme();
   const s = presets[preset].styles;
+  const transl = panelBackgroundMode === 'translucent';
+
+  /** Foreground for the trailing “Search all” + chevron (chromatic fill uses on-primary in both coverage modes). */
+  const searchTrailingForeground =
+    s.searchButtonTextColor ??
+    (s.searchButtonBrand ? 'var(--theme-on-primary-color)' : 'var(--K15t-foreground)');
+
+  const fgReadabilityShadow =
+    transl && mode === 'light'
+      ? '0 1px 2px rgba(0,0,0,0.14)'
+      : transl && mode === 'dark'
+        ? '0 1px 3px rgba(0,0,0,0.45)'
+        : undefined;
 
   const btnStyle: React.CSSProperties = {
     display: 'flex',
@@ -25,8 +39,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
     gap: 4,
     padding: '0 16px',
     margin: 0,
-    background: s.searchButtonBrand ? 'var(--theme-primary-color)' : 'var(--ds-background-neutral)',
-    color: s.searchButtonTextColor ?? (s.searchButtonBrand ? 'var(--theme-on-primary-color)' : 'var(--ds-foreground)'),
+    background: s.searchButtonBrand
+      ? 'var(--K15t-search-brand-button-fill)'
+      : 'var(--K15t-background-neutral)',
+    color: searchTrailingForeground,
     border: 'none',
     borderLeft: 'none',
     borderRadius: 0,
@@ -37,18 +53,37 @@ const SearchBar: React.FC<SearchBarProps> = ({
     whiteSpace: 'nowrap' as const,
     transition: 'opacity 0.15s',
     flexShrink: 0,
+    textShadow: fgReadabilityShadow,
   };
 
   // Gradient border technique: paint the border gradient via background-clip
   // when searchBorderGradient is set. The fill sits in padding-box, the gradient
   // in border-box — a transparent border lets the gradient show through.
-  const glassFill = s.searchGlassBackground ?? 'var(--ds-surface)';
+  const glassFill = s.searchGlassBackground ?? 'var(--K15t-surface)';
   const wrapperBackground = s.searchBorderGradient
     ? `linear-gradient(${glassFill}, ${glassFill}) padding-box, ${s.searchBorderGradient} border-box`
     : glassFill;
+  const translucentNeutralSearchBorder =
+    transl && !s.searchBorderGradient
+      ? `1px solid color-mix(in srgb, var(--neutral-${mode === 'dark' ? '12' : '1'}) 25%, transparent)`
+      : undefined;
+
+  /** Solid panel mode: fixed chrome on the pill (translucent keeps neutral mix above). */
+  const solidPanelSearchBorder =
+    !transl && !s.searchBorderGradient
+      ? mode === 'dark'
+        ? '1px solid #000000'
+        : '1px solid #ffffff'
+      : undefined;
+
   const wrapperBorder = s.searchBorderGradient
     ? '2px solid transparent'
-    : s.searchBorder ?? '1px solid var(--ds-border-neutral-strong)';
+    : translucentNeutralSearchBorder ?? solidPanelSearchBorder ?? s.searchBorder ?? '1px solid var(--K15t-border-neutral)';
+
+  const outerBackground = s.searchBorderGradient
+    ? wrapperBackground
+    : panelSurfaceBackground(glassFill, panelBackgroundMode);
+  const outerBackdrop = transl ? 'blur(30px)' : s.searchBackdropFilter;
 
   return (
     <div
@@ -57,13 +92,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
         margin: '0 auto',
         display: 'flex',
         alignItems: 'stretch',
-        background: wrapperBackground,
+        background: outerBackground,
         borderRadius: 'var(--ds-radius-pill)',
         border: wrapperBorder,
         overflow: 'hidden',
         boxShadow,
-        backdropFilter: s.searchBackdropFilter,
-        WebkitBackdropFilter: s.searchBackdropFilter,
+        backdropFilter: outerBackdrop,
+        WebkitBackdropFilter: outerBackdrop,
+        transition: PANEL_SURFACE_TRANSITION,
       }}
     >
       {/* Search icon */}
@@ -72,7 +108,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
         style={{
           fontSize: 18,
           padding: '0 12px',
-          color: s.searchForegroundColor ?? 'var(--ds-foreground-subtle)',
+          color: s.searchForegroundColor ?? 'var(--K15t-foreground-subtle)',
+          //textShadow: fgReadabilityShadow,
           flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
@@ -85,6 +122,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <input
         type="text"
         placeholder={placeholder}
+        className={transl && mode === 'light' ? 'placeholder:text-[var(--neutral-11)]' : undefined}
         style={{
           flex: 1,
           border: 'none',
@@ -93,7 +131,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
           fontSize: 'var(--ds-font-size-md)',
           fontFamily: 'var(--ds-font-family-body)',
           fontWeight: 500,
-          color: s.searchForegroundColor ?? 'var(--ds-foreground)',
+          color: s.searchForegroundColor ?? 'var(--K15t-foreground)',
+          //textShadow: fgReadabilityShadow,
           background: 'transparent',
           minWidth: 0,
         }}

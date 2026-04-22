@@ -10,8 +10,8 @@ const SiteFooter: React.FC = () => {
   return (
     <footer
       style={{
-        background: 'var(--theme-footer-background-color)',
-        color: 'var(--theme-footer-text-color)',
+        background: 'var(--theme-footer-background-slot)',
+        color: 'var(--theme-footer-text-slot)',
         padding: s.footerPadding,
         fontSize: 'var(--ds-font-size-sm)',
         fontFamily: 'var(--ds-font-family-body)',
@@ -26,7 +26,7 @@ const SiteFooter: React.FC = () => {
           justifyContent: 'space-between',
         }}
       >
-        <span style={{ fontWeight: 500 }}>{config.brandName}</span>
+        <span style={{ fontWeight: 500, color: 'var(--theme-headline-color)' }}>{config.brandName}</span>
         <span style={{ opacity: 0.7 }}>Powered by Scroll Sites for Confluence</span>
       </div>
     </footer>
