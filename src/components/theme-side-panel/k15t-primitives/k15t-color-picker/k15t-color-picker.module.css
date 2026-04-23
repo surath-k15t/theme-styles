@@ -1,0 +1,105 @@
+.colorPicker {
+    --input-field-height: 2rem;
+    --k15t-color-picker-button-height: calc(var(--input-field-height) - 2 * 0.25rem);
+    --k15t-color-picker-button-width: var(--k15t-color-picker-button-height);
+    --k15t-color-picker-button-radius: var(--border-radius-s);
+    --k15t-color-picker-inner-spacing: 0.75rem;
+    --k15t-color-picker-input-width: 110px;
+
+    position: relative;
+    display: inline-block;
+
+    :global(.k15t-text-field .k15t-icon) {
+        right: calc(var(--k15t-color-picker-button-width) + 0.25rem + 0.75rem);
+    }
+
+    :global(.k15t-text-field__input) {
+        padding-right: calc(var(--k15t-color-picker-button-width) + 0.25rem + 0.75rem);
+    }
+
+    .pickerInput {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+
+        width: var(--k15t-color-picker-button-width);
+        height: var(--k15t-color-picker-button-height);
+        padding: 0;
+
+        border: var(--border-width-s) solid var(--border-input-resting);
+        border-radius: var(--k15t-color-picker-button-radius);
+
+        background: none;
+
+        &::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        &::-moz-color-swatch {
+            border: none;
+        }
+    }
+}
+
+:global(input[type='color'].k15t-color-picker__color-input)::-webkit-color-swatch {
+    border: none;
+}
+
+/* Standalone input baseline (vpt3 app normally provides this via config-field context). */
+.colorPicker :global(.k15t-text-field__input) {
+    --background-color: var(--background-neutral-resting);
+    --border-color: var(--background-neutral-resting);
+    --color: var(--foreground-resting);
+
+    box-sizing: border-box;
+    height: var(--input-field-height);
+    width: var(--k15t-color-picker-input-width);
+    padding: 0 1rem;
+    padding-right: calc(var(--k15t-color-picker-button-width) + 0.25rem + 0.75rem);
+    padding-left: 0.5rem;
+
+    display: block;
+    border-radius: var(--border-radius-s);
+    border: var(--border-width-s) solid var(--border-color);
+    background-color: var(--background-color);
+    color: var(--color);
+    transition: var(--input-field-hightlight-transition);
+
+    font: var(--font-body-default-s);
+    font-family: ui-monospace, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: var(--font-size-xs);
+}
+
+.colorPicker :global(.k15t-text-field__input:hover:not(:disabled):not([aria-invalid='true'])) {
+    --background-color: var(--background-neutral-hovered);
+    --border-color: var(--background-neutral-hovered);
+}
+
+.colorPicker:focus-within :global(.k15t-text-field__input:not(:disabled):not([aria-invalid='true'])) {
+    --background-color: var(--surface-raised-resting);
+    --border-color: var(--border-brand-strong);
+    box-shadow: var(--box-shadow-highlight-selected);
+}
+
+.colorPicker :global(.k15t-text-field__input[disabled]) {
+    --border-color: var(--border-neutral-subtle);
+    --color: var(--foreground-disabled);
+    cursor: not-allowed;
+}
+
+.colorPicker :global(.k15t-text-field__input::placeholder) {
+    color: var(--foreground-disabled);
+    font: var(--font-body-default-s);
+}
+
+.colorPicker :global(.k15t-text-field__input:focus-visible:not(:disabled)) {
+    outline: none;
+}
+
+.colorPicker :global(.k15t-text-field__input:has(+ .k15t-state-indicator)) {
+    padding-right: 2.5rem;
+}
+
+.widthFluid {
+    --k15t-color-picker-input-width: 100%;
+}

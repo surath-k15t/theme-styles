@@ -14,10 +14,10 @@
   }
 
   body {
-    font-family: var(--ds-font-family-body);
+    font-family: var(--K15t-font-family-body);
     color: var(--K15t-foreground);
     background: var(--K15t-surface);
-    line-height: var(--ds-line-height-medium);
+    line-height: var(--K15t-line-height-medium);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

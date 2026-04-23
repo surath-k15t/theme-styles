@@ -1,0 +1,41 @@
+.controlOneLine {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 2rem;
+}
+
+.controlOneLine:not(:last-child) {
+  margin-bottom: 0.75rem;
+}
+
+.controlOneLineLabel {
+  min-width: 0;
+  font: var(--font-body-strong-xs);
+  line-height: var(--line-height-m);
+  color: var(--foreground-resting);
+}
+
+.controlOneLinePicker {
+  flex: 0 0 auto;
+}
+
+.section {
+  margin-top: 1rem;
+  padding: 0.875rem 1rem;
+  border: var(--border-width-s) solid var(--border-neutral-strong);
+  border-radius: var(--border-radius-s);
+  background: var(--surface-default);
+}
+
+.sectionTitle {
+  margin: 0;
+  font: var(--font-body-strong-xs);
+  line-height: var(--line-height-m);
+  color: var(--foreground-resting);
+}
+
+.sectionBody {
+  margin-top: 0.75rem;
+}

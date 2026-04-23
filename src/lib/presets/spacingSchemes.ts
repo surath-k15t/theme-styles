@@ -21,9 +21,9 @@ export interface SpacingSchemeValues {
   cardsHeadingMarginBottom: number;
   /** Gap between cards in px — varies by layout type */
   cardsGap: Record<CardLayout, number>;
-  /** Line height for card titles (h3) — maps to --ds-line-height-* token */
+  /** Line height for card titles (h3) — maps to --K15t-line-height-* token */
   cardTitleLineHeight: string;
-  /** Line height for card body / description text — maps to --ds-line-height-* token */
+  /** Line height for card body / description text — maps to --K15t-line-height-* token */
   cardBodyLineHeight: string;
   /** Default portal app-card icon container (px) when this spacing scheme is selected */
   defaultIconSize: number;
@@ -48,8 +48,8 @@ export const spacingSchemes: Record<SpacingScheme, SpacingSchemeValues> = {
       'list-2col': 0,
       'list-3col': 0,
     },
-    cardTitleLineHeight:      'var(--ds-line-height-x-small)',
-    cardBodyLineHeight:       'var(--ds-line-height-small)',
+    cardTitleLineHeight:      'var(--K15t-line-height-x-small)',
+    cardBodyLineHeight:       'var(--K15t-line-height-small)',
     defaultIconSize:          58,
   },
   standard: {
@@ -70,8 +70,8 @@ export const spacingSchemes: Record<SpacingScheme, SpacingSchemeValues> = {
       'list-2col': 18,
       'list-3col': 18,
     },
-    cardTitleLineHeight:      'var(--ds-line-height-small)',
-    cardBodyLineHeight:       'var(--ds-line-height-medium)',
+    cardTitleLineHeight:      'var(--K15t-line-height-small)',
+    cardBodyLineHeight:       'var(--K15t-line-height-medium)',
     defaultIconSize:          58,
   },
   spacious: {
@@ -92,8 +92,8 @@ export const spacingSchemes: Record<SpacingScheme, SpacingSchemeValues> = {
       'list-2col': 32,
       'list-3col': 32,
     },
-    cardTitleLineHeight:      'var(--ds-line-height-medium)',
-    cardBodyLineHeight:       'var(--ds-line-height-medium)',
+    cardTitleLineHeight:      'var(--K15t-line-height-medium)',
+    cardBodyLineHeight:       'var(--K15t-line-height-medium)',
     defaultIconSize:          72,
   },
 };

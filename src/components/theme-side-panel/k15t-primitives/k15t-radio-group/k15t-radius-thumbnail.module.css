@@ -1,0 +1,51 @@
+/*
+ * vpt3 `radio-group.module.css` — `.thumbnail-radio-item-thumbnail*` (flattened; no nested `&-`).
+ * Theme configurator option thumbnails: 2 : 1 aspect, min width 6.25rem.
+ */
+.thumbnailRadioItemThumbnail {
+    position: relative;
+
+    min-width: 6.25rem;
+    aspect-ratio: 2 / 1;
+    margin-left: 0.5rem;
+
+    padding-left: 0.5rem;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    --_box-shadow: 0 0 0 var(--border-width-m);
+    box-shadow: var(--_box-shadow) var(--border-neutral-subtle);
+    border-radius: var(--border-radius-s);
+
+    transition: box-shadow 200ms ease-in-out;
+
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.thumbnailRadioItemThumbnailActive {
+    box-shadow: var(--_box-shadow) var(--border-brand-selected);
+}
+
+.thumbnailRadioItemThumbnailIndicator {
+    position: absolute;
+    right: 0.5625rem;
+    top: -0.8rem;
+
+    width: 1rem;
+    height: 1rem;
+
+    background-color: var(--surface-raised-resting);
+    border-radius: var(--border-radius-circle);
+    color: var(--border-brand-selected);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+}

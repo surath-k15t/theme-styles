@@ -23,10 +23,10 @@ The project is structured around **preset configurations** — each preset defin
 All visual properties flow through a CSS token chain. Radius is a good example:
 
 ```
-roundness (preset style) → --theme-roundness → --ds-radius-factor → --ds-radius-small / medium / large / pill
+roundness (preset style) → --theme-roundness → --K15t-radius-factor → --K15t-radius-small / medium / large / pill
 ```
 
-Components hardcode the appropriate token step (e.g. cards use `--ds-radius-medium`, search uses `--ds-radius-pill`) rather than receiving per-preset overrides. This means changing a single `roundness` number in a preset reshapes the entire UI consistently.
+Components hardcode the appropriate token step (e.g. cards use `--K15t-radius-medium`, search uses `--K15t-radius-pill`) rather than receiving per-preset overrides. This means changing a single `roundness` number in a preset reshapes the entire UI consistently.
 
 Other token families cover spacing schemes (`compact` / `standard` / `spacious`), icon sizes, card gaps per layout type, and typography scales.
 
@@ -90,7 +90,7 @@ src/
 │       └── playground.ts
 ├── pages/              # Portal, Article page layouts
 ├── global.css          # Tailwind + base shell styles
-├── design-tokens/      # core-tokens.css, alias-tokens.css, theme-tokens.css (imported from baseStyles.ts)
+├── design-tokens-HCTheme/      # core-tokens.css, alias-tokens.css, theme-tokens.css (imported from baseStyles.ts)
 └── index.css
 ```
 

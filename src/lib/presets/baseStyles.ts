@@ -1,6 +1,6 @@
-import '../../design-tokens/core-tokens.css';
-import '../../design-tokens/alias-tokens.css';
-import '../../design-tokens/theme-tokens.css';
+import '../../design-tokens-HCTheme/core-tokens.css';
+import '../../design-tokens-HCTheme/alias-tokens.css';
+import '../../design-tokens-HCTheme/theme-tokens.css';
 
 import type { PresetStyles } from './types';
 
@@ -21,30 +21,30 @@ export const baseStyles: PresetStyles = {
   bannerOverlapHeader: false,
 
   // Typography: H1 (banner main heading)
-  h1Size: 'var(--ds-font-size-2xl)',
-  h1Weight: 'var(--ds-font-weight-medium)',
+  h1Size: 'var(--K15t-font-size-xxl)',
+  h1Weight: 'var(--K15t-font-weight-medium)',
   h1Color: 'inherit',
   h1LetterSpacing: 'normal',
-  h1LineHeight: 'var(--ds-line-height-x-small)',
+  h1LineHeight: 'var(--K15t-line-height-x-small)',
   h1PaddingBottom: '0px',
   headerBackground: 'var(--theme-header-background-slot)',
 
   // Typography: H2 (section headings like "Our Apps")
-  h2Size: 'var(--ds-font-size-xl)',
-  h2Weight: 'var(--ds-font-weight-medium)',
+  h2Size: 'var(--K15t-font-size-xl)',
+  h2Weight: 'var(--K15t-font-weight-medium)',
   h2Color: 'var(--theme-headline-color)',
   h2LetterSpacing: 'normal',
-  h2LineHeight: 'var(--ds-line-height-small)',
+  h2LineHeight: 'var(--K15t-line-height-small)',
 
   // Typography: H3 (card titles)
-  h3Size: 'var(--ds-font-size-md)',
-  h3Weight: 'var(--ds-font-weight-medium)',
+  h3Size: 'var(--K15t-font-size-m)',
+  h3Weight: 'var(--K15t-font-weight-medium)',
   h3Color: 'var(--theme-headline-color)',
   h3LetterSpacing: 'normal',
 
   // Typography: P (card descriptions, body text)
-  pSize: 'var(--ds-font-size-sm)',
-  pWeight: 'var(--ds-font-weight-regular)',
+  pSize: 'var(--K15t-font-size-s)',
+  pWeight: 'var(--K15t-font-weight-regular)',
   pColor: 'var(--K15t-foreground-subtle)',
 
   portalCanvasBackground: 'var(--K15t-canvas)',

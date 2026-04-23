@@ -1,0 +1,165 @@
+:root {
+    --color-neutral-0: #FFFFFF;
+    --color-neutral-50: #F7F8F9;
+    --color-neutral-100: #F7F8F9;
+    --color-neutral-200: #F1F2F4;
+    --color-neutral-300: #DCDFE4;
+    --color-neutral-400: #B3B9C4;
+    --color-neutral-500: #8590A2;
+    --color-neutral-600: #758195;
+    --color-neutral-700: #626F86;
+    --color-neutral-800: #44546F;
+    --color-neutral-900: #2C3E5D;
+    --color-neutral-1000: #172B4D;
+    --color-neutral-1100: #091E42;
+
+    --color-blue-100: #E9F2FF;
+    --color-blue-200: #CCE0FF;
+    --color-blue-300: #85B8FF;
+    --color-blue-400: #579DFF;
+    --color-blue-500: #388BFF;
+    --color-blue-600: #1D7AFC;
+    --color-blue-700: #0C66E4;
+    --color-blue-800: #0055CC;
+    --color-blue-900: #09326C;
+    --color-blue-1000: #1C2B41;
+
+    --color-light-purple-50: #FAE4FC;
+    --color-light-purple-100: #F2BCF8;
+    --color-light-purple-200: #E98DF5;
+    --color-light-purple-300: #DF55F2;
+    --color-light-purple-400: #D602EE;
+    --color-light-purple-500: #CD00EA;
+    --color-light-purple-600: #BA00E5;
+    --color-light-purple-700: #A200E0;
+    --color-light-purple-800: #8B00DD;
+    --color-light-purple-900: #5C00D2;
+
+    --color-purple-100: #F3F0FF;
+    --color-purple-200: #DFD8FD;
+    --color-purple-300: #B8ACF6;
+    --color-purple-400: #9F8FEF;
+    --color-purple-500: #8F7EE7;
+    --color-purple-600: #8270DB;
+    --color-purple-700: #6E5DC6;
+    --color-purple-800: #5E4DB2;
+    --color-purple-900: #352C63;
+    --color-purple-1000: #2B273F;
+
+    --color-brand-50: #F4F8FF;
+    --color-brand-100: #DEEBFF;
+    --color-brand-200: #B3D4FF;
+    --color-brand-300: #4C9AFF;
+    --color-brand-400: #2684FF;
+    --color-brand-500: #0065FF;
+    --color-brand-600: #0163FA;
+    --color-brand-700: #0052CC;
+    --color-brand-800: #0747A6;
+    --color-brand-900: #053987;
+    --color-brand-1000: #042556;
+
+    --color-red-50: #FFEBEE;
+    --color-red-100: #FFCDD2;
+    --color-red-200: #EF9A9A;
+    --color-red-400: #EF5350;
+    --color-red-500: #F44336;
+    --color-red-600: #E53935;
+    --color-red-700: #D32F2F;
+    --color-red-800: #C62828;
+    --color-red-900: #B71C1C;
+
+    --color-green-50: #E3F5ED;
+    --color-green-100: #BCE5D2;
+    --color-green-200: #90D4B6;
+    --color-green-300: #5DC49A;
+    --color-green-400: #2EB785;
+    --color-green-500: #00AA70;
+    --color-green-600: #009B65;
+    --color-green-700: #008958;
+    --color-green-800: #00784B;
+    --color-green-900: #005935;
+
+    --color-teal-50: #E0F2F1;
+    --color-teal-100: #B2DFDB;
+    --color-teal-200: #80CBC4;
+    --color-teal-300: #4DB6AC;
+    --color-teal-400: #26A69A;
+    --color-teal-500: #009688;
+    --color-teal-600: #00897B;
+    --color-teal-700: #00796B;
+    --color-teal-800: #00695C;
+    --color-teal-900: #004D40;
+
+    --color-yellow-50: #FFFDE7;
+    --color-yellow-100: #FFF9C4;
+    --color-yellow-200: #FFF59D;
+    --color-yellow-300: #FFF176;
+    --color-yellow-400: #FFEE58;
+    --color-yellow-500: #FFEB3B;
+    --color-yellow-600: #FDD835;
+    --color-yellow-700: #FBC02D;
+    --color-yellow-800: #F9A825;
+    --color-yellow-900: #F57F17;
+    --color-yellow-1000: #CD6408;
+
+    --color-orange-50: #FFF3E0;
+    --color-orange-100: #FFE0B2;
+    --color-orange-200: #FFCC80;
+    --color-orange-600: #FB8C00;
+
+    --color-k15t-purple-200: #BB9AE8;
+    --color-k15t-green-500: #2EB785;
+    --color-k15t-yellow-400: #FFDF4F;
+    --color-k15t-yellow-500: #FFC420;
+    --color-k15t-red-200: #FFBDCB;
+    --color-k15t-red-400: #EF6F5D;
+    --color-k15t-blue-200: #92D0FF;
+    --color-k15t-blue-400: #1062FB;
+
+    --border-radius-none: 0;
+    --border-radius-xxs: 0.0625rem; /* 1 px */
+    --border-radius-xs: 0.125rem; /* 2px */
+    --border-radius-s: 0.25rem; /* 4px */
+    --border-radius-m: 0.5rem; /* 8px */
+    --border-radius-l: 0.75rem; /* 12px */
+    --border-radius-xl: 2rem; /* 32px */
+    --border-radius-circle: 50%;
+
+    /* Px values on purpose, the border width should stay the same, regardless of scaling */
+    --border-width-s: 1px;
+    --border-width-m: 2px;
+    --border-width-ml: 3px;
+    --border-width-l: 4px;
+    --border-width-xl: 5px;
+
+    --elevation-s: 0 8px 12px 0 #091E4226;
+    --elevation-m: 4px 4px 10px 5px var(--color-neutral-100);
+
+    --font-family-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, system-ui, "Helvetica Neue", sans-serif;
+    --font-family-headline: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, system-ui, "Helvetica Neue", sans-serif;
+    --font-family-code: ui-monospace, Menlo, "Segoe UI Mono", "Ubuntu Mono", monospace;
+
+    /* The values are always 100 lower than the values in Figma */
+    --font-weight-regular: 450;
+    --font-weight-medium: 500;
+    --font-weight-semi-bold: 600;
+
+    --line-height-xs: 1.1;
+    --line-height-s: 1.3;
+    --line-height-m: 1.5;
+    --line-height-l: 1.6;
+    --line-height-xl: 1.7;
+
+    --font-size-xxs: 0.625rem; /* => 10px */
+    --font-size-xs: 0.75rem; /* => 12px */
+    --font-size-s: 0.875rem; /* => 14px */
+    --font-size-m: 1rem; /* => 16px */
+    --font-size-ml: 1.125rem; /* => 18px */
+    --font-size-l: 1.5rem; /* => 24px */
+    --font-size-xl: 2rem; /* => 32px */
+    --font-size-xxl: 3rem; /* => 48px */
+
+    --paragraph-spacing-none: 0;
+    --paragraph-spacing-s: 5;
+    --paragraph-spacing-m: 10;
+}

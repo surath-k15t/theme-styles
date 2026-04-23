@@ -189,7 +189,7 @@ function readStoredLastAppliedBrandStyleId(): BrandStylePresetId | null {
   return null;
 }
 
-/** Radix-style radius steps → `--theme-roundness` / `--ds-radius-factor`. */
+/** Radix-style radius steps → `--theme-roundness` / `--K15t-radius-factor`. */
 export type ThemeRadiusTier = 'none' | 'small' | 'medium' | 'large' | 'full';
 
 export const THEME_RADIUS_TIER_VALUES: Record<ThemeRadiusTier, number> = {

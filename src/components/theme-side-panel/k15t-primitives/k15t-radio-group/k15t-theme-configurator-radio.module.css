@@ -1,0 +1,40 @@
+/*
+ * Theme configurator sidebar radio row styles (vpt3 `radio-group.module.css`).
+ * Flattened selectors: nested `&-thumbnail` broke postcss output (`1rem}-thumbnail…`), which
+ * prevented item/label/dot rules from applying in the browser.
+ */
+.thumbnailRadioItem:global(.k15t-radio-group__item) {
+    --_transition: 200ms ease-in-out;
+
+    width: 100%;
+    padding: 0.25rem 0.25rem 0.25rem 1rem;
+
+    border-radius: var(--border-radius-s);
+
+    transition: background-color var(--_transition);
+}
+
+.thumbnailRadioItem:global(.k15t-radio-group__item):hover {
+    background-color: var(--background-neutral-subtle-hovered);
+}
+
+.thumbnailRadioItem :global(.k15t-radio-group__item-label) {
+    font: var(--font-body-strong-xs);
+    line-height: var(--line-height-s);
+
+    width: 100%;
+    padding-left: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    min-height: 2.5rem;
+}
+
+.thumbnailRadioItem :global(.k15t-radio-group__dot) {
+    margin-top: var(--border-width-m);
+
+    min-width: 1rem;
+    min-height: 1rem;
+}

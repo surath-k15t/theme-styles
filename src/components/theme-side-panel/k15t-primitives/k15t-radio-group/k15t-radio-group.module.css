@@ -1,0 +1,62 @@
+/* Copied from vpt3 `k15t-radio-group.module.css` + theme sidebar spacing from `config-field.module.css` (:global(.k15t-radio-group) { gap: 0.25rem }) */
+.radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.item {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: fit-content;
+    transition: border 300ms linear;
+    color: var(--foreground-resting);
+
+    .dot {
+        border-radius: 100%;
+        border: var(--border-width-m) solid var(--border-neutral-strong);
+        transition: border 300ms linear;
+        width: 1rem;
+        height: 1rem;
+        background-color: white;
+    }
+
+    &:hover:not([disabled]) .dot {
+        border-width: 0.3125rem;
+        border-color: var(--border-neutral-strong);
+    }
+
+    &:hover:not([disabled]) .dot[data-state='checked'] {
+        border-color: var(--background-brand-subtle-strong-resting);
+    }
+
+    .dot[data-state='checked'] {
+        border-width: 0.3125rem;
+        border-color: var(--background-brand-subtle-strong-resting);
+    }
+
+    &[disabled] {
+        cursor: not-allowed;
+
+        .dot {
+            border-color: var(--border-neutral-subtle);
+        }
+    }
+
+    &:focus-visible {
+        outline: var(--border-width-m) solid var(--border-brand-strong);
+        outline-offset: 2px;
+        z-index: 0;
+    }
+}
+
+.label {
+    width: fit-content;
+    font: var(--font-body-strong-m);
+    padding-left: 0.5rem;
+    cursor: pointer;
+}

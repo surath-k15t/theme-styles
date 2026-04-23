@@ -28,7 +28,7 @@ export const playgroundPreset: PresetConfig = {
     '--theme-headline-font': "'Inter', ui-sans-serif, sans-serif",
     '--theme-headline-scale': '1',
     '--theme-content-width':       '860px',
-    '--theme-content-line-height': 'var(--ds-line-height-large)',
+    '--theme-content-line-height': 'var(--K15t-line-height-large)',
     '--theme-content-spacing':     '1rem',
   },
   darkCssVars: {},

@@ -1,0 +1,142 @@
+:root {
+    --foreground-resting: var(--color-neutral-1000);
+    --foreground-hovered: var(--color-neutral-1100);
+    --foreground-selected: var(--color-neutral-800);
+    --foreground-disabled: var(--color-neutral-400);
+    --foreground-subtle: var(--color-neutral-900);
+    --foreground-restrained: var(--color-neutral-600);
+    --foreground-notification: var(--color-neutral-0);
+    --foreground-brand-resting: var(--color-brand-600);
+    --foreground-brand-pressed: var(--color-brand-600);
+    --foreground-brand-selected: var(--color-brand-600);
+    --foreground-on-strong: var(--color-neutral-0);
+    --foreground-on-notification-subtle: var(--color-light-purple-700);
+    --foreground-on-notification-strong: var(--color-neutral-0);
+    --foreground-on-information-subtle: var(--color-blue-700);
+    --foreground-on-information-strong: var(--color-neutral-0);
+    --foreground-on-tip-subtle: var(--color-purple-700);
+    --foreground-on-tip-strong: var(--color-neutral-0);
+    --foreground-on-success-subtle: var(--color-green-600);
+    --foreground-on-success-strong: var(--color-neutral-0);
+    --foreground-on-warning-subtle: var(--color-yellow-800);
+    --foreground-on-warning-strong: var(--color-neutral-0);
+    --foreground-on-danger-subtle: var(--color-red-700);
+    --foreground-on-danger-strong: var(--color-neutral-0);
+    --foreground-on-brand-subtle: var(--color-brand-600);
+    --foreground-on-brand-strong: var(--color-neutral-0);
+    --foreground-on-brand-medium: var(--color-brand-700);
+
+    --surface-default: var(--color-neutral-0);
+    --surface-raised-resting: var(--color-neutral-0);
+    --surface-raised-hovered: var(--color-neutral-100);
+    --surface-background: var(--color-neutral-0);
+    --surface-overlay-default: var(--color-neutral-0);
+    --surface-overlay-hovered: var(--color-neutral-100);
+    --surface-overlay-selected: var(--color-neutral-200);
+
+    --background-neutral-resting: var(--color-neutral-200);
+    --background-neutral-hovered: var(--color-neutral-300);
+    --background-neutral-pressed: var(--color-neutral-400);
+    --background-neutral-selected: var(--color-neutral-500);
+    --background-neutral-subtle-resting: var(--color-neutral-50);
+    --background-neutral-subtle-hovered: var(--color-neutral-100);
+    --background-neutral-subtle-pressed: var(--color-neutral-200);
+    --background-neutral-subtle-selected: var(--color-neutral-300);
+    --background-neutral-medium-resting: var(--color-neutral-300);
+    --background-neutral-medium-hovered: var(--color-neutral-400);
+    --background-neutral-medium-pressed: var(--color-neutral-500);
+    --background-neutral-medium-selected: var(--color-neutral-800);
+    --background-neutral-strong-resting: var(--color-neutral-700);
+    --background-neutral-strong-hovered: var(--color-neutral-800);
+    --background-neutral-strong-pressed: var(--color-neutral-900);
+    --background-neutral-strong-selected: var(--color-neutral-900);
+    --background-brand-resting: var(--color-brand-100);
+    --background-brand-hovered: var(--color-brand-200);
+    --background-brand-pressed: var(--color-blue-300);
+    --background-brand-selected: var(--color-brand-100);
+    --background-brand-strong-resting: var(--color-brand-500);
+    --background-brand-strong-hovered: var(--color-brand-700);
+    --background-brand-strong-pressed: var(--color-brand-800);
+    --background-brand-strong-selected: var(--color-brand-500);
+    --background-brand-subtle-resting: var(--surface-default);
+    --background-brand-subtle-hovered: var(--color-brand-50);
+    --background-brand-subtle-pressed: var(--color-brand-100);
+    --background-brand-subtle-selected: var(--color-brand-50);
+    --background-brand-subtle-strong-resting: var(--color-brand-400);
+    --background-brand-subtle-strong-hovered: var(--color-brand-500);
+    --background-brand-subtle-strong-pressed: var(--color-brand-700);
+    --background-brand-subtle-strong-selected: var(--color-brand-400);
+    --background-notification-resting: var(--color-light-purple-50);
+    --background-notification-strong: var(--color-light-purple-600);
+    --background-information-subtle: var(--color-blue-100);
+    --background-information-hovered: var(--color-blue-200);
+    --background-information-strong: var(--color-blue-600);
+    --background-tip-resting: var(--color-purple-400);
+    --background-tip-subtle: var(--color-purple-100);
+    --background-tip-hover: var(--color-purple-200);
+    --background-tip-strong-resting: var(--color-purple-600);
+    --background-tip-strong-hovered: var(--color-purple-700);
+    --background-tip-strong-pressed: var(--color-purple-800);
+    --background-success-subtle: var(--color-green-50);
+    --background-success-strong: var(--color-green-600);
+    --background-warning-subtle: var(--color-yellow-100);
+    --background-warning-strong: var(--color-yellow-700);
+    --background-warning-xstrong: var(--color-yellow-1000);
+    --background-warning-hovered: var(--color-yellow-800);
+    --background-warning-pressed: var(--color-yellow-900);
+    --background-danger-subtle: var(--color-red-50);
+    --background-danger-strong: var(--color-red-600);
+    --background-danger-hovered: var(--color-red-700);
+    --background-danger-active: var(--color-red-800);
+    --background-input: var(--color-neutral-0);
+
+    --border-information-subtle: var(--background-information-subtle);
+    --border-information-default: var(--background-information-strong);
+    --border-warning-default: var(--color-yellow-700);
+    --border-warning-subtle: var(--color-yellow-50);
+    --border-neutral-subtle: var(--color-neutral-200);
+    --border-neutral-strong: var(--color-neutral-300);
+    --border-neutral-selected: var(--color-neutral-500);
+    --border-input-resting: var(--color-neutral-300);
+    --border-input-hovered: var(--color-neutral-400);
+    --border-input-selected: var(--border-neutral-selected);
+    --border-notification-default: var(--color-light-purple-600);
+    --border-notification-subtle: var(--color-light-purple-50);
+    --border-danger-default: var(--color-red-600);
+    --border-danger-subtle: var(--color-red-50);
+    --border-brand-hovered: var(--color-brand-500);
+    --border-brand-selected: var(--color-brand-600);
+    --border-brand-subtle: var(--color-brand-100);
+    --border-brand-strong: var(--color-brand-600);
+    --border-brand-strong-hovered: var(--color-brand-700); /* Not part of Figma */
+    --border-dirtystate-default: var(--color-purple-600);
+    --border-dirtystate-subtle: var(--color-purple-100);
+    --border-tip-default: var(--color-purple-500);
+
+    --link-resting: var(--color-blue-700);
+    --link-hovered: var(--color-blue-800);
+    --link-visited: var(--color-blue-800);
+    --link-inverted-resting: var(--color-blue-500);
+
+    --blanket: hsla(218, 54%, 20%, 0.6); /* rgba(23,43,77,0.60) */
+    --loading: hsl(0 0% 100% / 80%);
+
+    --font-headline-s: var(--font-weight-medium) var(--font-size-ml) / 1 var(--font-family-headline);
+    --font-headline-m: var(--font-weight-regular) var(--font-size-l) / 1 var(--font-family-headline);
+    --font-headline-l: var(--font-weight-semi-bold) var(--font-size-l) / 1 var(--font-family-headline);
+    --font-headline-xl: var(--font-weight-medium) var(--font-size-xl) / 1 var(--font-family-headline);
+
+    --font-body-default-xxs: var(--font-weight-regular) var(--font-size-xxs) / 1 var(--font-family-body);
+    --font-body-default-xs: var(--font-weight-regular) var(--font-size-xs) / 1 var(--font-family-body);
+    --font-body-default-s: var(--font-weight-regular) var(--font-size-s) / 1 var(--font-family-body);
+    --font-body-default-m: var(--font-weight-regular) var(--font-size-m) / 1 var(--font-family-body);
+    --font-body-default-l: var(--font-weight-regular) var(--font-size-ml) / 1 var(--font-family-body);
+
+    --font-body-strong-xxs: var(--font-weight-semi-bold) var(--font-size-xxs) / 1 var(--font-family-body);
+    --font-body-strong-xs: var(--font-weight-semi-bold) var(--font-size-xs) / 1 var(--font-family-body);
+    --font-body-strong-s: var(--font-weight-semi-bold) var(--font-size-s) / 1 var(--font-family-body);
+    --font-body-strong-m: var(--font-weight-semi-bold) var(--font-size-m) / 1 var(--font-family-body);
+    --font-body-strong-l: var(--font-weight-semi-bold) var(--font-size-ml) / 1 var(--font-family-body);
+
+    --font-code-m: var(--font-weight-regular) var(--font-size-m) / var(--line-height-l) var(--font-family-body);
+}

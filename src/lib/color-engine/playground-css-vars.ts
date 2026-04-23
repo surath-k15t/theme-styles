@@ -63,7 +63,7 @@ function chromaticStepVars(diagnostics: { hex: string }[]): CssVarMap {
 
 /**
  * Injects accent steps (`--palette-step-*`, `--chromatic-step-*`) and contrast picks from hex math.
- * Color coverage is not handled here; usage behavior lives in `src/design-tokens/alias-tokens.css`.
+ * Color coverage is not handled here; usage behavior lives in `src/design-tokens-HCTheme/alias-tokens.css`.
  */
 export function buildPlaygroundCssVars(
   baseHex: string,

@@ -1,0 +1,15 @@
+/* Layout / field metrics referenced by K15t primitives (from vpt3 styles/index.css). */
+:root {
+  --font-size-root: 16px;
+  --input-field-height: 2rem;
+  --input-field-message-spacing: 0.25rem;
+  --input-form-field-height: calc(
+    var(--input-field-height) + var(--input-field-message-spacing) + var(--font-size-xs) * var(--line-height-s)
+  );
+  --max-select-box-height: 15rem;
+  --z-index-1-surface: 1;
+  --z-index-2-surface-floating: 2;
+
+  --box-shadow-highlight-selected: inset 0 0 0 1px var(--border-brand-strong);
+  --input-field-hightlight-transition: box-shadow ease-in-out 200ms, border ease-in-out 200ms;
+}
