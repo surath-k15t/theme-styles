@@ -61,11 +61,11 @@ export const PagesTab: React.FC<PagesTabProps> = ({
     <>
       <ConfigCategory title="Portal Page">
         <div>
-          <CmsFieldLabel title="Card layout" hint="The layout of app cards on the portal home page." />
+          <CmsFieldLabel title="Tile layout" hint="Set the layout and orientation of the content source tiles on the portal page." />
           <select
             value={cardLayout}
             onChange={e => setCardLayout(e.target.value as CardLayout)}
-            aria-label="Portal app cards layout"
+            aria-label="Portal app tiles layout"
             style={cmsSelectStyle}
           >
             {CARD_LAYOUT_OPTIONS.map(id => (
@@ -78,10 +78,10 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div>
           <CmsFieldLabel
             title="Icon size"
-            hint={`The size of the icon container on content source cards.`}
+            hint={`The icon size on the content source tiles, in pixels.`}
           />
           <Slider
-            label="The size of the icon container on content source cards."
+            label="The size of the icon container on content source tiles."
             min={THEME_ICON_SIZE_MIN}
             max={THEME_ICON_SIZE_MAX}
             step={1}
@@ -92,7 +92,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
         <div>
           <CmsFieldLabel
             title="Banner padding"
-            hint="The top and bottom padding of the portal banner"
+            hint="The top and bottom spacing of the portal banner, in pixels."
           />
           <Slider
             label="Banner vertical padding"
@@ -104,7 +104,7 @@ export const PagesTab: React.FC<PagesTabProps> = ({
           />
         </div>
         <div>
-          <CmsFieldLabel title="Banner Image" hint="Set an image for the banner." />
+          <CmsFieldLabel title="Banner Image" />
           <div className={styles.fileUpload}>
             <input
               ref={bannerFileRef}

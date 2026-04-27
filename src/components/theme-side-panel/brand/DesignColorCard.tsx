@@ -14,11 +14,7 @@ export interface DesignColorCardProps {
   isDark: boolean;
   inputValue: string;
   handleHexInput: (val: string) => void;
-  setPlaygroundHex: (v: string) => void;
-  setInputValue: (v: string) => void;
   diagnostics: ScaleDiagnostic[];
-  accentSelectedStep: number;
-  neutralScaleHexes: readonly string[];
   panelBorder: string;
   panelFg: string;
   panelMuted: string;
@@ -36,11 +32,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   isDark,
   inputValue,
   handleHexInput,
-  setPlaygroundHex,
-  setInputValue,
   diagnostics,
-  accentSelectedStep,
-  neutralScaleHexes,
   panelBorder,
   panelFg,
   panelMuted,
@@ -52,32 +44,17 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
   setColorCoverage,
 }) => {
   const { colorModeSetting, setColorModeSetting, advancedColorPanelEnabled } = useTheme();
-  /** Light → dark (left → right): all 12 engine steps = `--palette-step-1`…`12` (brand-25 … brand-950). */
-  const brandScaleStops = [
-    { tone: '25', step: 1 },
-    { tone: '50', step: 2 },
-    { tone: '100', step: 3 },
-    { tone: '200', step: 4 },
-    { tone: '300', step: 5 },
-    { tone: '400', step: 6 },
-    { tone: '500', step: 7 },
-    { tone: '600', step: 8 },
-    { tone: '700', step: 9 },
-    { tone: '800', step: 10 },
-    { tone: '900', step: 11 },
-    { tone: '950', step: 12 },
-  ] as const;
 
   return (
   <>
-    {/* 1. Color theme — select (same control pattern as Pages tab / vpt3 theme `Select` for enum fields) */}
+    {/* 1. Color mode — select (same control pattern as Pages tab / vpt3 theme `Select` for enum fields) */}
     <div>
       <CmsFieldLabel
-        title="Color theme"
-        hint="Whether your site supports light, dark, or both."
+        title="Color mode"
+        hint="Set whether your site supports light mode, dark mode, or both."
       />
       <select
-        aria-label="Color theme"
+        aria-label="Color mode"
         value={colorModeSetting}
         onChange={e => setColorModeSetting(e.target.value as ColorModeSetting)}
         style={cmsSelectStyle}
@@ -113,7 +90,7 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
               marginBottom: 0,
             }}
           >
-            Your brand color generates the accent scale used across your site.
+            Your brand color is used to create a consistent color range for buttons, links, and accents.
           </div>
         </div>
         <div className={fieldRow.controlSlot}>
@@ -125,66 +102,6 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
             aria-label="Accent color hex value"
           />
         </div>
-      </div>
-      <div
-        role="group"
-        aria-label="Brand color palette; selected step shows a checkmark with large rounded corners"
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'flex-start',
-          gap: 0,
-          padding: 0,
-        }}
-      >
-        {brandScaleStops.map(({ tone, step }) => {
-          const swatch = diagnostics[step - 1];
-          if (!swatch) return null;
-          const selected = step === accentSelectedStep;
-          const checkFg = step >= 6 ? '#ffffff' : '#0a0a0a';
-          return (
-            <button
-              key={step}
-              type="button"
-              title={`${swatch.hex} — brand ${tone}`}
-              aria-label={`Brand ${tone}, ${swatch.hex}`}
-              aria-current={selected ? 'true' : undefined}
-              onClick={() => {
-                setPlaygroundHex(swatch.hex);
-                setInputValue(swatch.hex);
-              }}
-              style={{
-                flex: '0 0 32px',
-                width: 32,
-                height: 32,
-                border: 'none',
-                borderRadius: selected ? 100 : 0,
-                background: swatch.hex,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 0,
-                flexShrink: 0,
-                boxShadow: 'none',
-              }}
-            >
-              {selected ? (
-                <span
-                  className="material-symbols-outlined"
-                  aria-hidden
-                  style={{
-                    color: checkFg,
-                    fontSize: 16,
-                    fontVariationSettings: "'FILL' 1, 'wght' 500",
-                  }}
-                >
-                  check
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
       </div>
 
         {advancedColorPanelEnabled ? (
@@ -304,56 +221,22 @@ export const DesignColorCard: React.FC<DesignColorCardProps> = ({
             </div>
           </>
         ) : null}
-
-      <div>
-        <CmsFieldLabel
-          title="Default colors"
-          hint="The neutral colors used across your site."
-        />
-        <div
-          role="group"
-          aria-label="Default neutral colors, read-only"
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-            gap: 0,
-            padding: 0,
-          }}
-        >
-          {neutralScaleHexes.slice(1, -1).map((hexValue, i) => (
-            <div
-              key={`${hexValue}-${i}`}
-              title={`${hexValue} (reference)`}
-              aria-hidden
-              style={{
-                flex: '0 0 32px',
-                width: 32,
-                height: 32,
-                background: hexValue,
-                boxShadow: 'none',
-                borderRadius: 0,
-              }}
-            />
-          ))}
-        </div>
-      </div>
     </div>
 
     {/* 3. Color usage — last subsection */}
     <div>
       <CmsFieldLabel
         title="Color usage"
-        hint="Choose how your brand colors are applied to the UI."
+        hint="Choose how your brand color is applied to the UI."
       />
       <K15tRadioGroup.Root
         aria-label="Color usage"
         value={colorCoverage}
         onChange={v => setColorCoverage(v as ColorCoverageMode)}
       >
-        <K15tRadioGroup.Item value="minimal" label="Minimal" />
-        <K15tRadioGroup.Item value="subtle" label="Subtle" />
-        <K15tRadioGroup.Item value="standard" label="Standard" />
+        <K15tRadioGroup.Item value="minimal" label="Minimal — Appears only on key interactive elements" />
+        <K15tRadioGroup.Item value="standard" label="Standard — Used for accents and section highlights" />
+        <K15tRadioGroup.Item value="prominent" label="Prominent — Applied broadly across navigation, cards, and UI elements" />
       </K15tRadioGroup.Root>
     </div>
 

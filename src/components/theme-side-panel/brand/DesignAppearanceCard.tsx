@@ -28,7 +28,7 @@ export const DesignAppearanceCard: React.FC<DesignAppearanceCardProps> = ({
     <div>
       <CmsFieldLabel
         title="Corner radius"
-        hint="Controls how rounded cards and buttons appear across your site."
+        hint="Set how rounded corners appear on buttons, tiles, and other UI elements."
       />
       <Slider
         id="design-corner-radius"
@@ -47,7 +47,7 @@ export const DesignAppearanceCard: React.FC<DesignAppearanceCardProps> = ({
     <div>
       <CmsFieldLabel
         title="Spacing"
-        hint="Controls padding, gaps, and line height across your site."
+        hint="Adjust the spacing between elements across your site."
       />
       <K15tRadioGroup.Root
         aria-label="Spacing"
@@ -63,7 +63,7 @@ export const DesignAppearanceCard: React.FC<DesignAppearanceCardProps> = ({
     <div>
       <CmsFieldLabel
         title="Background style"
-        hint="Choose between a solid or frosted glass effect for the header, cards, and search bar."
+        hint="Apply a solid or translucent background to UI elements."
       />
       <K15tRadioGroup.Root
         aria-label="Background style"
@@ -71,7 +71,7 @@ export const DesignAppearanceCard: React.FC<DesignAppearanceCardProps> = ({
         onChange={v => setPanelBackgroundMode(v as PanelBackgroundMode)}
       >
         <K15tRadioGroup.Item value="solid" label="Solid" />
-        <K15tRadioGroup.Item value="translucent" label="Frosted Glass" />
+        <K15tRadioGroup.Item value="translucent" label="Translucent" />
       </K15tRadioGroup.Root>
     </div>
   </>

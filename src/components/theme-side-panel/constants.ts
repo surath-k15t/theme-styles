@@ -43,18 +43,18 @@ export const SPACING_LABELS: Record<SpacingScheme, string> = {
 };
 
 export const CARD_LAYOUT_OPTIONS: CardLayout[] = [
-  'grid-3col',
-  'grid-2col',
   'list-1col',
   'list-2col',
   'list-3col',
+  'grid-2col',
+  'grid-3col',
 ];
 
 /** Short labels for the card layout dropdown. */
 export const CARD_LAYOUT_LABELS: Record<CardLayout, string> = {
-  'grid-3col': 'Grid, 3 columns',
-  'grid-2col': 'Grid, 2 columns',
-  'list-1col': 'List, 1 column',
-  'list-2col': 'List, 2 columns',
-  'list-3col': 'List, 3 columns',
+  'list-1col': 'Horizontal - 1 column',
+  'list-2col': 'Horizontal - 2 columns',
+  'list-3col': 'Horizontal - 3 columns',
+  'grid-2col': 'Vertical - 2 columns',
+  'grid-3col': 'Vertical - 3 columns',
 };

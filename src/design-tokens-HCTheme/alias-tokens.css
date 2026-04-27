@@ -48,7 +48,7 @@
 }
 
 /* Color usage (`data-color-usage`) — canvas, cards, search/logo fills; engine injects steps + on-color vars. */
-[data-theme-root][data-color-usage="standard"] {
+[data-theme-root][data-color-usage="prominent"] {
   --K15t-surface: var(--K15t-color-brand-25);
   --K15t-surface-hovered: var(--K15t-color-brand-50);
   --K15t-surface-raised: var(--K15t-color-brand-25);
@@ -69,7 +69,7 @@
   --K15t-header-logo-badge-fg: var(--theme-on-primary-color);
 }
 
-[data-theme-root][data-color-usage="subtle"] {
+[data-theme-root][data-color-usage="standard"] {
   --K15t-surface: var(--K15t-color-neutral-0);
   --K15t-surface-hovered: var(--K15t-color-neutral-50);
   --K15t-surface-raised: var(--K15t-color-neutral-0);
@@ -120,13 +120,13 @@
   --K15t-app-card-border-color-hovered: transparent;
 }
 
-[data-theme-root][data-color-usage="subtle"][data-mode="light"],
+[data-theme-root][data-color-usage="standard"][data-mode="light"],
 [data-theme-root][data-color-usage="minimal"][data-mode="light"] {
   --K15t-header-logo-badge-fill: var(--K15t-color-neutral-700);
   --K15t-header-logo-badge-fg: var(--K15t-color-neutral-25);
 }
 
-[data-theme-root][data-color-usage="subtle"][data-mode="dark"],
+[data-theme-root][data-color-usage="standard"][data-mode="dark"],
 [data-theme-root][data-color-usage="minimal"][data-mode="dark"] {
   --K15t-header-logo-badge-fill: var(--K15t-color-neutral-500);
   --K15t-header-logo-badge-fg: var(--K15t-color-neutral-900);

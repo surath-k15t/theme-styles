@@ -241,7 +241,7 @@ interface ThemeContextType {
   /** Portal banner main heading: white vs black. */
   portalBannerHeadingColor: PortalBannerHeadingColor;
   setPortalBannerHeadingColor: (v: PortalBannerHeadingColor) => void;
-  /** Playground color usage: Standard (full ramp), Subtle (neutral surfaces + chromatic accents), Minimal (like Subtle + neutral canvas/header + flat cards). */
+  /** Playground color usage: Prominent (full ramp), Standard (neutral surfaces + chromatic accents), Subtle (like Standard + neutral canvas/header + flat cards). */
   colorCoverage: ColorUsageMode;
   setColorCoverage: (v: ColorUsageMode) => void;
   /** Header, cards, search: solid vs frosted glass (45% + blur). */
@@ -308,7 +308,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [portalBannerHeadingColor, setPortalBannerHeadingColorState] = useState<PortalBannerHeadingColor>(() =>
     readStoredPortalBannerHeadingColor('light'),
   );
-  const [colorCoverage, setColorCoverageState] = useState<ColorUsageMode>(() => readStoredColorUsage('standard'));
+  const [colorCoverage, setColorCoverageState] = useState<ColorUsageMode>(() => readStoredColorUsage('prominent'));
   const [panelBackgroundMode, setPanelBackgroundModeState] = useState<PanelBackgroundMode>(() =>
     readStoredPanelBackgroundMode('solid'),
   );

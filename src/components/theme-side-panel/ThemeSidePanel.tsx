@@ -5,7 +5,6 @@ import {
   alphaVariantMatchingSolid,
   generateDarkScale,
   generateScale,
-  neutralSolidsForMode,
 } from '@/lib/color-engine';
 import {
   PLAYGROUND_HEX_KEY,
@@ -186,7 +185,6 @@ export const ThemeSidePanel: React.FC = () => {
       });
   }, [diagnostics]);
 
-  const neutralScaleHexes = neutralSolidsForMode(isDark);
   const hasUnsavedChanges = useMemo(
     () => JSON.stringify(currentSnapshot) !== JSON.stringify(savedSnapshot),
     [currentSnapshot, savedSnapshot],
@@ -220,13 +218,6 @@ export const ThemeSidePanel: React.FC = () => {
     if (/^#[0-9a-fA-F]{6}$/.test(val)) setPlaygroundHex(val);
   }
 
-  const normalizedHex = hex.replace(/^#/, '').toLowerCase();
-  const accentSelectedStep = useMemo(() => {
-    const idx = diagnostics.findIndex(s => s.hex.replace(/^#/, '').toLowerCase() === normalizedHex);
-    if (idx >= 0) return diagnostics[idx].step;
-    return brandStep;
-  }, [diagnostics, normalizedHex, brandStep]);
-
   if (diagnostics.length < 12) return null;
 
   const secondLevelContent = (
@@ -243,11 +234,7 @@ export const ThemeSidePanel: React.FC = () => {
               isDark={isDark}
               inputValue={inputValue}
               handleHexInput={handleHexInput}
-              setPlaygroundHex={setPlaygroundHex}
-              setInputValue={setInputValue}
               diagnostics={diagnostics}
-              accentSelectedStep={accentSelectedStep}
-              neutralScaleHexes={neutralScaleHexes}
               panelBorder={panelBorder}
               panelFg={panelFg}
               panelMuted={panelMuted}

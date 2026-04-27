@@ -45,7 +45,7 @@ export function buildMergedCustomChromeForSnapshot(snap: BrandStyleSnapshot): Cu
   const solidDefault = engineVars['--palette-step-1'] ?? '#f4f5f7';
   const paletteChrome = computePaletteChromeColors({
     engineVars,
-    colorCoverage: snap.colorCoverage ?? 'standard',
+    colorCoverage: snap.colorCoverage ?? 'prominent',
     mode: modeUi,
     panelBackgroundMode: snap.panelBackgroundMode ?? 'solid',
     portalBannerStyle: snap.portalBannerStyle ?? 'image',

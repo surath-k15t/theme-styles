@@ -1,4 +1,4 @@
-export type ColorUsageMode = 'standard' | 'subtle' | 'minimal';
+export type ColorUsageMode = 'minimal' | 'standard' | 'prominent';
 
 /** @deprecated Use `ColorUsageMode` */
 export type ColorCoverageMode = ColorUsageMode;
@@ -9,7 +9,7 @@ const LEGACY_STORAGE_KEY = 'playground:colorCoverage';
 const LEGACY_APPLY_BRAND_KEY = 'playground:applyBrandColor';
 
 export function usesStandardPalette(mode: ColorUsageMode): boolean {
-  return mode === 'standard';
+  return mode === 'prominent';
 }
 
 /** @deprecated Use `usesStandardPalette` */
@@ -18,29 +18,30 @@ export function usesBalancedPalette(mode: ColorUsageMode): boolean {
 }
 
 export function usesNeutralPaletteSteps(mode: ColorUsageMode): boolean {
-  return mode === 'subtle' || mode === 'minimal';
+  return mode === 'standard' || mode === 'minimal';
 }
 
 function normalizeStoredMode(raw: string | null): ColorUsageMode | null {
-  if (raw === 'standard' || raw === 'subtle' || raw === 'minimal') return raw;
-  if (raw === 'balanced') return 'standard';
+  if (raw === 'minimal' || raw === 'standard' || raw === 'prominent') return raw;
+  if (raw === 'subtle') return 'minimal';
+  if (raw === 'balanced') return 'prominent';
   return null;
 }
 
-export function readStoredColorUsage(fallback: ColorUsageMode = 'standard'): ColorUsageMode {
+export function readStoredColorUsage(fallback: ColorUsageMode = 'prominent'): ColorUsageMode {
   if (typeof window === 'undefined') return fallback;
   const primary = normalizeStoredMode(window.sessionStorage.getItem(STORAGE_KEY));
   if (primary) return primary;
   const legacy = normalizeStoredMode(window.sessionStorage.getItem(LEGACY_STORAGE_KEY));
   if (legacy) return legacy;
   const legacyBool = window.sessionStorage.getItem(LEGACY_APPLY_BRAND_KEY);
-  if (legacyBool === 'false') return 'subtle';
-  if (legacyBool === 'true') return 'standard';
+  if (legacyBool === 'false') return 'standard';
+  if (legacyBool === 'true') return 'prominent';
   return fallback;
 }
 
 /** @deprecated Use `readStoredColorUsage` */
-export function readStoredColorCoverage(fallback: ColorUsageMode = 'standard'): ColorUsageMode {
+export function readStoredColorCoverage(fallback: ColorUsageMode = 'prominent'): ColorUsageMode {
   return readStoredColorUsage(fallback);
 }
 

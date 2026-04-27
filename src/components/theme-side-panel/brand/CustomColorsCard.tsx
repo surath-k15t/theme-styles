@@ -66,7 +66,7 @@ export const CustomColorsCard: React.FC = () => {
         <div style={{ flex: 1, minWidth: 0 }}>
           <CmsFieldLabel
             title="Advanced color overrides"
-            hint="Customize individual component colors independently from your brand palette."
+            hint="Customize specific component colors manually. Changes won't update automatically if you change your brand color."
           />
         </div>
         <CmsSwitch
