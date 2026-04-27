@@ -1,0 +1,177 @@
+/*
+ * Core tokens
+ *
+ * @description — Storing raw values and build the basis of the design system. 
+ * 	The brand colors are also imported here from the color engine.
+ *  They are intended to only be used internally.
+ */
+[data-theme-root] {
+
+  --K15t-color-neutral-0: var(--neutral-0);
+  --K15t-color-neutral-25: var(--neutral-1);
+  --K15t-color-neutral-50: var(--neutral-2);
+  --K15t-color-neutral-75: var(--neutral-3);
+  --K15t-color-neutral-100: var(--neutral-4);
+  --K15t-color-neutral-200: var(--neutral-5);
+  --K15t-color-neutral-300: var(--neutral-6);
+  --K15t-color-neutral-400: var(--neutral-7);
+  --K15t-color-neutral-500: var(--neutral-8);
+  --K15t-color-neutral-600: var(--neutral-9);
+  --K15t-color-neutral-700: var(--neutral-10);
+  --K15t-color-neutral-800: var(--neutral-11);
+  --K15t-color-neutral-900: var(--neutral-12);
+  --K15t-color-neutral-1000: var(--neutral-13);
+
+  --K15t-color-brand-25: var(--palette-step-1);
+  --K15t-color-brand-50: var(--palette-step-2);
+  --K15t-color-brand-75: var(--palette-step-3);
+  --K15t-color-brand-100: var(--palette-step-4);
+  --K15t-color-brand-200: var(--palette-step-5);
+  --K15t-color-brand-300: var(--palette-step-6);
+  --K15t-color-brand-400: var(--palette-step-7);
+  --K15t-color-brand-500: var(--palette-step-8);
+  --K15t-color-brand-600: var(--palette-step-9);
+  --K15t-color-brand-700: var(--palette-step-10);
+  --K15t-color-brand-800: var(--palette-step-11);
+  --K15t-color-brand-900: var(--palette-step-12);
+
+/* Same as before */
+
+    --K15t-color-blue-100: #E9F2FE;
+	--K15t-color-blue-200: #CFE1FD;
+	--K15t-color-blue-300: #8FB8F6;
+	--K15t-color-blue-400: #669EF1;
+	--K15t-color-blue-500: #4588EC;
+	--K15t-color-blue-600: #357DE8;
+	--K15t-color-blue-700: #1769DB;
+	--K15t-color-blue-800: #1458BC;
+	--K15t-color-blue-900: #123263;
+	--K15t-color-blue-1000: #1C2B42;
+
+	--K15t-color-yellow-100: #FEF7C8;
+	--K15t-color-yellow-200: #F5E989;
+	--K15t-color-yellow-300: #EED12A;
+	--K15t-color-yellow-400: #F5E988;
+	--K15t-color-yellow-500: #CF9F00;
+	--K15t-color-yellow-600: #B38600;
+	--K15t-color-yellow-700: #946F00;
+	--K15t-color-yellow-800: #7F5F00;
+	--K15t-color-yellow-900: #533F04;
+	--K15t-color-yellow-1000: #332E1B;
+
+	--K15t-color-orange-100: #FFF5DB;
+	--K15t-color-orange-200: #FCE4A6;
+	--K15t-color-orange-300: #FBC827;
+	--K15t-color-orange-400: #FCA700;
+	--K15t-color-orange-500: #F68908;
+	--K15t-color-orange-600: #DF6C00;
+	--K15t-color-orange-700: #BD5B00;
+	--K15t-color-orange-800: #9E4C00;
+	--K15t-color-orange-900: #693200;
+	--K15t-color-orange-1000: #3A2C1F;
+
+	--K15t-color-green-100: #DCFFF1;
+	--K15t-color-green-200: #BBF3DB;
+	--K15t-color-green-300: #7FE2B8;
+	--K15t-color-green-400: #4CCE97;
+	--K15t-color-green-500: #2CBB7F;
+	--K15t-color-green-600: #24A06B;
+	--K15t-color-green-700: #20845A;
+	--K15t-color-green-800: #226E4E;
+	--K15t-color-green-900: #174B35;
+	--K15t-color-green-1000: #1C3329;
+
+	--K15t-color-lime-100: #EFFFD6;
+	--K15t-color-lime-200: #D3F1A7;
+	--K15t-color-lime-300: #B3DF72;
+	--K15t-color-lime-400: #94C748;
+	--K15t-color-lime-500: #82B536;
+	--K15t-color-lime-600: #6A9A23;
+	--K15t-color-lime-700: #5B7F24;
+	--K15t-color-lime-800: #4C6B1F;
+	--K15t-color-lime-900: #37471F;
+	--K15t-color-lime-1000: #28311B;
+
+	--K15t-color-red-100: #FFECEB;
+	--K15t-color-red-200: #FFD5D2;
+	--K15t-color-red-300: #FD9891;
+	--K15t-color-red-400: #F87168;
+	--K15t-color-red-500: #F15B50;
+	--K15t-color-red-600: #E1483D;
+	--K15t-color-red-700: #C8372C;
+	--K15t-color-red-800: #AD2E24;
+	--K15t-color-red-900: #5D1F1A;
+	--K15t-color-red-1000: #42221F;
+
+	--K15t-color-teal-100: #E7F9FF;
+	--K15t-color-teal-200: #C6EDFB;
+	--K15t-color-teal-300: #9ED9EE;
+	--K15t-color-teal-400: #6CC3E0;
+	--K15t-color-teal-500: #42B2D7;
+	--K15t-color-teal-600: #2898BD;
+	--K15t-color-teal-700: #227D9B;
+	--K15t-color-teal-800: #206A83;
+	--K15t-color-teal-900: #164555;
+	--K15t-color-teal-1000: #1E3137;
+
+	--K15t-color-purple-100: #F8EEFE;
+	--K15t-color-purple-200: #EED7FC;
+	--K15t-color-purple-300: #D8A0F7;
+	--K15t-color-purple-400: #C87DF4;
+	--K15t-color-purple-500: #AE5AE1;
+	--K15t-color-purple-600: #AE5AE1;
+	--K15t-color-purple-700: #964AC0;
+	--K15t-color-purple-800: #8040A5;
+	--K15t-color-purple-900: #48245D;
+	--K15t-color-purple-1000: #35243F;
+
+	--K15t-color-magenta-100: #FFECF8;
+	--K15t-color-magenta-200: #FDD0EC;
+	--K15t-color-magenta-300: #F797D2;
+	--K15t-color-magenta-400: #E674BB;
+	--K15t-color-magenta-500: #BF63F3;
+	--K15t-color-magenta-600: #CD519D;
+	--K15t-color-magenta-700: #AD4787;
+	--K15t-color-magenta-800: #943D73;
+	--K15t-color-magenta-900: #50253F;
+	--K15t-color-magenta-1000: #3D2232;
+
+/* ------------------------------------------------------------------------------------------------ */
+
+  --K15t-font-family-sans: 'Roboto', ui-sans-serif, Helvetica, Arial, sans-serif;
+  --K15t-font-family-mono: 'PT Mono', ui-monospace,  Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --K15t-font-family-body: var(--K15t-font-family-sans);
+  --K15t-font-family-headline: var(--K15t-font-family-body);
+
+  --K15t-font-weight-regular: 400;
+  --K15t-font-weight-medium: 500;
+  --K15t-font-weight-bold: 700;
+
+  --K15t-font-size-scale-large: 1;
+
+  /* Semantic scale — XXS → 6XL */
+  --K15t-font-size-xxs: 0.625rem;	/* 10px */
+  --K15t-font-size-xs:  0.75rem;	/* 12px */
+  --K15t-font-size-s:  0.875rem;    /* 14px */
+  --K15t-font-size-m:  1rem;	/* 16px */
+  --K15t-font-size-ml: 1.125rem;	/* 18px */
+  --K15t-font-size-l: 1.25rem;	/* 20px */
+  --K15t-font-size-xl: 1.5rem;	/* 24px */
+  --K15t-font-size-xxl: 2rem;	/* 32px */
+  --K15t-font-size-xxxl: 3rem;	/* 48px */
+
+  --K15t-line-height-x-small: 1.1;
+  --K15t-line-height-small:   1.3;
+  --K15t-line-height-medium:  1.5;
+  --K15t-line-height-large:   1.7;
+  --K15t-line-height-x-large: 1.9;
+
+  --K15t-radius-factor: 1;
+
+  --K15t-radius-none: calc(0px * var(--K15t-radius-factor));
+  --K15t-radius-small: calc(3px * var(--K15t-radius-factor));
+  --K15t-radius-medium: calc(5px * var(--K15t-radius-factor));
+  --K15t-radius-large: calc(8px * var(--K15t-radius-factor));
+  --K15t-radius-circle: 50%;
+  --K15t-radius-pill: calc(10000px * var(--K15t-radius-factor));
+}

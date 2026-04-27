@@ -26,3 +26,4 @@ vite.config.ts.timestamp-*.mjs
 
 # Local-only tooling (never commit)
 .claude/
+.vercel

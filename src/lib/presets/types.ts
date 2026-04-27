@@ -37,7 +37,7 @@ export interface PresetStyles {
   h3Weight: string;
   h3Color: string;
   h3LetterSpacing: string;
-  h3FontFamily?: string;  // overrides headline font for card titles (defaults to var(--ds-font-family-headline))
+  h3FontFamily?: string;  // overrides headline font for card titles (defaults to var(--K15t-font-family-headline))
 
   pSize: string;
   pWeight: string;
@@ -56,7 +56,7 @@ export interface PresetStyles {
   /** Horizontal (left/right) padding of the cards section wrapper in px; defaults to 24 */
   cardsSectionPaddingSides?: number;
 
-  // Radius — single factor driving the full --ds-radius-* token scale
+  // Radius — single factor driving the full --K15t-radius-* token scale
   /** Multiplier for the radius token scale. 0 = sharp, 1 = default, 2 = rounded, 4 = very round */
   roundness: number;
 
@@ -147,7 +147,7 @@ export interface PresetConfig {
    * Controls how the banner background is rendered:
    * - 'none'     — blends with the portal canvas (no distinct banner bg)
    * - 'colored'  — solid/custom color set via `styles.bannerBackground`
-   * - 'gradient' — flowing gradient from `--K15t-color-brand-100|400|700` (palette steps 3/6/9)
+   * - 'gradient' — flowing gradient from `--K15t-color-brand-75|300|600` (palette steps 3/6/9)
    * - 'image'    — full-width decorative image (set via `bannerImage`)
    */
   bannerStyle: 'none' | 'colored' | 'gradient' | 'image';

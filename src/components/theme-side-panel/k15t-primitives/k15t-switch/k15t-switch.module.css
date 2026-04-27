@@ -1,0 +1,71 @@
+/* Knob-only switch: ::before thumb moves with transform (keyframes were not reliably re-running on state flip). */
+.switch {
+    --k15t-switch-root-width: 1.75rem;
+    --k15t-switch-root-height: 1rem;
+    --k15t-switch-root-border-radius: var(--k15t-switch-root-height);
+    --k15t-switch-root-background-inactive: var(--background-neutral-strong-resting);
+    --k15t-switch-root-background-active: var(--background-brand-strong-resting);
+
+    --k15t-switch-thumb-width: 0.75rem;
+    --k15t-switch-thumb-height: var(--k15t-switch-thumb-width);
+    --k15t-switch-thumb-border-radius: var(--border-radius-circle);
+    --k15t-switch-thumb-background-inactive: var(--surface-default);
+    --k15t-switch-thumb-margin: var(--border-radius-xs);
+
+    --_thumb-x-off: 0;
+    --_thumb-x-on: calc(var(--k15t-switch-root-width) - var(--k15t-switch-thumb-width) - 2 * var(--k15t-switch-thumb-margin));
+
+    all: unset;
+
+    position: relative;
+
+    width: var(--k15t-switch-root-width);
+    height: var(--k15t-switch-root-height);
+
+    border-radius: var(--k15t-switch-root-border-radius);
+    background-color: var(--k15t-switch-root-background-inactive);
+
+    cursor: pointer;
+
+    transition: background-color 200ms ease-in-out;
+
+    &[data-state="checked"],
+    &[aria-checked="true"] {
+        background-color: var(--k15t-switch-root-background-active);
+    }
+
+    &::before {
+        content: "";
+
+        position: absolute;
+        top: var(--k15t-switch-thumb-margin);
+        left: var(--k15t-switch-thumb-margin);
+
+        width: var(--k15t-switch-thumb-width);
+        height: var(--k15t-switch-thumb-height);
+        border-radius: var(--k15t-switch-thumb-border-radius);
+
+        background-color: var(--k15t-switch-thumb-background-inactive);
+
+        transform: translateX(var(--_thumb-x-off));
+        transition: transform 200ms ease-in-out;
+    }
+
+    &.motionStatic::before {
+        transition: none;
+    }
+
+    &[data-state="checked"]::before,
+    &[aria-checked="true"]::before {
+        transform: translateX(var(--_thumb-x-on));
+    }
+
+    &[data-state="checked"][disabled],
+    &[data-state="unchecked"][disabled],
+    &[aria-checked="true"][disabled],
+    &[aria-checked="false"][disabled] {
+        cursor: not-allowed;
+        --k15t-switch-root-background-inactive: var(--foreground-disabled);
+        --k15t-switch-root-background-active: var(--foreground-disabled);
+    }
+}

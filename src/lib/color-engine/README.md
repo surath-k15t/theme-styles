@@ -2,7 +2,7 @@
 
 Turns a **single brand color** (hex or any string Culori can parse) into a **12-step OKLCH-based chromatic palette**: backgrounds, UI chrome, borders, solid + hover, and text steps. Output is **sRGB hex** after gamut clamping, plus per-step **L / C / h** diagnostics and **WCAG contrast** vs step 1.
 
-**Neutral scale** (fixed neutral ramp for typography and UI neutrals) lives in `neutral-ramp.ts` as **12 sRGB solids**; `ThemeContext` injects them as `--gray-1`…`--gray-12` on `data-theme-root`. Alpha / P3 refinements live in `src/design-tokens/alias-tokens.css`.
+**Neutral scale** (fixed neutral ramp for typography and UI neutrals) lives in `neutral-ramp.ts` as **12 sRGB solids**; `ThemeContext` injects them as `--gray-1`…`--gray-12` on `data-theme-root`. Alpha / P3 refinements live in `src/design-tokens-HCTheme/alias-tokens.css`.
 
 The **Playground** preset (`FloatingControls` → `ColorEnginePlayground`) uses the **v2** chromatic API: `generateScale` (light) and `generateDarkScale` (dark).
 
@@ -116,7 +116,7 @@ There is **no Gaussian (normal) distribution** in this package. V2 also uses **c
 
 ## Related UI
 
-- `src/components/theme/floating-controls/` — theme panel (`ThemeSidePanel`, `DesignColorCard`); calls v2 generators and shows alpha variants for selected steps. Import the shell via `FloatingControls.tsx`.
+- `src/components/theme-side-panel/` — theme panel (`ThemeSidePanel`, `DesignColorCard`); calls v2 generators and shows alpha variants for selected steps. Import the shell via `FloatingControls.tsx`.
 
 ---
 

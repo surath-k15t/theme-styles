@@ -82,7 +82,7 @@ export function createPlaygroundDefaultBrandStyleSnapshot(): BrandStyleSnapshot 
     portalBannerSolidBackgroundHex: null,
     bannerPaddingX: playgroundPreset.styles.bannerPaddingX,
     portalBannerHeadingColor: 'light',
-    colorCoverage: 'standard',
+    colorCoverage: 'prominent',
     panelBackgroundMode: 'solid',
     customColorsEnabled: true,
     customChrome: {
@@ -120,7 +120,7 @@ const monoBrandStyleSnapshot: BrandStyleSnapshot = {
   portalBannerSolidBackgroundHex: null,
   bannerPaddingX: 92,
   portalBannerHeadingColor: 'dark',
-  colorCoverage: 'subtle',
+  colorCoverage: 'standard',
   panelBackgroundMode: 'solid',
   customColorsEnabled: true,
   customChrome: {
@@ -140,7 +140,7 @@ const igniteBrandStyleSnapshot: BrandStyleSnapshot = {
   themeRadiusTier: 'medium',
   spacingScheme: 'spacious',
   panelBackgroundMode: 'translucent',
-  colorCoverage: 'subtle',
+  colorCoverage: 'standard',
   customColorsEnabled: false,
   portalBannerStyle: 'image',
   portalBannerImage: '/bold/bannerImageForBold.png',
@@ -158,7 +158,7 @@ const auroraBrandStyleSnapshot: BrandStyleSnapshot = {
   themeRadiusTier: 'medium',
   spacingScheme: 'standard',
   panelBackgroundMode: 'solid',
-  colorCoverage: 'standard',
+  colorCoverage: 'prominent',
   customColorsEnabled: true,
   customChrome: {
     bannerText: '#000000',
@@ -179,7 +179,7 @@ const corporateBrandStyleSnapshot: BrandStyleSnapshot = {
   themeRadiusTier: 'small',
   spacingScheme: 'standard',
   panelBackgroundMode: 'solid',
-  colorCoverage: 'standard',
+  colorCoverage: 'prominent',
   customColorsEnabled: true,
   customChrome: {
     headerBg: '#2c2c2c',

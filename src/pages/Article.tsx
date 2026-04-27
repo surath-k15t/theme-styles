@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import SiteHeader from '@/components/theme/SiteHeader';
-import SiteFooter from '@/components/theme/SiteFooter';
+import SiteHeader from '@/components/theme-preview/SiteHeader';
+import SiteFooter from '@/components/theme-preview/SiteFooter';
 import { useTheme } from '@/lib/ThemeContext';
 import { presets } from '@/lib/presets';
 
@@ -38,7 +38,7 @@ const Article: React.FC = () => {
           flex: 1,
           display: 'flex',
           background: s.articleCanvasBackground,
-          fontFamily: 'var(--ds-font-family-body)',
+          fontFamily: 'var(--K15t-font-family-body)',
         }}
       >
         {/* Left sidebar */}
@@ -49,7 +49,7 @@ const Article: React.FC = () => {
             borderRight: '1px solid var(--K15t-border-brand-strong)',
             padding: s.sidebarPadding,
             flexShrink: 0,
-            fontSize: 'var(--ds-font-size-sm)',
+            fontSize: 'var(--K15t-font-size-sm)',
             overflow: 'auto',
           }}
         >
@@ -58,7 +58,7 @@ const Article: React.FC = () => {
               <div
                 style={{
                   padding: '8px 12px 8px 24px',
-                  fontWeight: 'var(--ds-font-weight-medium)' as any,
+                  fontWeight: 'var(--K15t-font-weight-medium)' as any,
                   color: 'var(--K15t-foreground)',
                   fontSize: 13,
                   display: 'flex',
@@ -83,7 +83,7 @@ const Article: React.FC = () => {
                       color: i === 0 ? s.sidebarSelectedColor : s.sidebarItemColor,
                       background: i === 0 ? s.sidebarSelectedBackground : 'transparent',
                       borderLeft: i === 0 ? s.sidebarSelectedBorder : '2px solid transparent',
-                      borderRadius: 'var(--ds-radius-small)',
+                      borderRadius: 'var(--K15t-radius-small)',
                       transition: 'background 0.22s ease',
                       fontSize: 13,
                     }}
@@ -117,7 +117,7 @@ const Article: React.FC = () => {
           {/* Breadcrumb */}
           <div
             style={{
-              fontSize: 'var(--ds-font-size-sm)',
+              fontSize: 'var(--K15t-font-size-sm)',
               color: 'var(--K15t-foreground-subtle)',
               marginBottom: 24,
               display: 'flex',
@@ -136,9 +136,9 @@ const Article: React.FC = () => {
 
           <h1
             style={{
-              fontFamily: 'var(--ds-font-family-headline)',
-              fontSize: 'var(--ds-font-size-2xl)',
-              fontWeight: 'var(--ds-font-weight-medium)',
+              fontFamily: 'var(--K15t-font-family-headline)',
+              fontSize: 'var(--K15t-font-size-2xl)',
+              fontWeight: 'var(--K15t-font-weight-medium)',
               color: 'var(--theme-headline-color)',
               marginBottom: 'var(--theme-content-spacing)',
             }}
@@ -148,7 +148,7 @@ const Article: React.FC = () => {
           <p
             style={{
               color: 'var(--K15t-foreground-subtle)',
-              fontSize: 'var(--ds-font-size-lg)',
+              fontSize: 'var(--K15t-font-size-lg)',
               marginBottom: 'calc(var(--theme-content-spacing) * 2)',
             }}
           >
@@ -158,9 +158,9 @@ const Article: React.FC = () => {
 
           <h2
             style={{
-              fontFamily: 'var(--ds-font-family-headline)',
-              fontSize: 'var(--ds-font-size-xl)',
-              fontWeight: 'var(--ds-font-weight-medium)',
+              fontFamily: 'var(--K15t-font-family-headline)',
+              fontSize: 'var(--K15t-font-size-xl)',
+              fontWeight: 'var(--K15t-font-weight-medium)',
               color: 'var(--theme-headline-color)',
               marginBottom: 'var(--theme-content-spacing)',
             }}
@@ -197,7 +197,7 @@ const Article: React.FC = () => {
             style={{
               background: 'var(--K15t-background-neutral)',
               border: '1px solid var(--K15t-border-brand-strong)',
-              borderRadius: 'var(--ds-radius-medium)',
+              borderRadius: 'var(--K15t-radius-medium)',
               height: 240,
               display: 'flex',
               alignItems: 'center',
@@ -224,7 +224,7 @@ const Article: React.FC = () => {
             minWidth: 320,
             padding: s.tocPadding,
             flexShrink: 0,
-            fontSize: 'var(--ds-font-size-sm)',
+            fontSize: 'var(--K15t-font-size-sm)',
           }}
         >
           <div
@@ -232,14 +232,14 @@ const Article: React.FC = () => {
               width: 280,
               boxSizing: 'border-box' as const,
               border: s.tocBoxBorder,
-              borderRadius: 'var(--ds-radius-medium)',
+              borderRadius: 'var(--K15t-radius-medium)',
               padding: s.tocBoxPadding,
             }}
           >
           <h2
             style={{
               fontSize: 12,
-              fontWeight: 'var(--ds-font-weight-medium)' as any,
+              fontWeight: 'var(--K15t-font-weight-medium)' as any,
               color: 'var(--K15t-foreground)',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
@@ -262,10 +262,10 @@ const Article: React.FC = () => {
                     color: i === 0
                       ? s.tocSelectedColor
                       : s.tocItemColor,
-                    fontWeight: i === 0 ? ('var(--ds-font-weight-medium)' as any) : 'normal',
+                    fontWeight: i === 0 ? ('var(--K15t-font-weight-medium)' as any) : 'normal',
                     fontSize: 13,
                     textDecoration: 'none',
-                    borderRadius: '0 var(--ds-radius-small) var(--ds-radius-small) 0',
+                    borderRadius: '0 var(--K15t-radius-small) var(--K15t-radius-small) 0',
                     transition: 'color 0.22s ease, background 0.22s ease',
                   }}
                   onMouseEnter={e => {
@@ -293,7 +293,7 @@ const Article: React.FC = () => {
                             color: s.tocItemColor,
                             fontSize: 12,
                             textDecoration: 'none',
-                            borderRadius: 'var(--ds-radius-small)',
+                            borderRadius: 'var(--K15t-radius-small)',
                             transition: 'color 0.22s ease, background 0.22s ease',
                           }}
                           onMouseEnter={e => {

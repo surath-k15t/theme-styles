@@ -1,0 +1,160 @@
+.navItem {
+  --_active-indicator-width: 0.25rem;
+  --_indicator-color: var(--foreground-brand-resting);
+
+  position: relative;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.25rem;
+
+  padding: 0.75rem 0;
+  color: var(--foreground-resting);
+  transition: background-color 100ms ease-in-out, color 100ms ease-in-out;
+}
+
+.navItem::before {
+  --_height: 0.875rem;
+
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: calc(var(--_height) / -2);
+
+  width: var(--_active-indicator-width);
+  height: var(--_height);
+
+  background-color: transparent;
+  border-radius: 0 4px 4px 0;
+  transition: background-color 100ms ease-in-out;
+}
+
+.navItem:hover {
+  background-color: var(--background-neutral-medium-hovered);
+}
+
+.navItemActive {
+  color: var(--foreground-resting);
+  background-color: var(--surface-default);
+}
+
+.navItemActive::before {
+  background-color: var(--_indicator-color);
+}
+
+/* vpt3 `level-navigation`: icon size only; label uses `font-body-default-xxs` (weight 350). */
+.navItemIcon {
+  --k15t-icon-color: var(--foreground-resting);
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--k15t-icon-color);
+}
+
+.navItemIcon :global(.material-symbols-outlined) {
+  font-size: 1.5rem;
+}
+
+.navItemIconImage {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  display: block;
+}
+
+.navItemLabel {
+  max-width: calc(76px - 2 * var(--_active-indicator-width) - 0.5rem);
+  overflow-wrap: anywhere;
+  font: var(--font-body-default-xxs);
+  line-height: var(--line-height-m);
+}
+
+/* vpt3 `info-text.module.css` */
+.infoText {
+  color: var(--foreground-restrained);
+  font: var(--font-body-default-xs);
+  line-height: var(--line-height-s);
+}
+
+.infoText:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+/* vpt3 `config-field.module.css` — .k15t-form__label override inside .config-field */
+.configFieldLabel {
+  display: block;
+  font: var(--font-body-strong-xs);
+  line-height: var(--line-height-m);
+  color: var(--foreground-resting);
+  padding-bottom: 0.5rem;
+}
+
+.configFieldLabel:has(+ .infoText) {
+  padding-bottom: 0;
+}
+
+/* vpt3 `config-field.module.css` — .control-one-line (used for inline label + switch rows) */
+.controlOneLine {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controlOneLine .configFieldLabel {
+  padding-bottom: 0;
+  line-height: var(--line-height-m);
+}
+
+/* vpt3 `config-field.module.css` — .label-container */
+.labelContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+/* vpt3 `config-category.module.css` — non-collapsible section wrapper */
+.configCategory {
+  padding: 0.75rem 0.75rem 1rem 0.75rem;
+  border: var(--border-width-s) solid var(--border-neutral-strong);
+  border-radius: var(--border-radius-s);
+  background: var(--surface-default);
+}
+
+.configCategoryHeader {
+  min-height: 1.625rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.configCategoryTitle {
+  font: var(--font-body-strong-m);
+  line-height: var(--line-height-l);
+  color: var(--foreground-resting);
+}
+
+.configCategoryContent {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* vpt3 `theme-configurator.module.css` — level headline */
+.levelHeadline {
+  margin: 0 0 0.5rem;
+  font: var(--font-headline-l);
+  color: var(--foreground-resting);
+}

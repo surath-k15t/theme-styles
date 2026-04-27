@@ -1,8 +1,8 @@
 import React from 'react';
-import SiteHeader from '@/components/theme/SiteHeader';
-import SiteFooter from '@/components/theme/SiteFooter';
-import Banner from '@/components/theme/Banner';
-import AppCards from '@/components/theme/AppCards';
+import SiteHeader from '@/components/theme-preview/SiteHeader';
+import SiteFooter from '@/components/theme-preview/SiteFooter';
+import Banner from '@/components/theme-preview/Banner';
+import AppCards from '@/components/theme-preview/AppCards';
 import { useTheme } from '@/lib/ThemeContext';
 import { presets } from '@/lib/presets';
 

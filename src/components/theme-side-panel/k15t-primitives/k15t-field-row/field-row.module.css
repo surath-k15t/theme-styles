@@ -1,0 +1,16 @@
+/* From vpt3 `config-field.module.css` — `.control-one-line` + `.label-container` */
+.controlOneLine {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.labelContainer {
+    flex: 1;
+    min-width: 0;
+}
+
+.controlSlot {
+    flex-shrink: 0;
+}

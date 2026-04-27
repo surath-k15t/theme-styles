@@ -1,0 +1,27 @@
+.slider {
+    --k15t-slider-foreground-color: var(--foreground-restrained);
+
+    /* vpt3 `config-field.module.css` `.slider` */
+    font: var(--font-body-default-xs);
+    line-height: var(--line-height-m);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 1rem;
+    width: 100%;
+
+    /* Radix root is a flex item beside the value; min-width:0 avoids collapse under overflow-x:hidden ancestors */
+    .control {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .valueDisplay {
+        box-sizing: content-box;
+        min-width: 2rem;
+        justify-self: end;
+        text-align: left;
+        color: var(--k15t-slider-foreground-color);
+        white-space: nowrap;
+    }
+}

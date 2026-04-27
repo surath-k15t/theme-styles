@@ -1,0 +1,20 @@
+/* Playground “outline primary” — not a stock K15t appearance; maps to semantic tokens. */
+.ghostBrand {
+  --k15t-button-background-color: var(--surface-default);
+  --k15t-button-foreground-color: var(--foreground-brand-resting);
+  --k15t-button-border-color: var(--border-brand-strong);
+}
+
+.ghostBrand:hover:not(:disabled) {
+  --k15t-button-background-color: var(--background-brand-subtle-hovered);
+  --k15t-button-border-color: var(--border-brand-strong-hovered);
+}
+
+.ghostBrand:active:not(:disabled) {
+  --k15t-button-background-color: var(--background-brand-subtle-pressed);
+}
+
+.ghostBrand:disabled {
+  --k15t-button-foreground-color: var(--foreground-disabled);
+  --k15t-button-border-color: var(--border-neutral-subtle);
+}

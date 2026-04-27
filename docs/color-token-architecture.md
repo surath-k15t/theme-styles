@@ -35,14 +35,14 @@ flowchart TB
     PALuse -->|yes| PAL
     PALuse -->|no subtle/minimal| PALcopy
     PALcopy --> PAL
-    CAN["`--ds-canvas`"]
+    CAN["`--K15t-canvas`"]
     C --> CAN
     CAN --> B1["Balanced:\n`palette-step-1`"]
     CAN --> B2["Subtle:\n`#fff` light / `gray-1` dark"]
     CAN --> B3["Minimal:\n`gray-1`"]
     ON["`--theme-on-primary-color`\nfrom chromatic step 9"]
     TXT["Portal text overrides\n→ `gray-11` / `gray-12`"]
-    ICON["`--ds-card-icon-color`\nchromatic 9 / 11"]
+    ICON["`--K15t-card-icon-color`\nchromatic 9 / 11"]
     MIN["Minimal only:\nheader `gray-1`,\nborder `gray-3`"]
     D12 --> ON
     CH --> ICON
@@ -52,7 +52,7 @@ flowchart TB
 
   subgraph root["`ThemeProvider` → `data-theme-root`"]
     TV["`style={…preset cssVars,\n…buildColorEngineThemeVars}`"]
-    DT["`design-tokens.css`\n`--ds-color-brand-*` → `--palette-step-*`"]
+    DT["`design-tokens.css`\n`--K15t-color-brand-*` → `--palette-step-*`"]
     TV --> DT
   end
 
@@ -60,7 +60,7 @@ flowchart TB
   fixed --> TV
 
   subgraph ui["How the UI picks colors"]
-    SEM["Semantic tokens\n`--ds-surface`, `--theme-primary-color`, …"]
+    SEM["Semantic tokens\n`--K15t-surface`, `--theme-primary-color`, …"]
     REACT["Some React reads `colorCoverage`\ne.g. SearchBar, AppCards minimal"]
     C --> REACT
     CH --> REACT
